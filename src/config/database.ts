@@ -4,7 +4,7 @@ dotenv.config()
 
 let database = new Sequelize(process.env.MySQL_DATABASE_NAME as string, process.env.MySQL_USERNAME as string, process.env.MySQL_PASSWORD as string, {
   host: "localhost",
-  dialect: "mysql",
+  dialect: "postgres",
   define: {
     timestamps: false,
     freezeTableName: true,

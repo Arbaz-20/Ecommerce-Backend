@@ -1,23 +1,23 @@
 {
   "development": {
-    "username": "root",
-    "password": "pass",
+    "username": "postgres",
+    "password": "root",
     "database": "ecommerce_website",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "postgres"
   },
   "test": {
-    "username": "root",
-    "password": "pass",
+    "username": "postgres",
+    "password": "root",
     "database": "ecommerce_website",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "postgres"
   },
   "production": {
-    "username": "root",
-    "password": "pass",
+    "username": "postgres",
+    "password": "root",
     "database": "ecommerce_website",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "postgres"
   }
 }
