@@ -1,6 +1,6 @@
 import { Sequelize,DataTypes} from "sequelize";
 import db from "../config/database";
-import countries  from "../utils/countrysMasterFile";
+import countries  from "../utils/masterFiles/countrysMasterFile";
 
 const auth = db.define("auths",{
     id:{

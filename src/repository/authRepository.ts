@@ -34,8 +34,8 @@ class AuthRepository {
         return await auth.destroy({where:{id:id}});
     }
 
-    public BulkDeleteUsers = async(id:string) :Promise<number> => {
-        return await auth.destroy({where:{id:id}})
+    public BulkDeleteUsers = async(ids:string[]) :Promise<number> => {
+        return await auth.destroy({where:{id:ids}})
     }
 
 }
