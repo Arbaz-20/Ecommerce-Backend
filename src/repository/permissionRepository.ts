@@ -6,30 +6,30 @@ class PermissionRepository{
     constructor(){
 
     }
-    public CreateUser = async ( userData : object | any ) : Promise<object> => {
-        return await permission.create(userData);
+    public CreatePermission = async ( PermissionData : object | any ) : Promise<object> => {
+        return await permission.create(PermissionData);
     }
 
-    public updateUser = async (id:string,userData : object | any ) : Promise<object> => {
-        return await permission.update(userData,{where:{id:id}});
+    public UpdatePermission = async (id:string,PermissionData : object | any ) : Promise<[affectedCount: number]> => {
+        return await permission.update(PermissionData,{where:{id:id}});
     }
 
-    public GetUserById = async (id:string):Promise< object | null > =>{
+    public GetPermissionById = async (id:string):Promise< object | null > =>{
         return await permission.findByPk(id);
     }
 
-    public GetAllUsers = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
+    public GetAllPermissions = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
         return await permission.findAndCountAll({
             offset:page,
             limit:limit,
         });
     }
 
-    public DeleteUser = async(id:string) :Promise<number> => {
+    public DeletePermission = async(id:string) :Promise<number> => {
         return await permission.destroy({where:{id:id}});
     }
 
-    public bulkDeleteUser = async (ids:string[]) : Promise<number> => {
+    public BulkDeletePermissions = async (ids:string[]) : Promise<number> => {
         return await permission.destroy({where:{id:ids}})
     }
 }
