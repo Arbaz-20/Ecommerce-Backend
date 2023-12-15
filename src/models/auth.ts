@@ -20,6 +20,20 @@ const auth = db.define("auths",{
             },
         },
     },
+    email:{
+        type:DataTypes.STRING,
+        validate:{
+            isEmail:{
+                msg:"Invalid Email",
+            },
+            isNull:{
+                msg:"Email is Required"
+            },
+            notEmpty:{
+                msg:"Email is Required"
+            }
+        }
+    },
     password:{
         type:DataTypes.STRING,
         validate:{
