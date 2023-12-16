@@ -11,7 +11,7 @@ class AuthRepository {
         return await auth.create(userData);
     }
 
-    public UpdateUser = async (id:string, userData : object | any ):Promise<[affectedCount: number]>=>{
+    public UpdateUser = async (id:string, userData : object|any ):Promise<[affectedCount?:number|undefined]>=>{
         return await auth.update(userData,{where:{id:id}});
     }
 

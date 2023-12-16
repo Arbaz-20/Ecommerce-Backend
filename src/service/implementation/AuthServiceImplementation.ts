@@ -22,24 +22,45 @@ class AuthServiceImplementation implements IAuthService{
         }
     }
     
-    public UpdateUser = async (id: string, userData: any): Promise<[affectedCount: number]> =>{
-        let response = await this.repository.UpdateUser(id,userData);
-        return response;
+    public UpdateUser = async (id: string, userData: any): Promise<{error ? : string, status ? : number  }| [ affectedCount?: number|undefined]> =>{
+        if(id == null || id == undefined){
+            return {error:"user id is required",status:400}
+        }else{
+            let salt = await bcryptjs.genSalt(10);
+            let password = await bcryptjs.hash(userData.password, salt);
+            userData["password"] = password
+            let response : [affectedCount? : number] | {error?:string,status?:number} = await this.repository.UpdateUser(id,userData);
+            return response;
+        }
     }
+       
     
     public GetUserById = async (id: string): Promise<object | null>=> {
-        let response = await this.repository.GetUserById(id);
-        return response;
+        if(id == null ||id == undefined){
+            return {error:"id is required",status:400}
+        }else{
+            let response = await this.repository.GetUserById(id);
+            return response;
+        }
     }
     
     public GetAllUsers = async (page: number, limit: number): Promise<{ rows: object[]; count: number; }>=> {
-        let response = await this.repository.GetAllUsers(page,limit);
+        if(page == null || page == undefined || limit == null || limit == undefined || page == 0 || limit == 0){
+            page = 0;
+            limit = 10;
+        }
+        let offset = (page - 1)*limit;
+        let response = await this.repository.GetAllUsers(offset,limit);
         return response;    
     }
     
-    public GetUserByName = async (name: string): Promise<object[] | []> =>{
-        let response = await this.repository.GetUserByName(name);
-        return response;
+    public GetUserByName = async (name: string): Promise<object[] | object> =>{
+        if(name == null || name == undefined){
+            return {error:"name is required",status:400}
+        }else{
+            let response = await this.repository.GetUserByName(name);
+            return response;
+        }
     }
     
     public DeleteUser = async (id: string): Promise<number>=> {
