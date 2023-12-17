@@ -1,25 +1,6 @@
 import AuthServiceImplementation from "../service/implementation/AuthServiceImplementation"
 import { Request,Response } from "express"
-
-interface user{
-    id:string,
-    name:string,
-    age:number,
-    email:string,
-    password:string,
-    country:Enumerator,
-    type:Enumerator,
-    image:string,
-    city:string,
-    address:string,
-    createdAt:Date,
-    updatedAt:Date
-}
-
-interface ErrorStatus{
-    error?:string,
-    status?:number
-}
+import { user,ErrorStatus } from "../utils/types/userTypes"
 class AuthController{
     auth_service: AuthServiceImplementation
 
@@ -49,20 +30,20 @@ class AuthController{
         }
     }
 
-    public UpdateUser = async(res : Response ,req : Request)=>{
+    public UpdateUser = async(res : Response ,req : Request) => {
         let userData = req.body;
         let {id} = req.params;
         if(id == null || id == undefined){
             res.status(404).json({error : "please provide id to update"})
         }else{
             try{
-                let userResponse : [affectedCount ? : number | undefined] | { error ? : string |undefined, status ? : number|undefined } = await this.auth_service.UpdateUser(id,userData);
+                let userResponse : object | [affectedCount:number] |any = await this.auth_service.UpdateUser(id,userData);
                 if(userResponse == null || userResponse == undefined){
                     res.status(400).json({error:"Something went wrong please try again"});
                 }
-                // else if(userResponse.error || userResponse.status == 400){
-
-                // }
+                else if(userResponse.error || userResponse.status){
+                    res.status(userResponse.status).json({error:userResponse.error});
+                }
                 else{
                     res.status(200).json({message:"updated Sucessfully",data: userResponse});
                 }
@@ -78,7 +59,7 @@ class AuthController{
             res.status(404).json({error:"please provide id"})
     }else{
             try {
-                let userResponse : user | {error ?:string,status?:number } |null = await this.auth_service.GetUserById(id);
+                let userResponse : user | {error ?:string,status?:number } | null = await this.auth_service.GetUserById(id);
                 if(userResponse == null || userResponse == undefined){
                     res.status(400).json({error:"Something went wrong please try again"});
                 }
@@ -91,16 +72,56 @@ class AuthController{
         }
     }
 
-    public getallusers = async (res:Response,req : Request) => {
+    public GetAllUsers = async (res:Response,req : Request) => {
         let page =req.query.page;
-        let limit =req.query.limit;
+        let limit = req.query.limit as unknown as number;
         try {
-            let userResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } 
-        } catch (error) {
-            
+            let userResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.auth_service.GetAllUsers(Number(page),limit);
+            if(userResponse == null || userResponse == undefined){
+                res.status(400).json({error:"Something went wrong please try again"});
+            }else{
+                res.status(200).json({data : userResponse});
+            }
+        } catch (error:any) {
+            res.status(400).json({error:error.message});
         }
     }
-}
+
+    public DeleteUser =async (res:Response,req : Request) => {
+        let id : string = req.params?.id;
+        try {
+            let userResponse : ErrorStatus<object> | any | number = await this.auth_service.DeleteUser(id);
+            if(userResponse == null || userResponse == undefined){
+                res.status(400).json({error:"Something went wrong please try again"});
+            }else if (userResponse.error || userResponse.status == 400){
+                res.status(userResponse.status as number).json({error:userResponse.error});
+            }else{
+                res.status(200).json({message:"deleted Sucessfully"});
+            }
+        } catch (error:any) {
+            res.status(400).json({error:error.message})
+        }
+        
+    }
+
+    public BulkDeleteUser =async (res:Response,req : Request) => {
+        let ids : string[] = req.body.ids;
+        try {
+            let userResponse : ErrorStatus<object> | any | number = await this.auth_service.BulkDeleteUsers(ids);
+            if(userResponse == null || userResponse == undefined){
+                res.status(400).json({error:"Something went wrong please try again"});
+            }else if (userResponse.error || userResponse.status == 400){
+                res.status(userResponse.status as number).json({error:userResponse.error});
+            }else{
+                res.status(200).json({message:"All deleted Sucessfully"});
+            }
+        } catch (error:any) {
+            res.status(400).json({error:error.message})
+        }
+        
+    }
+
+} 
 
 export default AuthController
 

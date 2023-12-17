@@ -1,7 +1,7 @@
 import IAuthService from "../interface/IAuthService";
 import AuthRepository from "../../repository/authRepository";
 import bcryptjs from 'bcryptjs'
-
+import { user,ErrorStatus } from "../../utils/types/userTypes";
 class AuthServiceImplementation implements IAuthService{
     
     repository: AuthRepository;
@@ -22,14 +22,14 @@ class AuthServiceImplementation implements IAuthService{
         }
     }
     
-    public UpdateUser = async (id: string, userData: any): Promise<{error ? : string, status ? : number  }| [ affectedCount?: number|undefined]> =>{
+    public UpdateUser = async (id: string, userData: any): Promise<object| [ affectedCount?: number|undefined]> =>{
         if(id == null || id == undefined){
             return {error:"user id is required",status:400}
         }else{
             let salt = await bcryptjs.genSalt(10);
             let password = await bcryptjs.hash(userData.password, salt);
             userData["password"] = password
-            let response : [affectedCount? : number] | {error?:string,status?:number} = await this.repository.UpdateUser(id,userData);
+            let response : [affectedCount? : number] | object = await this.repository.UpdateUser(id,userData);
             return response;
         }
     }
@@ -63,9 +63,14 @@ class AuthServiceImplementation implements IAuthService{
         }
     }
     
-    public DeleteUser = async (id: string): Promise<number>=> {
-        let response = await this.repository.DeleteUser(id);
-        return response;
+    public DeleteUser = async (id: string): Promise<ErrorStatus<object>|number> => {
+        if(id == null || id == undefined){
+            return {error:"id is required",status:400}
+        }else{
+            let response = await this.repository.DeleteUser(id);
+            return response;
+        }
+        
     }
     
     public BulkDeleteUsers = async (ids: string[]): Promise<number>=> {

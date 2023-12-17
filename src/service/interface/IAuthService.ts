@@ -2,7 +2,7 @@ interface IAuthService{
 
     CreateUser( userData : object | any ) : Promise<object>
 
-    UpdateUser(id:string, userData : object | any ):Promise<{erorr?:string,status?:number}|[affectedCount?:number|undefined]>
+    UpdateUser(id:string, userData : object | any ):Promise<object|[affectedCount?:number|undefined]>
 
     GetUserById(id:string):Promise< object | null >
 
@@ -10,7 +10,7 @@ interface IAuthService{
 
     GetUserByName(name:string) :Promise<object[] | object>
 
-    DeleteUser(id:string) :Promise<number>
+    DeleteUser(id:string) :Promise<number |object>
 
     BulkDeleteUsers (ids:string[]) : Promise<number>
 
