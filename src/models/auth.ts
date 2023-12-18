@@ -17,8 +17,9 @@ const auth = db.define("auths",{
             },
             notNull:{
                 msg:"Name cannot be empty"
-            },
+            }
         },
+        allowNull:false
     },
     email:{
         type:DataTypes.STRING,
@@ -32,7 +33,8 @@ const auth = db.define("auths",{
             notEmpty:{
                 msg:"Email is Required"
             }
-        }
+        },
+        allowNull:false
     },
     password:{
         type:DataTypes.STRING,
@@ -43,7 +45,8 @@ const auth = db.define("auths",{
             notNull:{
                 msg:"Please provide a password"
             }
-        }
+        },
+        allowNull:false
     },
     address:{
         type:DataTypes.STRING,
@@ -54,7 +57,7 @@ const auth = db.define("auths",{
         allowNull:true
     },
     age:{
-        type:DataTypes.NUMBER,
+        type:DataTypes.INTEGER,
     },
     country:{
         type:DataTypes.ENUM,
@@ -71,7 +74,7 @@ const auth = db.define("auths",{
     },
     type:{
         type:DataTypes.STRING,
-        allowNull:true
+        allowNull:false
     },
     createdAt:{
         type:DataTypes.DATE,

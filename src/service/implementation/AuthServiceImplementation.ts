@@ -35,7 +35,7 @@ class AuthServiceImplementation implements IAuthService{
     }
        
     
-    public GetUserById = async (id: string): Promise<object | null>=> {
+    public GetUserById = async (id: string): Promise< object|null > => {
         if(id == null ||id == undefined){
             return {error:"id is required",status:400}
         }else{

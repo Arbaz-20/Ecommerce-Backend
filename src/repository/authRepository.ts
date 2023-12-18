@@ -15,7 +15,7 @@ class AuthRepository {
         return await auth.update(userData,{where:{id:id}});
     }
 
-    public GetUserById = async (id:string):Promise< object | null > =>{
+    public GetUserById = async (id:string):Promise< object | null |{error?:string,status?:number}> =>{
         return await auth.findByPk(id);
     }
 

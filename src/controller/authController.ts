@@ -1,6 +1,7 @@
 import AuthServiceImplementation from "../service/implementation/AuthServiceImplementation"
 import { Request,Response } from "express"
 import { user,ErrorStatus } from "../utils/types/userTypes"
+
 class AuthController{
     auth_service: AuthServiceImplementation
 
@@ -106,14 +107,29 @@ class AuthController{
 
     public BulkDeleteUser =async (res:Response,req : Request) => {
         let ids : string[] = req.body.ids;
+        let errors: string[] = [];
+        let success:string[] = [];
         try {
-            let userResponse : ErrorStatus<object> | any | number = await this.auth_service.BulkDeleteUsers(ids);
-            if(userResponse == null || userResponse == undefined){
-                res.status(400).json({error:"Something went wrong please try again"});
-            }else if (userResponse.error || userResponse.status == 400){
-                res.status(userResponse.status as number).json({error:userResponse.error});
+            for await(let id of ids ){
+                if(id != null || id != undefined || id != ""){
+                    let isExist : user | { error?: string | undefined , status?: number | undefined }|any = await this.auth_service.GetUserById(id);
+                    if(isExist !== null || isExist !== undefined){
+                        let response : number | ErrorStatus<object>|any = await this.auth_service.DeleteUser(id);
+                        if(response > 0){
+                            success.push(`${isExist.name} Deleted Sucessfully`);
+                        }
+                        else{
+                            errors.push(`${isExist.name} couldn't Delete plese try again`);
+                        }
+                    }    
+                }
+            }
+            if(errors.length > 0){
+                res.status(400).json({error:errors});
+            }else if(errors.length > 0,success.length > 0){
+                res.status(400).json({success:success,error:errors});
             }else{
-                res.status(200).json({message:"All deleted Sucessfully"});
+                res.status(400).json({success:success , message:"All Deleted Successfully"});
             }
         } catch (error:any) {
             res.status(400).json({error:error.message})
