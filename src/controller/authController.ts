@@ -26,7 +26,8 @@ class AuthController{
                     res.status(200).json({message:"Sign Up Sucessfully",data: userResponse});
                 }
             } catch (error:any) {
-                res.status(400).json({error:error.message});
+                this.print(error);
+                res.status(400).json({error:error});
             }
         }
     }
@@ -135,6 +136,10 @@ class AuthController{
             res.status(400).json({error:error.message})
         }
         
+    }
+
+    private print = async(message:string) :Promise< string | void > => {
+        return console.log(message);
     }
 
 } 

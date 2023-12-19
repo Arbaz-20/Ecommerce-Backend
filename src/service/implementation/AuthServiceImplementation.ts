@@ -1,6 +1,6 @@
 import IAuthService from "../interface/IAuthService";
 import AuthRepository from "../../repository/authRepository";
-import bcryptjs from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 import { user,ErrorStatus } from "../../utils/types/userTypes";
 class AuthServiceImplementation implements IAuthService{
     
@@ -14,9 +14,10 @@ class AuthServiceImplementation implements IAuthService{
         if(userData.password == null || userData.password == undefined){
             return {error:"Password is required",status:400}
         }else{
-            let salt = await bcryptjs.genSalt(10);
-        let password = await bcryptjs.hash(userData.passworda, salt);
-        userData["password"] = password
+            let salt = await bcrypt.genSalt(10);
+            let password = await bcrypt.hash(userData.password, salt);
+            userData = JSON.parse(JSON.stringify(userData));
+            userData["password"] = password
             let response = await this.repository.CreateUser(userData);
             return response;
         }
@@ -26,8 +27,8 @@ class AuthServiceImplementation implements IAuthService{
         if(id == null || id == undefined){
             return {error:"user id is required",status:400}
         }else{
-            let salt = await bcryptjs.genSalt(10);
-            let password = await bcryptjs.hash(userData.password, salt);
+            let salt = await bcrypt.genSalt(10);
+            let password = await bcrypt.hash(userData.password, salt);
             userData["password"] = password
             let response : [affectedCount? : number] | object = await this.repository.UpdateUser(id,userData);
             return response;

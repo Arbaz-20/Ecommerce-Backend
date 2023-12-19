@@ -27,13 +27,8 @@ const auth = db.define("auths",{
             isEmail:{
                 msg:"Invalid Email",
             },
-            isNull:{
-                msg:"Email is Required"
-            },
-            notEmpty:{
-                msg:"Email is Required"
-            }
         },
+        unique:true,
         allowNull:false
     },
     password:{
