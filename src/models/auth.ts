@@ -33,14 +33,14 @@ const auth = db.define("auths",{
     },
     password:{
         type:DataTypes.STRING,
-        validate:{
-            notEmpty:{
-                msg:"Please provide a password"
-            },
-            notNull:{
-                msg:"Please provide a password"
-            }
-        },
+        // validate:{
+        //     notEmpty:{
+        //         msg:"Please provide a password"
+        //     },
+        //     notNull:{
+        //         msg:"Please provide a password"
+        //     }
+        // },
         allowNull:false
     },
     address:{
@@ -60,7 +60,7 @@ const auth = db.define("auths",{
         get() {
             let country = this.getDataValue('country');
             let data = countries.includes(country)
-            return data == false ?? "Invalid Country"
+            return(data == false ?"Invalid Country":country)
         },
     },
     city:{

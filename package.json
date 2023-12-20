@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "start":"nodemon index.ts"
+    "start": "nodemon index.ts"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +33,7 @@
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",
+    "@types/multer": "^1.4.11",
     "@types/nodemailer": "^6.4.14",
     "@types/nodemon": "^1.19.6",
     "@types/pg": "^8.10.9",

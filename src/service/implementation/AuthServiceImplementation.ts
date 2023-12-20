@@ -1,7 +1,7 @@
 import IAuthService from "../interface/IAuthService";
 import AuthRepository from "../../repository/authRepository";
 import bcrypt from 'bcryptjs'
-import { user,ErrorStatus } from "../../utils/types/userTypes";
+import { ErrorStatus } from "../../utils/types/userTypes";
 class AuthServiceImplementation implements IAuthService{
     
     repository: AuthRepository;
@@ -23,15 +23,24 @@ class AuthServiceImplementation implements IAuthService{
         }
     }
     
-    public UpdateUser = async (id: string, userData: any): Promise<object| [ affectedCount?: number|undefined]> =>{
+    public UpdateUser = async (id: string, userData: any): Promise<object| [ affectedCount?: number]> =>{
         if(id == null || id == undefined){
             return {error:"user id is required",status:400}
         }else{
-            let salt = await bcrypt.genSalt(10);
-            let password = await bcrypt.hash(userData.password, salt);
-            userData["password"] = password
-            let response : [affectedCount? : number] | object = await this.repository.UpdateUser(id,userData);
-            return response;
+            if(userData.password == null || userData.password == undefined){
+                let response : [affectedCount? : number] | object = await this.repository.UpdateUser(id,userData);
+                console.log(response);
+                return response;                
+            }else{
+                let salt = await bcrypt.genSalt(10);
+                let password = await bcrypt.hash(userData.password, salt);
+                userData = JSON.parse(JSON.stringify(userData));
+                userData["password"] = password
+                let response : [affectedCount? : number] | object = await this.repository.UpdateUser(id,userData);
+                console.log(response);
+                return response;
+            }
+            
         }
     }
        

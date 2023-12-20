@@ -1,6 +1,6 @@
 import AuthServiceImplementation from "../service/implementation/AuthServiceImplementation"
 import { Request,Response } from "express"
-import { user,ErrorStatus } from "../utils/types/userTypes"
+import { user,ErrorStatus,Fileinfo } from "../utils/types/userTypes"
 
 class AuthController{
     auth_service: AuthServiceImplementation
@@ -11,6 +11,7 @@ class AuthController{
 
     public CreateUser = async (req : Request ,res : Response) => {
         let userData = req.body
+        let file:Fileinfo | undefined = req.file; 
         if(userData.name == undefined || userData.email == undefined || userData.password == undefined || userData.name == null|| userData.email == null || userData.password == null){
             res.status(400).json({error : "please provide the required fields"})
         }else{
@@ -27,35 +28,66 @@ class AuthController{
                 }
             } catch (error:any) {
                 this.print(error);
-                res.status(400).json({error:error});
+                let validationerror = []
+                for await(let response of error.errors){
+                    let obj :{path : string,message : string} = {
+                        path: "",
+                        message: ""
+                    };
+                    obj.path = response.path,
+                    obj.message = response.message
+                    validationerror.push(obj);
+                }
+                res.status(400).json({errors : validationerror});
             }
         }
     }
 
-    public UpdateUser = async(res : Response ,req : Request) => {
+    public UpdateUser = async(req : Request,res : Response ) => {
         let userData = req.body;
         let {id} = req.params;
         if(id == null || id == undefined){
             res.status(404).json({error : "please provide id to update"})
         }else{
             try{
-                let userResponse : object | [affectedCount:number] |any = await this.auth_service.UpdateUser(id,userData);
-                if(userResponse == null || userResponse == undefined){
-                    res.status(400).json({error:"Something went wrong please try again"});
-                }
-                else if(userResponse.error || userResponse.status){
-                    res.status(userResponse.status).json({error:userResponse.error});
-                }
-                else{
-                    res.status(200).json({message:"updated Sucessfully",data: userResponse});
+                let isExist = await this.auth_service.GetUserById(id)
+                if(isExist == null ||isExist == undefined){
+                    res.status(400).json({error: "please select user properly"})
+                }else{
+                    let userResponse : object | [affectedCount:number] |any = await this.auth_service.UpdateUser(id,userData);
+                    if(userResponse == null || userResponse == undefined){
+                        res.status(400).json({error:"Something went wrong please try again"});
+                    }
+                    else if(userResponse.error || userResponse.status){
+                        res.status(userResponse.status).json({error:userResponse.error});
+                    }
+                    else{
+                        if(userResponse > 0){
+                            res.status(200).json({message:"updated Sucessfully"});
+                        }else{
+                            res.status(200).json({message:"Couldnt updated please try again"});
+                        }
+                        
+                    }
                 }
             }catch(error : any){
-                res.status(400).json({error:error.message});
+                console.log(error);
+                let validationerror : Array<object> = [];
+                for await(let response of error.errors){
+                    let obj:{path : string , message : string}={
+                        path: "",
+                        message: ""
+                    }
+                    obj.path = response.path;
+                    obj.message = response.message;
+                    validationerror.push(obj);
+                }
+                res.status(400).json({errors:validationerror})
             } 
         }
     }
 
-    public GetUserById =async (res:Response,req : Request) => {
+    public GetUserById =async (req : Request,res:Response) => {
         let id = req.params.id;
         if(id == null || id == undefined){
             res.status(404).json({error:"please provide id"})
@@ -74,12 +106,12 @@ class AuthController{
         }
     }
 
-    public GetAllUsers = async (res:Response,req : Request) => {
-        let page =req.query.page;
+    public GetAllUsers = async (req : Request,res:Response) => {
+        let page = req.query.page as unknown as number;
         let limit = req.query.limit as unknown as number;
         try {
             let userResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.auth_service.GetAllUsers(Number(page),limit);
-            if(userResponse == null || userResponse == undefined){
+            if(userResponse == null || userResponse == undefined || page == undefined || limit == undefined||page == null || limit == null){
                 res.status(400).json({error:"Something went wrong please try again"});
             }else{
                 res.status(200).json({data : userResponse});
@@ -89,7 +121,7 @@ class AuthController{
         }
     }
 
-    public DeleteUser =async (res:Response,req : Request) => {
+    public DeleteUser =async (req : Request,res:Response) => {
         let id : string = req.params?.id;
         try {
             let userResponse : ErrorStatus<object> | any | number = await this.auth_service.DeleteUser(id);
@@ -106,7 +138,7 @@ class AuthController{
         
     }
 
-    public BulkDeleteUser =async (res:Response,req : Request) => {
+    public BulkDeleteUser =async (req : Request,res:Response) => {
         let ids : string[] = req.body.ids;
         let errors: string[] = [];
         let success:string[] = [];

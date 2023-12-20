@@ -10,11 +10,23 @@ const permission= db.define("auths",{
     },
     create:{
         type:DataTypes.BOOLEAN,
-        allowNull:true   
+        defaultValue:false
     },
     edit:{
         type:DataTypes.BOOLEAN,
-        allowNull:true
+        defaultValue:false
+    },
+    update:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:false
+    },
+    delete:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:false
+    },
+    view:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:false
     },
     createdAt:{
         type:DataTypes.DATE,

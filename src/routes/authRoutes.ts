@@ -1,14 +1,20 @@
 import { Router } from "express";
 import AuthController from "../controller/authController";
+import multer from "multer"; 
+
 
 let authController = new AuthController();
 let AuthRouter : Router = Router();
 
-AuthRouter.post("/createUser",authController.CreateUser);
-AuthRouter.put("/updateUser",authController.UpdateUser);
-AuthRouter.get("/GetUserById",authController.GetUserById);
+let upload = multer({
+    storage : multer.memoryStorage()
+});
+
+AuthRouter.post("/createUser",upload.single('image'),authController.CreateUser);
+AuthRouter.put("/updateUser/:id",authController.UpdateUser);
+AuthRouter.get("/GetUserById/:id",authController.GetUserById);
 AuthRouter.get("/GetAllUsers",authController.GetAllUsers);
-AuthRouter.delete("/DeleteUser",authController.DeleteUser);
+AuthRouter.delete("/DeleteUser/:id",authController.DeleteUser);
 AuthRouter.delete("/BulkDeleteUser",authController.BulkDeleteUser);
 
 
