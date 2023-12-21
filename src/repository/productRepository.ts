@@ -6,12 +6,12 @@ class ProductRepository {
 
     }
 
-    public createProduct = async ( userData : object | any ) : Promise<object> => {
-        return await product.create(userData);
+    public createProduct = async ( productData : object | any ) : Promise<object> => {
+        return await product.create(productData);
     }
 
-    public UpdateProduct = async (id:string, userData : object|any ):Promise<[affectedCount?:number|undefined]>=>{
-        return await product.update(userData,{where:{id:id}});
+    public UpdateProduct = async (id:string, productData : object|any ):Promise<[affectedCount?:number|undefined]>=>{
+        return await product.update(productData,{where:{id:id}});
     }
 
     public GetProductById = async (id:string):Promise< object | null |{error?:string,status?:number}> =>{

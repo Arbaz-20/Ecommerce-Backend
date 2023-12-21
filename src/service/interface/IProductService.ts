@@ -1,8 +1,8 @@
 interface IProductService{
 
-    createProduct( userData : object | any ) : Promise<object>
+    createProduct(productData : object | any ) : Promise<object>
 
-    Updateproduct(id:string, userData : object | any ):Promise<object|[affectedCount?:number|undefined]>
+    Updateproduct(id:string,productData : object | any ):Promise<object|[affectedCount?:number|undefined]>
 
     GetProductById(id:string):Promise< object | null >
 

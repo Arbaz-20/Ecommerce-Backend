@@ -1,6 +1,5 @@
 import IProductService from "../interface/IProductService";
 import productRepository from "../../repository/productRepository";
-import bcrypt from 'bcryptjs'
 import { ErrorStatus } from "../../utils/types/userTypes";
 class ProductServiceImplementation implements IProductService{
     
@@ -9,25 +8,25 @@ class ProductServiceImplementation implements IProductService{
     constructor(){
         this.repository = new productRepository()
     }
-    Updateproduct(id: string, userData: any): Promise<object | [affectedCount?: number | undefined]> {
+    Updateproduct(id: string, productData: any): Promise<object | [affectedCount?: number | undefined]> {
         throw new Error("Method not implemented.");
     }
-    public createProduct = async (userData: any): Promise<object> =>{
-        if(userData == null || userData == undefined){
+    public createProduct = async (productData: any): Promise<object> =>{
+        if(productData == null || productData == undefined){
             return {error:"userdata not found",status:400}
         }else{
-            let response = await this.repository.createProduct(userData);
+            let response = await this.repository.createProduct(productData);
             return response;
         }
     }
     
-    public UpdateProduct= async (id: string, userData: any): Promise<object| [ affectedCount?: number]> =>{
+    public UpdateProduct= async (id: string, productData: any): Promise<object| [ affectedCount?: number]> =>{
         if(id == null || id == undefined){
             return {error:"user id is required",status:400}
         }else{
-            let response : [affectedCount? : number] | object = await this.repository.UpdateProduct(id,userData);
+            let response : [affectedCount? : number] | object = await this.repository.UpdateProduct(id,productData);
             console.log(response);
-            return response;  
+            return response
         }
     }
        
