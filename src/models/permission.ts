@@ -1,12 +1,15 @@
 import { Sequelize,DataTypes} from "sequelize";
 import db from "../config/database";
 
-const permission= db.define("auths",{
+const permissions = db.define("permissions",{
     id:{
         type:DataTypes.UUID,
         defaultValue:DataTypes.UUIDV4(), 
         allowNull:false,
         primaryKey:true
+    },
+    user_id:{
+        type:DataTypes.UUID,
     },
     create:{
         type:DataTypes.BOOLEAN,
@@ -37,4 +40,4 @@ const permission= db.define("auths",{
         defaultValue: Sequelize.fn('now')
     }
 });
-export default permission
+export default permissions

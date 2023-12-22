@@ -1,44 +1,63 @@
 import AuthServiceImplementation from "../service/implementation/AuthServiceImplementation"
 import { Request,Response } from "express"
 import { user,ErrorStatus,Fileinfo } from "../utils/types/userTypes"
+import PermissionServiceImplementation from "../service/implementation/PermissionServiceImplementation"
 
 class AuthController{
     auth_service: AuthServiceImplementation
+    permissionService: PermissionServiceImplementation
 
     constructor(){
         this.auth_service = new AuthServiceImplementation()
+        this.permissionService = new PermissionServiceImplementation()
     }
 
     public CreateUser = async (req : Request ,res : Response) => {
         let userData = req.body
-        let file:Fileinfo | undefined = req.file; 
-        if(userData.name == undefined || userData.email == undefined || userData.password == undefined || userData.name == null|| userData.email == null || userData.password == null){
-            res.status(400).json({error : "please provide the required fields"})
-        }else{
-            try {
-                let userResponse : user | { error ? : string,status ? : number }  = await this.auth_service.CreateUser(userData);
-                if(userResponse == null || userResponse == undefined){
-                    res.status(400).json({error:"Something went wrong please try again"});
+        if(userData.permission == null || userData.permission == undefined){
+            res.status(400).json({ error:"Please provide the permission to user"})
+        }
+        else{
+            let permission = JSON.parse(userData.permission);
+            let file:Fileinfo | undefined = req.file;
+            if(userData.name == undefined || userData.email == undefined || userData.password == undefined || userData.name == null|| userData.email == null || userData.password == null){
+                res.status(400).json({error : "please provide the required fields"})
+            }else{
+                try {
+                    let userResponse : user | { error ? : string,status ? : number } | any = await this.auth_service.CreateUser(userData);
+                    if(userResponse == null || userResponse == undefined){
+                        res.status(400).json({error:"Something went wrong please try again"});
+                    }
+                    else if(userResponse.error || userResponse.status == 400){
+                        res.status(userResponse.status as number).json({error:userResponse.error});
+                    }
+                    else{
+                        permission[0]["user_id"] = userResponse.id;
+                        let permissionResponse = await this.permissionService.CreatePermission(permission[0])
+                        if(permissionResponse == null || permissionResponse == undefined){
+                            res.status(400).json({error:"Something went wrong please try again"});
+                        }else{
+                            res.status(200).json({message:"Sign Up Sucessfully",data: userResponse});
+                        }
+                    }
+                } catch (error:any) {
+                    this.print(error);
+                    if(error.errors){
+                        let validationerror = []
+                        for await(let response of error.errors){
+                            let obj :{path : string,message : string} = {
+                                path: "",
+                                message: ""
+                            };
+                            obj.path = response.path,
+                            obj.message = response.message
+                            validationerror.push(obj);
+                        }
+                        res.status(400).json({errors : validationerror});
+                    }else{
+                        res.status(400).json({errors : error.message});
+                    }
                 }
-                else if(userResponse.error || userResponse.status == 400){
-                    res.status(userResponse.status as number).json({error:userResponse.error});
-                }
-                else{
-                    res.status(200).json({message:"Sign Up Sucessfully",data: userResponse});
-                }
-            } catch (error:any) {
-                this.print(error);
-                let validationerror = []
-                for await(let response of error.errors){
-                    let obj :{path : string,message : string} = {
-                        path: "",
-                        message: ""
-                    };
-                    obj.path = response.path,
-                    obj.message = response.message
-                    validationerror.push(obj);
-                }
-                res.status(400).json({errors : validationerror});
             }
         }
     }
@@ -124,7 +143,7 @@ class AuthController{
     public DeleteUser =async (req : Request,res:Response) => {
         let id : string = req.params?.id;
         try {
-            let userResponse : ErrorStatus<object> | any | number = await this.auth_service.DeleteUser(id);
+            let userResponse : {error?:string,status?:number} | any | number|undefined = await this.auth_service.DeleteUser(id);
             if(userResponse == null || userResponse == undefined){
                 res.status(400).json({error:"Something went wrong please try again"});
             }else if (userResponse.error || userResponse.status == 400){
@@ -147,7 +166,7 @@ class AuthController{
                 if(id != null || id != undefined || id != ""){
                     let isExist : user | { error?: string | undefined , status?: number | undefined }|any = await this.auth_service.GetUserById(id);
                     if(isExist !== null || isExist !== undefined){
-                        let response : number | ErrorStatus<object>|any = await this.auth_service.DeleteUser(id);
+                        let response : number | ErrorStatus|any = await this.auth_service.DeleteUser(id);
                         if(response > 0){
                             success.push(`${isExist.name} Deleted Sucessfully`);
                         }

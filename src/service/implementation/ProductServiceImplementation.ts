@@ -8,9 +8,6 @@ class ProductServiceImplementation implements IProductService{
     constructor(){
         this.repository = new productRepository()
     }
-    Updateproduct(id: string, productData: any): Promise<object | [affectedCount?: number | undefined]> {
-        throw new Error("Method not implemented.");
-    }
     public createProduct = async (productData: any): Promise<object> =>{
         if(productData == null || productData == undefined){
             return {error:"userdata not found",status:400}
@@ -59,7 +56,7 @@ class ProductServiceImplementation implements IProductService{
         }
     }
     
-    public DeleteProduct = async (id: string): Promise<ErrorStatus<object>|number> => {
+    public DeleteProduct = async (id: string): Promise<number | {error?:string,status?:number} | undefined> => {
         if(id == null || id == undefined){
             return {error:"id is required",status:400}
         }else{

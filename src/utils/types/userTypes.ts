@@ -1,5 +1,5 @@
-export interface user{
-    id:string,
+export interface user {
+    id ?:string,
     name:string,
     age:number,
     email:string,
@@ -13,7 +13,7 @@ export interface user{
     updatedAt:Date
 }
 
-export interface ErrorStatus<T>{
+export type ErrorStatus = {
     error?:string,
     status?:number
 }

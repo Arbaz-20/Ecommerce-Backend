@@ -73,7 +73,7 @@ class AuthServiceImplementation implements IAuthService{
         }
     }
     
-    public DeleteUser = async (id: string): Promise<ErrorStatus<object>|number> => {
+    public DeleteUser = async (id: string): Promise<{error?:string,status?:number}|number> => {
         if(id == null || id == undefined){
             return {error:"id is required",status:400}
         }else{
