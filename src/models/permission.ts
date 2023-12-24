@@ -8,7 +8,7 @@ const permissions = db.define("permissions",{
         allowNull:false,
         primaryKey:true
     },
-    user_id:{
+    userId:{
         type:DataTypes.UUID,
     },
     create:{

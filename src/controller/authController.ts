@@ -32,7 +32,7 @@ class AuthController{
                         res.status(userResponse.status as number).json({error:userResponse.error});
                     }
                     else{
-                        permission[0]["user_id"] = userResponse.id;
+                        permission[0]["userId"] = userResponse.id;
                         let permissionResponse = await this.permissionService.CreatePermission(permission[0])
                         if(permissionResponse == null || permissionResponse == undefined){
                             res.status(400).json({error:"Something went wrong please try again"});
@@ -64,6 +64,7 @@ class AuthController{
 
     public UpdateUser = async(req : Request,res : Response ) => {
         let userData = req.body;
+        let permissionData = JSON.parse(userData["permission"]);
         let {id} = req.params;
         if(id == null || id == undefined){
             res.status(404).json({error : "please provide id to update"})
@@ -82,7 +83,24 @@ class AuthController{
                     }
                     else{
                         if(userResponse > 0){
-                            res.status(200).json({message:"updated Sucessfully"});
+                            let permission = await this.permissionService.getPermissionByUserId(id);
+                            if(permission == null || permission == undefined){
+                                permissionData = JSON.parse(JSON.stringify(permissionData));
+                                permissionData["userId"] = id;
+                                let data = await this.permissionService.CreatePermission(permissionData[0]);
+                                if(data !== null || data !== undefined){
+                                    res.status(200).json({message:"Updated Successfully"})
+                                }else{
+                                    res.status(400).json({message:"Cannot update please try again"})
+                                }
+                            }else{
+                                let data = await this.permissionService.UpdatePermissionByUserId(id,permissionData[0]);
+                                if(data !== null || data !== undefined){
+                                    res.status(200).json({message:"Updated Successfully"})
+                                }else{
+                                    res.status(400).json({message:"Cannot update please try again"})
+                                }
+                            }
                         }else{
                             res.status(200).json({message:"Couldnt updated please try again"});
                         }
@@ -91,17 +109,21 @@ class AuthController{
                 }
             }catch(error : any){
                 console.log(error);
-                let validationerror : Array<object> = [];
-                for await(let response of error.errors){
-                    let obj:{path : string , message : string}={
-                        path: "",
-                        message: ""
+                if(error.errors){
+                    let validationerror : Array<object> = [];
+                    for await(let response of error.errors){
+                        let obj:{path : string , message : string}={
+                            path: "",
+                            message: ""
+                        }
+                        obj.path = response.path;
+                        obj.message = response.message;
+                        validationerror.push(obj);
                     }
-                    obj.path = response.path;
-                    obj.message = response.message;
-                    validationerror.push(obj);
+                    res.status(400).json({errors:validationerror})
+                }else{
+                    res.status(400).json({errors:error})
                 }
-                res.status(400).json({errors:validationerror})
             } 
         }
     }

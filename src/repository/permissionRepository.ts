@@ -14,8 +14,16 @@ class PermissionRepository{
         return await permission.update(PermissionData,{where:{id:id}});
     }
 
+    public UpdatePermissionByUserId = async (user_id:string,PermissionData : object | any ) : Promise<[affectedCount: number]> => {
+        return await permission.update(PermissionData,{where:{userId:user_id}});
+    }
+
     public GetPermissionById = async (id:string):Promise< object | null > =>{
         return await permission.findByPk(id);
+    }
+    
+    public getPermissionByUserId = async (user_id:string):Promise<object|null> => {
+        return await permission.findOne({where: {userId:user_id}});
     }
 
     public GetAllPermissions = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
@@ -27,6 +35,10 @@ class PermissionRepository{
 
     public DeletePermission = async(id:string) :Promise<number> => {
         return await permission.destroy({where:{id:id}});
+    }
+
+    public DeletePermissionByUserId = async (user_id:string) : Promise<number> => {
+        return await permission.destroy({where:{user_id:user_id}});
     }
 
     public BulkDeletePermissions = async (ids:string[]) : Promise<number> => {

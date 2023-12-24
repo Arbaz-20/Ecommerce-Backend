@@ -18,11 +18,22 @@ class PermissionServiceImplementation implements IPermissionSevice{
         let response = await this.repository.UpdatePermission(id,PermissionData);
         return response;
     }
+
+    public UpdatePermissionByUserId = async (user_id:string,PermissionData : object | any ) : Promise<[affectedCount: number]> => {
+        let response = await this.repository.UpdatePermissionByUserId(user_id,PermissionData);
+        return response;
+    }
     
     public GetPermissionById = async (id: string): Promise<object | null>=> {
         let response = await this.repository.GetPermissionById(id);
         return response;
     }
+
+    public getPermissionByUserId = async (user_id:string):Promise<object|null> => {
+        let response = await this.repository.getPermissionByUserId(user_id);
+        return response;
+    }
+
     
     public GetAllPermissions = async (page: number, limit: number): Promise<{ rows: object[]; count: number; }>=> {
         let response = await this.repository.GetAllPermissions(page,limit);
@@ -35,6 +46,11 @@ class PermissionServiceImplementation implements IPermissionSevice{
         return response;
     }
     
+    public DeletePermissionByUserId = async(user_id: string): Promise<number>=> {
+        let response = await this.repository.DeletePermissionByUserId(user_id);
+        return response;
+    }
+
     public BulkDeletePermissions = async (ids: string[]): Promise<number>=> {
         let response = await this.repository.BulkDeletePermissions(ids);
         return response;

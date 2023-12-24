@@ -25,11 +25,25 @@ class productController {
                         res.status(productResponse.status as number).json({error:productResponse.error});
                     }
                     else{
-                        res.status(200).json({message:"Sign Up Sucessfully",data: productResponse});
+                        res.status(200).json({message:`${productResponse.name} created succcesfully`,data: productResponse});
                     }
                     
             } catch (error:any) {
-                res.status(400).json({errors : error.message});
+                if(error.errors){
+                    let validationerror = []
+                    for await(let response of error.errors){
+                        let obj :{path : string,message : string} = {
+                            path: "",
+                            message: ""
+                        };
+                        obj.path = response.path,
+                        obj.message = response.message
+                        validationerror.push(obj);
+                    }
+                    res.status(400).json({errors : validationerror});
+                }else{
+                    res.status(400).json({errors : error.message});
+                }
             }
         }
     }
@@ -43,7 +57,7 @@ class productController {
             try{
                 let isExist = await this.product_service?.GetProductById(id)
                 if(isExist == null ||isExist == undefined){
-                    res.status(400).json({error: "please select user properly"})
+                    res.status(400).json({error: "please select product properly"})
                 }else{
                     let productResponse : object | [affectedCount:number] |any = await this.product_service?.UpdateProduct(id,productData);
                     if(productResponse == null || productResponse == undefined){
@@ -62,8 +76,23 @@ class productController {
                     }
                 }
             }catch(error : any){
-                res.status(400).json({errors:error.message});
-            } 
+                if(error.message){
+                    let validationerror : Array<object> = [];
+                    for await(let response of error.errors){
+                    let obj:{path : string , message : string}={
+                        path: "",
+                        message: ""
+                    }
+                    obj.path = response.path;
+                    obj.message = response.message;
+                    validationerror.push(obj);
+                }
+                    res.status(400).json({errors:validationerror})
+                }else{
+                    res.status(400).json({errors:error})
+                }
+                
+            }
         }
     }
 
