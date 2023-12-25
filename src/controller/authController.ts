@@ -171,7 +171,12 @@ class AuthController{
             }else if (userResponse.error || userResponse.status == 400){
                 res.status(userResponse.status as number).json({error:userResponse.error});
             }else{
-                res.status(200).json({message:"deleted Sucessfully"});
+                let permissions = await this.permissionService.DeletePermissionByUserId(id)
+                if(permissions !=null|| permissions != undefined){
+                    res.status(200).json({message:"deleted Sucessfully"});
+                }else{
+                    res.status(400).json({error:"couldnot able to delete"})
+                }
             }
         } catch (error:any) {
             res.status(400).json({error:error.message})
@@ -203,7 +208,7 @@ class AuthController{
             }else if(errors.length > 0,success.length > 0){
                 res.status(400).json({success:success,error:errors});
             }else{
-                res.status(400).json({success:success , message:"All Deleted Successfully"});
+                res.status(200).json({success:success , message:"All Deleted Successfully"});
             }
         } catch (error:any) {
             res.status(400).json({error:error.message})

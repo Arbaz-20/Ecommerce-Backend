@@ -46,12 +46,16 @@ class PermissionServiceImplementation implements IPermissionSevice{
         return response;
     }
     
-    public DeletePermissionByUserId = async(user_id: string): Promise<number>=> {
-        let response = await this.repository.DeletePermissionByUserId(user_id);
+    public DeletePermissionByUserId = async(userId: string): Promise<number>=> {
+        let response = await this.repository.DeletePermissionByUserId(userId);
         return response;
     }
 
-    public BulkDeletePermissions = async (ids: string[]): Promise<number>=> {
+    public BulkDeletePermissionsByUserId = async (userId: string[]): Promise<number>=> {
+        let response = await this.repository.BulkDeletePermissionsByUserId(userId);
+        return response;
+    }
+    public BulkDeletePermissions = async (ids:string[]) : Promise<number> => {
         let response = await this.repository.BulkDeletePermissions(ids);
         return response;
     }

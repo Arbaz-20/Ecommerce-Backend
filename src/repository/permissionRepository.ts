@@ -37,8 +37,12 @@ class PermissionRepository{
         return await permission.destroy({where:{id:id}});
     }
 
-    public DeletePermissionByUserId = async (user_id:string) : Promise<number> => {
-        return await permission.destroy({where:{user_id:user_id}});
+    public DeletePermissionByUserId = async (userId:string) : Promise<number> => {
+        return await permission.destroy({where:{userId:userId}});
+    }
+
+    public BulkDeletePermissionsByUserId = async (userId:string[]) : Promise<number> => {
+        return await permission.destroy({where:{userId:userId}})
     }
 
     public BulkDeletePermissions = async (ids:string[]) : Promise<number> => {

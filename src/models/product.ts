@@ -18,6 +18,7 @@ const product = db.define("product",{
                 msg:"Name cannot be empty"
             }
         },
+        unique:true,
         allowNull:false
     },
     image:{

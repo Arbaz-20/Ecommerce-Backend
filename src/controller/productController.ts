@@ -13,7 +13,7 @@ class productController {
     public createProduct = async( req : Request, res :Response)=>{
         let productdata = req.body;
         let file:Fileinfo | undefined = req.file; 
-        if(productdata.name ==  null || productdata.name == undefined){
+        if(productdata.name ==  null || productdata.name == undefined ||productdata.name == ""){
             res.status(404).json({error : "Product not found"})
         }else{
             try {
