@@ -1,0 +1,20 @@
+interface IOrderService{
+
+ CreateOrder ( OrderData : object|any ) : Promise<object>
+
+ UpdateOrder (id:string, OrderData : object|any ):Promise<[affectedCount?:number|undefined]>
+
+ GetOrderById (id:string):Promise< object | null |{error?:string,status?:number}>
+
+ GetAllOrders (page:number,limit:number) : Promise<{rows:Array<object>; count: number}>
+
+ GetOrderByName (name:string) :Promise<object[] | object >
+        
+ DeleteOrder (id:string) :Promise<number> 
+
+ BulkDeleteOrders (ids:string[]) :Promise<number> 
+
+
+}
+
+export default IOrderService;

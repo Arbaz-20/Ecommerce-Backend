@@ -61,7 +61,7 @@ const auth = db.define("auths",{
             let country = this.getDataValue('country');
             let data = countries.includes(country)
             return(data == false ?"Invalid Country":country)
-        },
+        }
     },
     city:{
         type:DataTypes.STRING,

@@ -5,6 +5,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import AuthRouter from "./src/routes/authRoutes";
 import ProductRouter from "./src/routes/productRoutes";
+import OrderRouter from "./src/routes/orderRoutes";
 
 
 db.sync({alter:true}).then(()=>{
@@ -22,6 +23,7 @@ app.use(cors());
 app.use(bodyParser())
 app.use("/api/auth",AuthRouter);
 app.use("/api/product",ProductRouter);
+app.use("/api/order",OrderRouter);
 
 
 app.listen(port, ()=>{
