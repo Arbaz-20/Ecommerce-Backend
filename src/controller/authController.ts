@@ -1,6 +1,6 @@
 import AuthServiceImplementation from "../service/implementation/AuthServiceImplementation"
 import { Request,Response } from "express"
-import { permissionType,UserType,user,ErrorStatus,Fileinfo } from "../utils/types/userTypes"
+import { DataInfo,permissionType,UserType,user,ErrorStatus,Fileinfo } from "../utils/types/userTypes"
 import PermissionServiceImplementation from "../service/implementation/PermissionServiceImplementation"
 import fs from 'fs'
 import { Stream,Readable } from "stream"
@@ -9,7 +9,7 @@ class AuthController{
     auth_service: AuthServiceImplementation
     permissionService: PermissionServiceImplementation
 
-    public destination: string = "../utils/upload/user"
+    public destination: string = "src/utils/upload/user"
 
     constructor(){
         this.auth_service = new AuthServiceImplementation()
@@ -17,30 +17,43 @@ class AuthController{
     }
 
     public CreateUser = async (req : Request ,res : Response) => {
-        let userData = req.body
+        let userData = req.body;
+        let file:Fileinfo | undefined = req.file as Fileinfo;
+        
         if(userData.permission == null || userData.permission == undefined){
             res.status(400).json({ error:"Please provide the permission to user"})
         }
         else{
-            let file:Fileinfo | undefined = req.file;
             if(userData.name == undefined || userData.email == undefined || userData.password == undefined || userData.name == null|| userData.email == null || userData.password == null){
                 res.status(400).json({error : "please provide the required fields"})
             }else{
                 try {
                     if(file == null || file == undefined){
                         let response = this.createUserData(userData);
-                        if((await response).error || (await response).status == 400){
+                        if((await response).message || (await response).status == 400){
                             res.status((await response).status as number).json({error:(await response).message});    
                         }else{
                             res.status((await response).status as number).json({message:(await response).message});    
                         }
                     }else{
-                        //file system we will be doing from tommorow
-                        // if(file?.fieldname?.split(".")[1] === "jpeg" ||file?.fieldname?.split(".")[1] ==="png" || file?.fieldname?.split(".")[1] === "jpeg"){
+                        if(file.mimetype?.split("/")[1] == "jpg" || file.mimetype?.split("/")[1] == "png" || file.mimetype?.split("/")[1] == "jpeg"){
+                            let stream = Readable.from(file.buffer as Buffer);
+                            let filePath = `${this.destination}/${file.originalname?.split(".")[0]+"_"+this.getTimeStamp()+"."+file.originalname?.split(".")[1]}`
+                            let writer = fs.createWriteStream(filePath);
+                            stream.pipe(writer);
+                            let url = `${process.env.server}/${filePath}`
+                            userData["image"] = url;
+                            let response : Promise<{message?:string,status?:number}> = this.createUserData(userData);
+                            if((await response).message && (await response).status == 400){
+                                res.status(400).json({error:(await response).message})
+                            }else{
+                                res.status(200).json({message:(await response).message})
+                            }
+                        }else{
+                            res.status(400).json({error:"Please Select either png or jpg or jpeg file"});    
+                        }
+                        
                             
-                        // }else{
-                        //     res.status(400).json({error:"Please Select either png or jpg or jpeg file"});    
-                        // }    
                     }
                 } catch (error:any) {
                     this.print(error);
@@ -231,23 +244,27 @@ class AuthController{
         return console.log(message);
     }
 
-    private createUserData  = async(userData:UserType) =>{
+    private createUserData  = async(userData:UserType):Promise<{message?:string,status?:number}> => {
         let permission:Array<permissionType> = JSON.parse(userData.permission as string)
         let userResponse : user | { error ? : string,status ? : number } | any = await this.auth_service.CreateUser(userData);
         if(userResponse == null || userResponse == undefined){
-            return{error:"Something went wrong please try again"};
+            return{message:"Something went wrong please try again",status:400};
         }
         else if(userResponse.error || userResponse.status == 400){
-            return {error:userResponse.error,status:400}
+            return {message:userResponse.error,status:userResponse.status}
         }else{
             permission[0]["userId"] = userResponse.id;
             let permissionResponse = await this.permissionService.CreatePermission(permission[0])
             if(permissionResponse == null || permissionResponse == undefined){
-                return {error:"Something went wrong please try again"}
+                return {message:"Something went wrong please try again",status:userResponse.status}
             }else{
-                return {message:"Sign Up Sucessfully",data: userResponse}
+                return {message:"Sign Up Sucessfully",status:200}
             }
         }
+    }
+
+    private getTimeStamp = () =>{
+        return Math.floor(Date.now() / 1000)
     }
 
 } 

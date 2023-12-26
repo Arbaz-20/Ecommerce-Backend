@@ -1,4 +1,4 @@
-export interface user {
+export type user ={
     id ?:string,
     name:string,
     age:number,
@@ -45,5 +45,10 @@ export type Fileinfo = {
     originalname?:string,
     encoding?:string
     mimetype?:string,
-    buffer?:Buffer
+    buffer?:Buffer | undefined
+}
+
+export type DataInfo = {
+    message?:string,
+    status?:number
 }
