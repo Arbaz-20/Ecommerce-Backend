@@ -1,7 +1,8 @@
 import IAuthService from "../interface/IAuthService";
 import AuthRepository from "../../repository/authRepository";
 import bcrypt from 'bcryptjs'
-import { ErrorStatus } from "../../utils/types/userTypes";
+import { ErrorStatus, UserType, user } from "../../utils/types/userTypes";
+import { Model } from "sequelize";
 class AuthServiceImplementation implements IAuthService{
     
     repository: AuthRepository;
@@ -45,7 +46,7 @@ class AuthServiceImplementation implements IAuthService{
     }
        
     
-    public GetUserById = async (id: string): Promise< object|null > => {
+    public GetUserById = async (id: string): Promise<Model<user> |null|ErrorStatus> => {
         if(id == null ||id == undefined){
             return {error:"id is required",status:400}
         }else{

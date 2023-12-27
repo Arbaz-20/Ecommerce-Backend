@@ -1,5 +1,6 @@
 import auth from "../models/auth";
-import { Op } from "sequelize";
+import { Model, Op } from "sequelize";
+import { UserType, user } from "../utils/types/userTypes";
 
 class AuthRepository {
 
@@ -15,7 +16,7 @@ class AuthRepository {
         return await auth.update(userData,{where:{id:id}});
     }
 
-    public GetUserById = async (id:string):Promise< object | null |{error?:string,status?:number}> =>{
+    public GetUserById = async (id:string):Promise<Model<user>| null |{error?:string,status?:number}> =>{
         return await auth.findByPk(id);
     }
 

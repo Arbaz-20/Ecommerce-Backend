@@ -1,10 +1,13 @@
+import { Model } from "sequelize";
+import { ErrorStatus, UserType, user } from "../../utils/types/userTypes";
+
 interface IAuthService{
 
     CreateUser( userData : object | any ) : Promise<object>
 
     UpdateUser(id:string, userData : object | any ):Promise<object|[affectedCount?:number|undefined]>
 
-    GetUserById(id:string):Promise< object | null >
+    GetUserById(id:string):Promise<Model<user>|null|ErrorStatus >
 
     GetAllUsers(page:number,limit:number) : Promise<{rows:Array<object>; count: number}>
 

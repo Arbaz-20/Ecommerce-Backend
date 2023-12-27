@@ -1,4 +1,4 @@
-export type user ={
+export type user = {
     id ?:string,
     name:string,
     age:number,
@@ -20,7 +20,7 @@ export type UserType = {
     password:string,
     country:Enumerator,
     type:Enumerator,
-    image:string,
+    image?:string,
     city:string,
     address:string,
     permission?:string|undefined
