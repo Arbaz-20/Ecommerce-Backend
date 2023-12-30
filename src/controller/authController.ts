@@ -100,24 +100,37 @@ class AuthController{
                             res.status(400).json({error:"Something went wrong"});
                         }
                     }else{
-                        userData = await JSON.parse(userData);
                         if(isExist.image == null || isExist.image == undefined){
                             if(file.originalname?.split(".")[1] == "jpeg"||file.originalname?.split(".")[1] == "png"||file.originalname?.split(".")[1] == "jpg"){
+                                let streamData = Readable.from(file.buffer as Buffer);
                                 let filepath = `${destination}/${file.originalname.split(".")[0]+"_"+this.getTimeStamp()+"."+file.originalname.split(".")[1]}`
                                 let writer = fs.createWriteStream(filepath);
-                                stream.pipe(writer);
+                                streamData.pipe(writer);
                                 userData["image"] = `${process.env.server}/${filepath}`
-                                let updateResponse: object| [ affectedCount?: number] = await this.updateUserData(userData,id);
-                                if(Number(updateResponse) > 0){
-                                    res.status(200).json({message:"Updated Successfully"})
+                                let updateResponse: {message?:string | undefined ,status?:number} = await this.updateUserData(userData,id);
+                                if(updateResponse.status == 200){
+                                    res.status(200).json({message:updateResponse.message})
                                 }else{
-                                    res.status(200).json({message:"Could Update please try again"})
+                                    res.status(400).json({error_message:updateResponse.message})
                                 }
                             }else{
-                                res.status(200).json({message:"Plese select either png or jpeg or jpg file format"})
+                                res.status(400).json({error_message:"Plese select either png or jpeg or jpg file format"})
                             }
                         }else{
-
+                            let imageName = isExist.image.split("/")
+                            let filename = imageName[imageName.length - 1]
+                            fs.rm(`${destination}/${filename}`,(error:unknown)=>{console.log(error)});
+                            let streamData = Readable.from(file.buffer as Buffer);
+                            let filepath = `${destination}/${file.originalname?.split(".")[0]+"_"+this.getTimeStamp()+"."+file.originalname?.split(".")[1]}`
+                            let writer = fs.createWriteStream(filepath);
+                            streamData.pipe(writer);
+                            userData["image"] = `${process.env.server}/${filepath}`
+                            let updateResponse:{message?:string,status?:number} = await this.updateUserData(userData,id);
+                            if(updateResponse.status == 200){
+                                res.status(200).json({message:updateResponse.message})
+                            }else{
+                                res.status(400).json({error:updateResponse.message})
+                            }
                         }
                     }
                 }
@@ -136,7 +149,7 @@ class AuthController{
                     }
                     res.status(400).json({errors:validationerror})
                 }else{
-                    res.status(400).json({errors:error})
+                    res.status(400).json({errors:error.message})
                 }
             } 
         }
@@ -155,54 +168,20 @@ class AuthController{
             return {message:userResponse.error,status:userResponse.status}
         }else{
             let response = await this.permissionService.DeletePermissionByUserId(id);
+            console.log("this is the permission response",response)
             if(response > 0){
-                permission[0]["userId"] = userResponse.id;
+                permission[0]["userId"] = id;
                 let permissionResponse = await this.permissionService.CreatePermission(permission[0])
                 if(permissionResponse == null || permissionResponse == undefined){
                     return {message:"Something went wrong please try again",status:userResponse.status}
                 }else{
-                    return {message:"Sign Up Sucessfully",status:200}
+                    return {message:"Updated Sucessfully",status:200}
                 }
             }else{
                 return {message:"Permission cannot updated please try again",status:400}
             }
         }
     }
-
-    // let userResponse : object | [affectedCount:number] |any = await this.auth_service.UpdateUser(id,userData);
-    // if(userResponse == null || userResponse == undefined){
-    //     res.status(400).json({error:"Something went wrong please try again"});
-    // }
-    // else if(userResponse.error || userResponse.status){
-    //     res.status(userResponse.status).json({error:userResponse.error});
-    // }
-    // else{
-    //     if(userResponse > 0){
-    //         let permission = await this.permissionService.getPermissionByUserId(id);
-    //         if(permission == null || permission == undefined){
-    //             permissionData = JSON.parse(JSON.stringify(permissionData));
-    //             permissionData["userId"] = id;
-    //             let data = await this.permissionService.CreatePermission(permissionData[0]);
-    //             if(data !== null || data !== undefined){
-    //                 res.status(200).json({message:"Updated Successfully"})
-    //             }else{
-    //                 res.status(400).json({message:"Cannot update please try again"})
-    //             }
-    //         }else{
-    //             let data = await this.permissionService.UpdatePermissionByUserId(id,permissionData[0]);
-    //             if(data !== null || data !== undefined){
-    //                 res.status(200).json({message:"Updated Successfully"})
-    //             }else{
-    //                 res.status(400).json({message:"Cannot update please try again"})
-    //             }
-    //         }
-    //     }else{
-    //         res.status(200).json({message:"Couldnt updated please try again"});
-    //     }  
-    // }
-
-
-
 
     public GetUserById =async (req : Request,res:Response) => {
         let id = req.params.id;
