@@ -34,8 +34,8 @@ class AuthController {
                         else {
                             if (file.mimetype?.split("/")[1] == "jpg" || file.mimetype?.split("/")[1] == "png" || file.mimetype?.split("/")[1] == "jpeg") {
                                 let stream = stream_1.Readable.from(file.buffer);
-                                let filePath = `${this.destination}/${file.originalname?.split(".")[0] + "_" + this.getTimeStamp() + "." + file.originalname?.split(".")[1]}`;
-                                filePath = Array.from(filePath).replaceAll(" ", "_");
+                                let filename = file.originalname?.replaceAll(" ", "_");
+                                let filePath = `${this.destination}/${filename?.split(".")[0] + "_" + this.getTimeStamp() + "." + filename?.split(".")[1]}`;
                                 let writer = fs_1.default.createWriteStream(filePath);
                                 stream.pipe(writer);
                                 let url = `${process.env.server}/${filePath}`;
@@ -107,11 +107,11 @@ class AuthController {
                             if (isExist.image == null || isExist.image == undefined) {
                                 if (file.originalname?.split(".")[1] == "jpeg" || file.originalname?.split(".")[1] == "png" || file.originalname?.split(".")[1] == "jpg") {
                                     let streamData = stream_1.Readable.from(file.buffer);
-                                    let filepath = `${destination}/${file.originalname.split(".")[0] + "_" + this.getTimeStamp() + "." + file.originalname.split(".")[1]}`;
-                                    filepath = filepath.replace(" ", "_");
-                                    let writer = fs_1.default.createWriteStream(filepath);
+                                    let filename = file.originalname?.replaceAll(" ", "_");
+                                    let filePath = `${this.destination}/${filename?.split(".")[0] + "_" + this.getTimeStamp() + "." + filename?.split(".")[1]}`;
+                                    let writer = fs_1.default.createWriteStream(filePath);
                                     streamData.pipe(writer);
-                                    userData["image"] = `${process.env.server}/${filepath}`;
+                                    userData["image"] = `${process.env.server}/${filePath}`;
                                     let updateResponse = await this.updateUserData(userData, id);
                                     if (updateResponse.status == 200) {
                                         res.status(200).json({ message: updateResponse.message });
@@ -126,14 +126,14 @@ class AuthController {
                             }
                             else {
                                 let imageName = isExist.image.split("/");
-                                let filename = imageName[imageName.length - 1];
-                                fs_1.default.rm(`${destination}/${filename}`, (error) => { console.log(error); });
+                                let filenameData = imageName[imageName.length - 1];
+                                fs_1.default.rm(`${destination}/${filenameData}`, (error) => { console.log(error); });
                                 let streamData = stream_1.Readable.from(file.buffer);
-                                let filepath = `${destination}/${file.originalname?.split(".")[0] + "_" + this.getTimeStamp() + "." + file.originalname?.split(".")[1]}`;
-                                filepath = filepath.replace(" ", "_");
-                                let writer = fs_1.default.createWriteStream(filepath);
+                                let filename = file.originalname?.replaceAll(" ", "_");
+                                let filePath = `${this.destination}/${filename?.split(".")[0] + "_" + this.getTimeStamp() + "." + filename?.split(".")[1]}`;
+                                let writer = fs_1.default.createWriteStream(filePath);
                                 streamData.pipe(writer);
-                                userData["image"] = `${process.env.server}/${filepath}`;
+                                userData["image"] = `${process.env.server}/${filePath}`;
                                 let updateResponse = await this.updateUserData(userData, id);
                                 if (updateResponse.status == 200) {
                                     res.status(200).json({ message: updateResponse.message });

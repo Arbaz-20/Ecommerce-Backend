@@ -19,8 +19,7 @@ database_1.default.sync({ alter: true }).then(() => {
 dotenv_1.default.config();
 let app = (0, express_1.default)();
 let port = process.env.PORT;
-app.use("/src/utlis/upload", express_1.default.static("src/utlis/upload"));
-app.use(express_1.default.static("src/utlis/upload"));
+app.use(express_1.default.static("./src/utils/upload"));
 app.use((0, cors_1.default)());
 app.use((0, body_parser_1.default)());
 app.use("/api/auth", authRoutes_1.default);

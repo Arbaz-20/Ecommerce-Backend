@@ -29,8 +29,8 @@ class productController {
                     else {
                         if (file.mimetype?.split("/")[1] == "jpg" || file.mimetype?.split("/")[1] == "png" || file.mimetype?.split("/")[1] == "jpeg") {
                             let stream = stream_1.Readable.from(file.buffer);
-                            let filePath = `${this.destination}/${file.originalname?.split(".")[0] + "_" + this.getTimeStamp() + "." + file.originalname?.split(".")[1]}`;
-                            filePath = filePath.replace(" ", "_");
+                            let filename = file.originalname?.replaceAll(" ", "_");
+                            let filePath = `${this.destination}/${filename?.split(".")[0] + "_" + this.getTimeStamp() + "." + filename?.split(".")[1]}`;
                             let writer = fs_1.default.createWriteStream(filePath);
                             stream.pipe(writer);
                             let url = `${process.env.server}/${filePath}`;
@@ -70,8 +70,7 @@ class productController {
         };
         this.UpdateProduct = async (req, res) => {
             let productdata = req.body;
-            console.log("This is the recieved object", productdata);
-            let { id } = req.params;
+            let id = req.params?.id;
             let file = req.file;
             let destination = "src/utils/upload/product";
             let stream = new stream_1.Stream();
@@ -95,7 +94,6 @@ class productController {
                             }
                             else {
                                 if (productResponse > 0) {
-                                    console.log("this is the product response", productResponse);
                                     res.status(200).json({ message: "updated Sucessfully" });
                                 }
                                 else {
@@ -104,14 +102,14 @@ class productController {
                             }
                         }
                         else {
-                            if (isExist.image == null || isExist.image == undefined) {
+                            if (isExist.image == null || isExist.image == undefined || isExist.image == "") {
                                 if (file.originalname?.split(".")[1] == "jpeg" || file.originalname?.split(".")[1] == "png" || file.originalname?.split(".")[1] == "jpg") {
                                     let streamData = stream_1.Readable.from(file.buffer);
-                                    let filepath = `${destination}/${file.originalname.split(".")[0] + "_" + this.getTimeStamp() + "." + file.originalname.split(".")[1]}`;
-                                    filepath = filepath.replace(" ", "_");
+                                    let filename = file.originalname?.replaceAll(" ", "_");
+                                    let filepath = `${this.destination}/${filename?.split(".")[0] + "_" + this.getTimeStamp() + "." + filename?.split(".")[1]}`;
                                     let writer = fs_1.default.createWriteStream(filepath);
                                     streamData.pipe(writer);
-                                    productdata["image"] = `${process.env.server}/${filepath}`;
+                                    productdata.image = `${process.env.server}/${filepath}`;
                                     let updateResponse = await this.product_service.UpdateProduct(id, productdata);
                                     if (updateResponse > 0) {
                                         res.status(200).json({ message: "Product updated successfully" });
@@ -126,15 +124,15 @@ class productController {
                             }
                             else {
                                 let imageName = isExist.image.split("/");
-                                let filename = imageName[imageName.length - 1];
-                                fs_1.default.rm(`${destination}/${filename}`, (error) => { console.log(error); });
+                                let filenamedata = imageName[imageName.length - 1];
+                                fs_1.default.rm(`${destination}/${filenamedata}`, (error) => { console.log(error); });
                                 let streamData = stream_1.Readable.from(file.buffer);
-                                let filepath = `${destination}/${file.originalname?.split(".")[0] + "_" + this.getTimeStamp() + "." + file.originalname?.split(".")[1]}`;
-                                filepath = filepath.replace(" ", "_");
+                                let filename = file.originalname?.replaceAll(" ", "_");
+                                let filepath = `${this.destination}/${filename?.split(".")[0] + "_" + this.getTimeStamp() + "." + filename?.split(".")[1]}`;
                                 let writer = fs_1.default.createWriteStream(filepath);
                                 streamData.pipe(writer);
-                                productdata.image = `${process.env.server}/${filepath}`;
-                                let updateResponse = await this.UpdateProduct(productdata, id);
+                                productdata["image"] = `${process.env.server}/${filepath}`;
+                                let updateResponse = await this.product_service.UpdateProduct(id, productdata);
                                 if (updateResponse > 0) {
                                     res.status(200).json({ message: "product updated successfully" });
                                 }
@@ -160,7 +158,7 @@ class productController {
                         res.status(400).json({ errors: validationerror });
                     }
                     else {
-                        res.status(400).json({ errors: error });
+                        res.status(400).json({ errors: error.message });
                     }
                 }
             }

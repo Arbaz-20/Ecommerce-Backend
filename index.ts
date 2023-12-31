@@ -19,14 +19,14 @@ dotenv.config()
 let app = express()
 let port = process.env.PORT
 
-app.use("/src/utlis/upload",express.static("src/utlis/upload"))
-app.use(express.static("src/utlis/upload"))
 app.use(cors());
 app.use(bodyParser())
+
 app.use("/api/auth",AuthRouter);
 app.use("/api/product",ProductRouter);
 app.use("/api/order",OrderRouter);
 
+app.use("/src/utils/upload",express.static("src/utils/upload"))
 
 app.listen(port, ()=>{
     console.log(`Server is accesssing on port : ${port}`);
