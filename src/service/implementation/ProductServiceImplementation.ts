@@ -10,18 +10,18 @@ class ProductServiceImplementation implements IProductService{
     }
     public createProduct = async (productData: any): Promise<object> =>{
         if(productData == null || productData == undefined){
-            return {error:"userdata not found",status:400}
+            return {error:"productData not found",status:400}
         }else{
             let response = await this.repository.createProduct(productData);
             return response;
         }
     }
     
-    public UpdateProduct= async (id: string, productData: any): Promise<object| [ affectedCount?: number]> =>{
+    public UpdateProduct= async (id: string, productData: any): Promise<{error?:string,status?:number}|[ affectedCount?: number]> =>{
         if(id == null || id == undefined){
-            return {error:"user id is required",status:400}
+            return {error:"product id is required",status:400}
         }else{
-            let response : [affectedCount? : number] | object = await this.repository.UpdateProduct(id,productData);
+            let response : [affectedCount? : number]  = await this.repository.UpdateProduct(id,productData);
             console.log(response);
             return response
         }

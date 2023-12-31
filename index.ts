@@ -19,6 +19,8 @@ dotenv.config()
 let app = express()
 let port = process.env.PORT
 
+app.use("/src/utlis/upload",express.static("src/utlis/upload"))
+app.use(express.static("src/utlis/upload"))
 app.use(cors());
 app.use(bodyParser())
 app.use("/api/auth",AuthRouter);

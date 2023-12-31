@@ -52,3 +52,23 @@ export type DataInfo = {
     message?:string,
     status?:number
 }
+
+export type product = {
+    id ?:string,
+    name:string,
+    image?:string,
+    quantity?:number,
+    colour?:string,
+    description?:string,
+    price?:number
+    createdAt:Date,
+    updatedAt:Date,
+}
+export type ProductType = {
+    name:string,
+    image?:string,
+    quantity?:number,
+    colour?:string,
+    description?:string,
+    price?:number
+}

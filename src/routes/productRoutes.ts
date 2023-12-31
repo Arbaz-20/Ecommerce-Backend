@@ -10,7 +10,7 @@ let upload = multer({
 });
 
 ProductRouter.post("/createProduct",upload.single('image'),productController.createProduct);
-ProductRouter.put("/UpdateProduct/:id",productController.UpdateProduct);
+ProductRouter.put("/UpdateProduct/:id",upload.single('image'),productController.UpdateProduct);
 ProductRouter.get("/GetProductById/:id",productController.GetProductById);
 ProductRouter.get("/GetAllProducts",productController.GetAllProducts);
 ProductRouter.delete("/DeleteProduct/:id",productController.DeleteProduct);

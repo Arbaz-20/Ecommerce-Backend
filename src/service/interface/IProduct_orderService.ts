@@ -1,8 +1,8 @@
 interface IProduct_orderService{
 
-    createProduct_order(product_orderData : object | any ) : Promise<object>
+    createProduct_order(product_orderData : object  ) : Promise<object>
 
-    UpdateProduct_order(id:string,product_orderData : object | any ):Promise<object|[affectedCount?:number|undefined]>
+    UpdateProduct_order(id:string,product_orderData : object  ):Promise<object|[affectedCount?:number|undefined]>
 
     GetProductById_order(id:string):Promise< object | null >
 

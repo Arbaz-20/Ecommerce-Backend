@@ -1,6 +1,6 @@
 interface IColourService{
 
-    createColour(colourData : object | any ) : Promise<object>
+    createColour(colourData : object  ) : Promise<object>
 
     UpdateColour(id:string,colourData : object | any ):Promise<object|[affectedCount?:number|undefined]>
 

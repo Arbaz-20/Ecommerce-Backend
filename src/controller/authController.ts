@@ -39,7 +39,8 @@ class AuthController{
                     }else{
                         if(file.mimetype?.split("/")[1] == "jpg" || file.mimetype?.split("/")[1] == "png" || file.mimetype?.split("/")[1] == "jpeg"){
                             let stream = Readable.from(file.buffer as Buffer);
-                            let filePath = `${this.destination}/${file.originalname?.split(".")[0]+"_"+this.getTimeStamp()+"."+file.originalname?.split(".")[1]}`
+                            let filename = file.originalname?.replaceAll(" ","_");
+                            let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
                             let writer = fs.createWriteStream(filePath);
                             stream.pipe(writer);
                             let url = `${process.env.server}/${filePath}`
@@ -103,10 +104,11 @@ class AuthController{
                         if(isExist.image == null || isExist.image == undefined){
                             if(file.originalname?.split(".")[1] == "jpeg"||file.originalname?.split(".")[1] == "png"||file.originalname?.split(".")[1] == "jpg"){
                                 let streamData = Readable.from(file.buffer as Buffer);
-                                let filepath = `${destination}/${file.originalname.split(".")[0]+"_"+this.getTimeStamp()+"."+file.originalname.split(".")[1]}`
-                                let writer = fs.createWriteStream(filepath);
+                                let filename = file.originalname?.replaceAll(" ","_");
+                                let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
+                                let writer = fs.createWriteStream(filePath);
                                 streamData.pipe(writer);
-                                userData["image"] = `${process.env.server}/${filepath}`
+                                userData["image"] = `${process.env.server}/${filePath}`
                                 let updateResponse: {message?:string | undefined ,status?:number} = await this.updateUserData(userData,id);
                                 if(updateResponse.status == 200){
                                     res.status(200).json({message:updateResponse.message})
@@ -118,13 +120,14 @@ class AuthController{
                             }
                         }else{
                             let imageName = isExist.image.split("/")
-                            let filename = imageName[imageName.length - 1]
-                            fs.rm(`${destination}/${filename}`,(error:unknown)=>{console.log(error)});
+                            let filenameData = imageName[imageName.length - 1]
+                            fs.rm(`${destination}/${filenameData}`,(error:unknown)=>{console.log(error)});
                             let streamData = Readable.from(file.buffer as Buffer);
-                            let filepath = `${destination}/${file.originalname?.split(".")[0]+"_"+this.getTimeStamp()+"."+file.originalname?.split(".")[1]}`
-                            let writer = fs.createWriteStream(filepath);
+                            let filename = file.originalname?.replaceAll(" ","_");
+                            let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
+                            let writer = fs.createWriteStream(filePath);
                             streamData.pipe(writer);
-                            userData["image"] = `${process.env.server}/${filepath}`
+                            userData["image"] = `${process.env.server}/${filePath}`
                             let updateResponse:{message?:string,status?:number} = await this.updateUserData(userData,id);
                             if(updateResponse.status == 200){
                                 res.status(200).json({message:updateResponse.message})
@@ -155,39 +158,15 @@ class AuthController{
         }
     }
 
-    private updateUserData  = async(userData:UserType,id:string):Promise<{message?:string,status?:number}> => {
-        let permission:Array<permissionType> = JSON.parse(userData.permission as string)
-        let userResponse : user | { error ? : string,status ? : number } | any = await this.auth_service.UpdateUser(id,userData);
-        if(userResponse == null || userResponse == undefined){
-            return{message:"Something went wrong please try again",status:400};
-        }
-        else if(userResponse < 1){
-            return{message:"Cannot Update please try again",status:400};
-        }
-        else if(userResponse.error || userResponse.status == 400){
-            return {message:userResponse.error,status:userResponse.status}
-        }else{
-            let response = await this.permissionService.DeletePermissionByUserId(id);
-            console.log("this is the permission response",response)
-            if(response > 0){
-                permission[0]["userId"] = id;
-                let permissionResponse = await this.permissionService.CreatePermission(permission[0])
-                if(permissionResponse == null || permissionResponse == undefined){
-                    return {message:"Something went wrong please try again",status:userResponse.status}
-                }else{
-                    return {message:"Updated Sucessfully",status:200}
-                }
-            }else{
-                return {message:"Permission cannot updated please try again",status:400}
-            }
-        }
+    public LoginUser = async (req:Request,res:Response) => {
+        
     }
 
     public GetUserById =async (req : Request,res:Response) => {
         let id = req.params.id;
         if(id == null || id == undefined){
             res.status(404).json({error:"please provide id"})
-    }else{
+        }else{
             try {
                 let userResponse : Model<user> | {error ?:string,status?:number } | null = await this.auth_service.GetUserById(id);
                 if(userResponse == null || userResponse == undefined){
@@ -280,10 +259,6 @@ class AuthController{
         
     }
 
-    private print = async(message:string) :Promise< string | void > => {
-        return console.log(message);
-    }
-
     private createUserData  = async(userData:UserType):Promise<{message?:string,status?:number}> => {
         let permission:Array<permissionType> = JSON.parse(userData.permission as string)
         let userResponse : user | { error ? : string,status ? : number } | any = await this.auth_service.CreateUser(userData);
@@ -303,8 +278,40 @@ class AuthController{
         }
     }
 
+    private updateUserData  = async(userData:UserType,id:string):Promise<{message?:string,status?:number}> => {
+        let permission:Array<permissionType> = JSON.parse(userData.permission as string)
+        let userResponse : user | { error ? : string,status ? : number } | any = await this.auth_service.UpdateUser(id,userData);
+        if(userResponse == null || userResponse == undefined){
+            return{message:"Something went wrong please try again",status:400};
+        }
+        else if(userResponse < 1){
+            return{message:"Cannot Update please try again",status:400};
+        }
+        else if(userResponse.error || userResponse.status == 400){
+            return {message:userResponse.error,status:userResponse.status}
+        }else{
+            let response = await this.permissionService.DeletePermissionByUserId(id);
+            console.log("this is the permission response",response)
+            if(response > 0){
+                permission[0]["userId"] = id;
+                let permissionResponse = await this.permissionService.CreatePermission(permission[0])
+                if(permissionResponse == null || permissionResponse == undefined){
+                    return {message:"Something went wrong please try again",status:userResponse.status}
+                }else{
+                    return {message:"Updated Sucessfully",status:200}
+                }
+            }else{
+                return {message:"Permission cannot updated please try again",status:400}
+            }
+        }
+    }
+
     private getTimeStamp = () =>{
         return Math.floor(Date.now() / 1000)
+    }
+
+    private print = async(message:string) :Promise< string | void > => {
+        return console.log(message);
     }
 
 } 

@@ -8,32 +8,69 @@ class Product_orderServiceImplementation implements IProduct_orderService{
         this.repository = new product_orderRepository()
     }
 
-    createProduct_order(product_orderData: any): Promise<object> {
-        throw new Error("Method not implemented.");
+    
+    public createProduct_order = async (product_orderData: object): Promise<object> =>{
+        if(product_orderData == null || product_orderData == undefined){
+            return {error:"product_orderData not found",status:400}
+        }else{
+            let response = await this.repository.createProduct_order(product_orderData);
+            return response;
+        }
     }
     
-    UpdateProduct_order(id: string, product_orderData: any): Promise<object | [affectedCount?: number | undefined]> {
-        throw new Error("Method not implemented.");
+    public UpdateProduct_order= async (id: string, product_orderData: object): Promise<object| [ affectedCount?: number]> =>{
+        if(id == null || id == undefined){
+            return {error:"product_order id is required",status:400}
+        }else{
+            let response : [affectedCount? : number] | object = await this.repository.UpdateProduct_order(id,product_orderData);
+            console.log(response);
+            return response
+        }
     }
-
-    GetProductById_order(id: string): Promise<object | null> {
-        throw new Error("Method not implemented.");
-    }
-
-    GetAllProduct_order(page: number, limit: number): Promise<{ rows: object[]; count: number; }> {
-        throw new Error("Method not implemented.");
-    }
-
-    GetProduct_orderByName(name: string): Promise<object | object[]> {
-        throw new Error("Method not implemented.");
-    }
-
-    DeleteProduct_order(id: string): Promise<number | { error?: string | undefined; status?: number | undefined; } | undefined> {
-        throw new Error("Method not implemented.");
+       
+    
+    public GetProductById_order = async (id: string): Promise< object|null > => {
+        if(id == null ||id == undefined){
+            return {error:"id is required",status:400}
+        }else{
+            let response = await this.repository.GetProductById_order(id);
+            return response;
+        }
     }
     
-    BulkDeleteProduct_order(ids: string[]): Promise<number> {
-        throw new Error("Method not implemented.");
+    public GetAllProduct_order = async (page: number, limit: number): Promise<{ rows: object[]; count: number; }>=> {
+        if(page == null || page == undefined || limit == null || limit == undefined || page == 0 || limit == 0){
+            page = 0;
+            limit = 10;
+        }
+        let offset = (page - 1)*limit;
+        let response = await this.repository.GetAllProduct_order(offset,limit);
+        return response;    
     }
+    
+    public GetProduct_orderByName = async (name: string): Promise<object[] | object> =>{
+        if(name == null || name == undefined){
+            return {error:"name is required",status:400}
+        }else{
+            let response = await this.repository.GetProduct_orderByName(name);
+            return response;
+        }
+    }
+    
+    public DeleteProduct_order = async (id: string): Promise<number | {error?:string,status?:number} | undefined> => {
+        if(id == null || id == undefined){
+            return {error:"id is required",status:400}
+        }else{
+            let response = await this.repository.DeleteProduct_order(id);
+            return response;
+        }
+        
+    }
+    
+    public BulkDeleteProduct_order = async (ids: string[]): Promise<number>=> {
+        let response = await this.repository.BulkDeleteProduct_order(ids);
+        return response;
+    }
+
 };
 export default Product_orderServiceImplementation
