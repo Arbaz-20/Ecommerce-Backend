@@ -72,3 +72,9 @@ export type ProductType = {
     description?:string,
     price?:number
 }
+
+export type UpdateReturn = {
+    affectedCount?:number,
+    error?:string,
+    status?:number
+}

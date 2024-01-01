@@ -5,6 +5,7 @@ import PermissionServiceImplementation from "../service/implementation/Permissio
 import fs from 'fs'
 import { Stream,Readable } from "stream"
 import { Model } from "sequelize"
+import jwt from "jsonwebtoken"
 
 class AuthController{
     auth_service: AuthServiceImplementation
@@ -49,6 +50,7 @@ class AuthController{
                             if((await response).message && (await response).status == 400){
                                 res.status(400).json({error:(await response).message})
                             }else{
+
                                 res.status(200).json({message:(await response).message})
                             }
                         }else{
@@ -77,6 +79,10 @@ class AuthController{
         }
     }
 
+    public LoginController = async(req : Request, res : Response) =>{
+
+    }
+
     public UpdateUser = async(req : Request,res : Response ) => {
         let userData = req.body;
         let {id} = req.params;
@@ -87,7 +93,7 @@ class AuthController{
             res.status(404).json({error : "please provide id to update"})
         }else{
             try{
-                let isExist : Model<UserType,UserType>|null|ErrorStatus|any = await this.auth_service.GetUserById(id)
+                let isExist : Model<UserType,UserType>|ErrorStatus|any = await this.auth_service.GetUserById(id)
                 if(isExist == null ||isExist == undefined){
                     res.status(400).json({error: "please select user properly"})
                 }else{
@@ -280,29 +286,31 @@ class AuthController{
 
     private updateUserData  = async(userData:UserType,id:string):Promise<{message?:string,status?:number}> => {
         let permission:Array<permissionType> = JSON.parse(userData.permission as string)
-        let userResponse : user | { error ? : string,status ? : number } | any = await this.auth_service.UpdateUser(id,userData);
+        let userResponse : ErrorStatus|[affectedCount?:number] = await this.auth_service.UpdateUser(id,userData);
         if(userResponse == null || userResponse == undefined){
             return{message:"Something went wrong please try again",status:400};
         }
-        else if(userResponse < 1){
-            return{message:"Cannot Update please try again",status:400};
-        }
-        else if(userResponse.error || userResponse.status == 400){
-            return {message:userResponse.error,status:userResponse.status}
-        }else{
-            let response = await this.permissionService.DeletePermissionByUserId(id);
-            console.log("this is the permission response",response)
-            if(response > 0){
-                permission[0]["userId"] = id;
-                let permissionResponse = await this.permissionService.CreatePermission(permission[0])
-                if(permissionResponse == null || permissionResponse == undefined){
-                    return {message:"Something went wrong please try again",status:userResponse.status}
+        else if(typeof userResponse == "number"){
+            if(userResponse > 0){
+                let response = await this.permissionService.DeletePermissionByUserId(id);
+                console.log("this is the permission response",response)
+                if(response > 0){
+                    permission[0]["userId"] = id;
+                    let permissionResponse = await this.permissionService.CreatePermission(permission[0])
+                    if(permissionResponse == null || permissionResponse == undefined){
+                        return {message:"Something went wrong please try again",status:400}
+                    }else{
+                        return {message:"Updated Sucessfully",status:200}
+                    }
                 }else{
-                    return {message:"Updated Sucessfully",status:200}
+                    return {message:"Permission cannot updated please try again",status:400}
                 }
             }else{
-                return {message:"Permission cannot updated please try again",status:400}
+                return{message:"Couldnt update properly",status:400};    
             }
+        }
+        else{
+            return {message:"Something went wrong",status:400}
         }
     }
 

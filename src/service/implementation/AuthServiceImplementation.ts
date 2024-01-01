@@ -1,7 +1,7 @@
 import IAuthService from "../interface/IAuthService";
 import AuthRepository from "../../repository/authRepository";
 import bcrypt from 'bcryptjs'
-import { ErrorStatus, UserType, user } from "../../utils/types/userTypes";
+import { ErrorStatus, UpdateReturn, UserType, user } from "../../utils/types/userTypes";
 import { Model } from "sequelize";
 class AuthServiceImplementation implements IAuthService{
     
@@ -11,7 +11,7 @@ class AuthServiceImplementation implements IAuthService{
         this.repository = new AuthRepository()
     }
     
-    public CreateUser = async (userData: any): Promise<object> =>{
+    public CreateUser = async (userData: any): Promise<ErrorStatus | user> =>{
         if(userData.password == null || userData.password == undefined){
             return {error:"Password is required",status:400}
         }else{
@@ -20,28 +20,33 @@ class AuthServiceImplementation implements IAuthService{
             userData = JSON.parse(JSON.stringify(userData));
             userData["password"] = password
             let response = await this.repository.CreateUser(userData);
-            return response;
+            return response as user;
         }
     }
+
+    public LoginController = async (userData: any): Promise<any>=>{
+        if(userData.password == null || userData.password == undefined){
+            return {error:"Password is required",status:400}
+        }else[
+
+        ]
+    }
     
-    public UpdateUser = async (id: string, userData: any): Promise<object| [ affectedCount?: number]> =>{
+    public UpdateUser = async (id: string, userData: UserType):Promise<ErrorStatus|[affectedCount?:number]> =>{
         if(id == null || id == undefined){
-            return {error:"user id is required",status:400}
+            return {error:"Please Select user to update",status:400} as ErrorStatus;
         }else{
             if(userData.password == null || userData.password == undefined){
-                let response : [affectedCount? : number] | object = await this.repository.UpdateUser(id,userData);
-                console.log(response);
-                return response;                
+                let response : [affectedCount? : number] = await this.repository.UpdateUser(id,userData);
+                return response               
             }else{
                 let salt = await bcrypt.genSalt(10);
                 let password = await bcrypt.hash(userData.password, salt);
                 userData = JSON.parse(JSON.stringify(userData));
                 userData["password"] = password
-                let response : [affectedCount? : number] | object = await this.repository.UpdateUser(id,userData);
-                console.log(response);
+                let response : [affectedCount?:number|undefined] = await this.repository.UpdateUser(id,userData);
                 return response;
             }
-            
         }
     }
        
