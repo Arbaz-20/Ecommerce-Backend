@@ -10,6 +10,7 @@ class AuthServiceImplementation implements IAuthService{
     constructor(){
         this.repository = new AuthRepository()
     }
+   
     
     public CreateUser = async (userData: any): Promise<ErrorStatus | user> =>{
         if(userData.password == null || userData.password == undefined){
@@ -77,6 +78,11 @@ class AuthServiceImplementation implements IAuthService{
             let response = await this.repository.GetUserByName(name);
             return response;
         }
+    }
+    public GetUserByEmail = async(email: string): Promise<user|null>=> {
+        let response = await this.repository.GetUserByEmail(email);
+        return response as user;
+       
     }
     
     public DeleteUser = async (id: string): Promise<{error?:string,status?:number}|number> => {

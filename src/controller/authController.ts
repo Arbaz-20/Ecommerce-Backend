@@ -6,7 +6,7 @@ import fs from 'fs'
 import { Stream,Readable } from "stream"
 import { Model } from "sequelize"
 import jwt from "jsonwebtoken"
-
+import bcrypt from 'bcryptjs'
 class AuthController{
     auth_service: AuthServiceImplementation
     permissionService: PermissionServiceImplementation
@@ -80,7 +80,32 @@ class AuthController{
     }
 
     public LoginController = async(req : Request, res : Response) =>{
+        let {email,password} = req.body;
+        if(email == null || password == null||password == undefined || email == undefined){
+            res.status(401).json({errors :"please enter email or password"});
+        }else{
+            let isExist:user|null = await this.auth_service.GetUserByEmail(email);
+            if(isExist == null){
+                res.status(400).json({error:"Account Dosent Exist"});
+            }else{
+                if(await bcrypt.compare(password,isExist.password)){
+                    let token = jwt.sign(
+                        {id: isExist.id, name : isExist.name},
+                        process.env.jwt_secret as string,
+                        {expiresIn:"30min"}
 
+                    )
+                    let refreshToken = jwt.sign(
+                        { id: isExist.id },
+                        process.env.jwt_secret as string,
+                        { expiresIn: "356d" }
+                      );
+                      res.status(200).json({message :"login successful",user:isExist,Accesstoken:token,refreshtoken:refreshToken})
+                }else{
+                    res.status(400).json({error:"Invalid Password"});
+                }
+            }
+        }
     }
 
     public UpdateUser = async(req : Request,res : Response ) => {
@@ -162,10 +187,6 @@ class AuthController{
                 }
             } 
         }
-    }
-
-    public LoginUser = async (req:Request,res:Response) => {
-        
     }
 
     public GetUserById =async (req : Request,res:Response) => {

@@ -31,6 +31,10 @@ class AuthRepository {
         return await auth.findAll({where:{name:{[Op.iLike]:`%${name}%`}}})
     }
 
+    public GetUserByEmail = async (email:string) :Promise<object|null> => {
+        return await auth.findOne({where:{email:{[Op.iLike]:`%${email}%`}}})
+    }
+
     public DeleteUser = async(id:string) :Promise<number> => {
         return await auth.destroy({where:{id:id}});
     }

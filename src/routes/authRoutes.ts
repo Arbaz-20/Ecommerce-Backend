@@ -11,6 +11,7 @@ let upload = multer({
 });
 
 AuthRouter.post("/createUser",upload.single('image'),authController.CreateUser);
+AuthRouter.post("/loginController",authController.LoginController)
 AuthRouter.put("/updateUser/:id",upload.single('image'),authController.UpdateUser);
 AuthRouter.get("/GetUserById/:id",authController.GetUserById);
 AuthRouter.get("/GetAllUsers",authController.GetAllUsers);

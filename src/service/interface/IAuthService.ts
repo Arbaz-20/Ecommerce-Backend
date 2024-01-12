@@ -13,6 +13,8 @@ interface IAuthService{
 
     GetUserByName(name:string) :Promise<object[] | object>
 
+    GetUserByEmail(email:string) :Promise<object|null>
+
     DeleteUser(id:string) :Promise<number |object>
 
     BulkDeleteUsers (ids:string[]) : Promise<number>
