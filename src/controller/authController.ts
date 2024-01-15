@@ -100,7 +100,12 @@ class AuthController{
                         process.env.jwt_secret as string,
                         { expiresIn: "356d" }
                       );
-                      res.status(200).json({message :"login successful",user:isExist,Accesstoken:token,refreshtoken:refreshToken})
+                      res.cookie("refreshToken", refreshToken, {
+                        httpOnly: true,
+                        secure: true,
+                      })
+                      res.cookie("AccessToken", token, { httpOnly: true, secure: true });
+                      res.status(200).json({message :"login successful",user:isExist})
                 }else{
                     res.status(400).json({error:"Invalid Password"});
                 }
