@@ -17,6 +17,7 @@ AuthRouter.get("/GetUserById/:id",authController.GetUserById);
 AuthRouter.get("/GetAllUsers",authController.GetAllUsers);
 AuthRouter.delete("/DeleteUser/:id",authController.DeleteUser);
 AuthRouter.delete("/BulkDeleteUser",authController.BulkDeleteUser);
+AuthRouter.delete("/logoutController",authController.logoutController)
 
 
 export default AuthRouter;

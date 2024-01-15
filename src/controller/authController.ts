@@ -84,7 +84,7 @@ class AuthController{
         if(email == null || password == null||password == undefined || email == undefined){
             res.status(401).json({errors :"please enter email or password"});
         }else{
-            let isExist:user|null = await this.auth_service.GetUserByEmail(email);
+            let isExist : user | null = await this.auth_service.GetUserByEmail(email);
             if(isExist == null){
                 res.status(400).json({error:"Account Dosent Exist"});
             }else{
@@ -110,6 +110,16 @@ class AuthController{
                     res.status(400).json({error:"Invalid Password"});
                 }
             }
+        }
+    }
+
+    public logoutController =(req: Request, res: Response)=>{
+        try {
+            res.cookie("AccessToken","",{maxAge:1});
+            res.cookie("refreshToken","",{maxAge:1});
+            res.status(200).json({message:"Logout successful"});
+        } catch (error:any) {
+            res.status(400).json({error:error});    
         }
     }
 
