@@ -32,7 +32,7 @@ export type permissionType = {
     edit:boolean,
     delete:boolean,
     view:boolean,
-    userId?:string,
+    authId?:string,
 }
 
 export type ErrorStatus = {
@@ -77,4 +77,11 @@ export type UpdateReturn = {
     affectedCount?:number,
     error?:string,
     status?:number
+}
+
+export type categoryType={
+    id ?:string,
+    name:string,
+    description?:string,
+    type?:string
 }

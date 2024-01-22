@@ -5,8 +5,9 @@ import PermissionServiceImplementation from "../service/implementation/Permissio
 import fs from 'fs'
 import { Stream,Readable } from "stream"
 import { Model } from "sequelize"
-import jwt from "jsonwebtoken"
+import jwt, { JwtPayload } from "jsonwebtoken"
 import bcrypt from 'bcryptjs'
+import auth from "../models/auth"
 class AuthController{
     auth_service: AuthServiceImplementation
     permissionService: PermissionServiceImplementation
@@ -111,7 +112,35 @@ class AuthController{
                 }
             }
         }
-    }
+    };
+
+    public RefreshToken = async (req:Request, res:Response) => {
+        let refreshToken = req.params.token;
+        if (refreshToken == null || refreshToken == undefined) {
+          res.status(400).json({ error: "refresh token required" });
+        } else {
+          try {
+            let decode :string|JwtPayload = jwt.verify(refreshToken, process.env.jwt_secret as string);
+            if (decode == null || decode == undefined) {
+              res.status(400).json({ error: "invalid token" });
+            } else {
+              let userData = await auth.findByPk(decode as string);
+              if (userData == null || userData == undefined) {
+                res.status(400).json({ error: "invalid refresh token" });
+              } else {
+                let token = jwt.sign(
+                  { data :decode},
+                  process.env.jwt_secret as string,
+                  { expiresIn: "30min" }
+                );
+                res.status(200).json({ accesToken: token /*,user:userData*/ });
+              }
+            }
+          } catch (error:any) {
+            res.status(400).json({ error: error.message });
+          }
+        }
+      };
 
     public logoutController =(req: Request, res: Response)=>{
         try {
@@ -310,7 +339,7 @@ class AuthController{
         else if(userResponse.error || userResponse.status == 400){
             return {message:userResponse.error,status:userResponse.status}
         }else{
-            permission[0]["userId"] = userResponse.id;
+            permission[0]["authId"] = userResponse.id;
             let permissionResponse = await this.permissionService.CreatePermission(permission[0])
             if(permissionResponse == null || permissionResponse == undefined){
                 return {message:"Something went wrong please try again",status:userResponse.status}
@@ -331,7 +360,7 @@ class AuthController{
                 let response = await this.permissionService.DeletePermissionByUserId(id);
                 console.log("this is the permission response",response)
                 if(response > 0){
-                    permission[0]["userId"] = id;
+                    permission[0]["authId"] = id;
                     let permissionResponse = await this.permissionService.CreatePermission(permission[0])
                     if(permissionResponse == null || permissionResponse == undefined){
                         return {message:"Something went wrong please try again",status:400}

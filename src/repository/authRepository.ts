@@ -1,6 +1,7 @@
 import auth from "../models/auth";
 import { Model, Op } from "sequelize";
 import { UserType, user } from "../utils/types/userTypes";
+import permissions from "../models/permission";
 
 class AuthRepository {
 
@@ -24,6 +25,11 @@ class AuthRepository {
         return await auth.findAndCountAll({
             offset:page,
             limit:limit,
+            include:[
+                {
+                    model:permissions
+                }
+            ]
         });
     }
 

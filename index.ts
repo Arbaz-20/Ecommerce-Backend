@@ -6,6 +6,8 @@ import bodyParser from "body-parser";
 import AuthRouter from "./src/routes/authRoutes";
 import ProductRouter from "./src/routes/productRoutes";
 import OrderRouter from "./src/routes/orderRoutes";
+import CategoryRouter from "./src/routes/categoryRoutes";
+import setAssociations from "./src/models/association";
 
 
 db.sync({alter:true}).then(()=>{
@@ -13,6 +15,7 @@ db.sync({alter:true}).then(()=>{
 }).catch((error)=>{
     console.log(error);
 })
+setAssociations()
 
 
 dotenv.config()
@@ -25,6 +28,7 @@ app.use(bodyParser())
 app.use("/api/auth",AuthRouter);
 app.use("/api/product",ProductRouter);
 app.use("/api/order",OrderRouter);
+app.use("/api/category",CategoryRouter);
 
 app.use("/src/utils/upload",express.static("src/utils/upload"))
 

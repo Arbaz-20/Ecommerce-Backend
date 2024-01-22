@@ -1,5 +1,6 @@
 import { Sequelize,DataTypes} from "sequelize";
 import db from "../config/database";
+import auth from "./auth";
 
 const permissions = db.define("permissions",{
     id:{
@@ -8,8 +9,11 @@ const permissions = db.define("permissions",{
         allowNull:false,
         primaryKey:true
     },
-    userId:{
+    authId:{
         type:DataTypes.UUID,
+        references:{
+            model:auth
+        }
     },
     create:{
         type:DataTypes.BOOLEAN,
