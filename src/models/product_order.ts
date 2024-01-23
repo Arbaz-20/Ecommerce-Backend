@@ -1,5 +1,7 @@
 import { DataTypes} from "sequelize";
 import db from "../config/database";
+import product from "./product";
+import order from "./order";
 
 const product_order = db.define("product_order",{
     id:{
@@ -11,33 +13,39 @@ const product_order = db.define("product_order",{
 
     productId:{
         type:DataTypes.UUID,
-        defaultValue:DataTypes.UUIDV4(),
-        allowNull:false,
-        primaryKey:true
+        references:{
+            model:product,
+            key:"id"
+        }
     },
 
     orderId:{
         type:DataTypes.UUID,
-        defaultValue:DataTypes.UUIDV4(),
-        allowNull:false,
-        primaryKey:true
+        references:{
+            model:order,
+            key:"id"
+        }
     },
 
     product_quantity:{
-        type:DataTypes.UUID,
-        defaultValue:DataTypes.UUIDV4(),
-        allowNull:false,
-        primaryKey:true
+        type:DataTypes.UUID
     },
 
     product_colour:{
-        type:DataTypes.UUID,
-        defaultValue:DataTypes.UUIDV4(),
-        allowNull:false,
-        primaryKey:true
+        type:DataTypes.UUID
     },
     discount:{
         type:DataTypes.FLOAT
+    },
+    createdAt:{
+        type:DataTypes.DATE,
+        allowNull:false,
+        defaultValue: db.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt:{
+        type:DataTypes.DATE,
+        allowNull:false,
+        defaultValue: db.literal('CURRENT_TIMESTAMP')
     }
 });
 

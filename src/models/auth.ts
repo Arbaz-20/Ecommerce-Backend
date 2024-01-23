@@ -55,7 +55,7 @@ const auth = db.define("auths",{
         type:DataTypes.INTEGER,
     },
     country:{
-        type:DataTypes.ENUM,
+        type:DataTypes.STRING,
         values:countries,
         get() {
             let country = this.getDataValue('country');

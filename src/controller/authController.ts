@@ -241,7 +241,7 @@ class AuthController{
             try {
                 let userResponse : Model<user> | {error ?:string,status?:number } | null = await this.auth_service.GetUserById(id);
                 if(userResponse == null || userResponse == undefined){
-                    res.status(400).json({error:"Something went wrong please try again"});
+                    res.status(400).json({error:"No User Exists"});
                 }
                 else{
                     res.status(200).json({data: userResponse});

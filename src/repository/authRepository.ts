@@ -18,7 +18,9 @@ class AuthRepository {
     }
 
     public GetUserById = async (id:string):Promise<Model<user>| null |{error?:string,status?:number}> =>{
-        return await auth.findByPk(id);
+        return await auth.findByPk(id,{
+            include:[{model:permissions,attributes:{exclude:["authId","createdAt","updatedAt"]}}],
+        });
     }
 
     public GetAllUsers = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {

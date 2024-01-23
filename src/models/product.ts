@@ -1,5 +1,6 @@
 import { Sequelize,DataTypes} from "sequelize";
 import db from "../config/database";
+import colour from "./colour";
 
 const product = db.define("product",{
     id:{
@@ -27,9 +28,6 @@ const product = db.define("product",{
     },
     quantity:{
         type:DataTypes.INTEGER
-    },
-    colour:{
-        type:DataTypes.STRING
     },
     description:{
         type:DataTypes.STRING

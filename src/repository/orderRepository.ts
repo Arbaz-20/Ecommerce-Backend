@@ -1,5 +1,7 @@
 import order from "../models/order";
 import { Op } from "sequelize";
+import product from "../models/product";
+import product_order from "../models/product_order";
 
 class OrderRepository {
 
@@ -24,6 +26,7 @@ class OrderRepository {
             offset:page,
             limit:limit,
             order:[["updatedAt","DESC"]],
+            include:[product]
         });
     }
 

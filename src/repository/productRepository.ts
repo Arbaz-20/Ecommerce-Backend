@@ -1,3 +1,4 @@
+import order from "../models/order";
 import product from "../models/product";
 import { Op } from "sequelize";
 

@@ -12,6 +12,7 @@ class OrderController {
 
     public CreateOrder = async (req:Request,res:Response)=> {
         let OrderData = req.body
+        let product = OrderData["product"]
         console.log(OrderData)
         if(OrderData == null || OrderData == undefined){
             res.status(400).json({error : "please provide the required fields"})
@@ -19,9 +20,12 @@ class OrderController {
             try {
                 let orderResponse : { error ? : string,status ? : number } | any  = await this.order_service?.CreateOrder(OrderData) 
                 if(orderResponse == null || orderResponse == undefined){
-                    res.status(400).json({error:"Something went wrong please try again"});
+                    res.status(400).json({error:"Order Cannot be created please try again"});
                 }
                 else{
+                    // for await(let product_order of product){
+                        
+                    // }
                     res.status(200).json({message:"order created succcesfully",data: orderResponse});
                 }
             } catch (error:any) {
