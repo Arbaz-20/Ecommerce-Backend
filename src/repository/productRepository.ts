@@ -22,6 +22,7 @@ class ProductRepository {
         return await product.findAndCountAll({
             offset:page,
             limit:limit,
+            order:[["updatedAt","DESC"]],
         });
     }
 

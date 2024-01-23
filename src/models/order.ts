@@ -43,7 +43,7 @@ const order = db.define("orders",{
         type:DataTypes.ENUM,
         values:payment_status,
         get() {
-            let payment_status = this.getDataValue('payment_status');
+            let payment_status= this.getDataValue('payment_status');
             let data = payment_status.includes(payment_status)
             return(data == false ?"invalid status":payment_status)
         }
@@ -69,11 +69,13 @@ const order = db.define("orders",{
     },
     createdAt:{
         type:DataTypes.DATE,
-        defaultValue: Sequelize.fn('now')
+        allowNull:false,
+        defaultValue: db.literal('CURRENT_TIMESTAMP')
     },
     updatedAt:{
         type:DataTypes.DATE,
-        defaultValue: Sequelize.fn('now')
+        allowNull:false,
+        defaultValue: db.literal('CURRENT_TIMESTAMP')
     }
 });
 export default order;

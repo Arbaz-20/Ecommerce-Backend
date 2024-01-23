@@ -29,7 +29,8 @@ class AuthRepository {
                 {
                     model:permissions
                 }
-            ]
+            ],
+            order:[["updatedAt","DESC"]],
         });
     }
 

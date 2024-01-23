@@ -30,6 +30,7 @@ class PermissionRepository{
         return await permission.findAndCountAll({
             offset:page,
             limit:limit,
+            order:[["updatedAt","DESC"]],
         });
     }
 

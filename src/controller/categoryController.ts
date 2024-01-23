@@ -111,37 +111,37 @@ class categoryController {
     }
 
     public GetAllCategories = async (req : Request, res : Response) => {
-    let page = req.query.page as unknown as number;
-    let limit = req.query.limit as unknown as number;
-    try {
-        let categoryResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.category_service.GetAllCategories(Number(page),limit);
-        if(categoryResponse == null || categoryResponse == undefined){
-            res.status(400).json({error:"Something went wrong please try again"});
-        }else{
-            res.status(200).json({data : categoryResponse});
+        let page = req.query.page as unknown as number;
+        let limit = req.query.limit as unknown as number;
+        try {
+            let categoryResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.category_service.GetAllCategories(Number(page),limit);
+            if(categoryResponse == null || categoryResponse == undefined){
+                res.status(400).json({error:"Something went wrong please try again"});
+            }else{
+                res.status(200).json({data : categoryResponse});
+            }
+        } catch (error:any) {
+            res.status(400).json({error:error.message});
         }
-    } catch (error:any) {
-        res.status(400).json({error:error.message});
-    }
     }
 
     public DeleteCategory = async(req:Request, res:Response)  => {
-    let id : string = req.params?.id;
-    try {
-        let categoryResponse : {error?:string,status?:number} | any | number|undefined = await this.category_service.DeleteCategory(id);
-        console.log(categoryResponse)
-        if(categoryResponse == null || categoryResponse == undefined){
-            res.status(400).json({error:"Something went wrong please try again"});
-        }else if (categoryResponse.error || categoryResponse.status == 400){
-            res.status(categoryResponse.status as number).json({error:categoryResponse.error});
+        let id : string = req.params?.id;
+        try {
+            let categoryResponse : {error?:string,status?:number} | any | number|undefined = await this.category_service.DeleteCategory(id);
+            console.log(categoryResponse)
+            if(categoryResponse == null || categoryResponse == undefined){
+                res.status(400).json({error:"Something went wrong please try again"});
+            }else if (categoryResponse.error || categoryResponse.status == 400){
+                res.status(categoryResponse.status as number).json({error:categoryResponse.error});
+            }
+            else{
+                res.status(200).json({message:"deleted successfully"})
+            }
+        } catch (error : any) {
+            console.log(error)
+            res.status(400).json({error:error.message})
         }
-        else{
-            res.status(200).json({message:"deleted successfully"})
-        }
-    } catch (error : any) {
-        console.log(error)
-        res.status(400).json({error:error.message})
-    }
     
     }
 

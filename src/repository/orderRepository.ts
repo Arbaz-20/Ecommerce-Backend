@@ -23,6 +23,7 @@ class OrderRepository {
         return await order.findAndCountAll({
             offset:page,
             limit:limit,
+            order:[["updatedAt","DESC"]],
         });
     }
 

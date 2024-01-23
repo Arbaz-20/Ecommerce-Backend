@@ -37,11 +37,13 @@ const permissions = db.define("permissions",{
     },
     createdAt:{
         type:DataTypes.DATE,
-        defaultValue: Sequelize.fn('now')
+        allowNull:false,
+        defaultValue: db.literal('CURRENT_TIMESTAMP')
     },
     updatedAt:{
         type:DataTypes.DATE,
-        defaultValue: Sequelize.fn('now')
+        allowNull:false,
+        defaultValue: db.literal('CURRENT_TIMESTAMP')
     }
 });
 export default permissions
