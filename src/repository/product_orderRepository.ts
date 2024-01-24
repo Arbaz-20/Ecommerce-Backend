@@ -1,5 +1,7 @@
 import product_order from "../models/product_order";
 import { Op } from "sequelize";
+import { productOrderData } from "../utils/types/orderTypes";
+import { Model } from "sequelize";
 
 class product_orderRepository {
     constructor(){
@@ -31,6 +33,10 @@ class product_orderRepository {
 
     public DeleteProduct_order = async(id:string) :Promise<number> => {
         return await product_order.destroy({where:{id:id}});
+    }
+
+    public DeleteProduct_orderByOrderId = async (orderId: string): Promise<number | {error?:string,status?:number} | undefined> => {
+        return await product_order.destroy({where:{orderId:orderId}})    
     }
 
     public BulkDeleteProduct_order = async(ids:string[]) :Promise<number> => {

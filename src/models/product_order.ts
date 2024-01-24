@@ -28,11 +28,11 @@ const product_order = db.define("product_order",{
     },
 
     product_quantity:{
-        type:DataTypes.UUID
+        type:DataTypes.BIGINT
     },
 
     product_colour:{
-        type:DataTypes.UUID
+        type:DataTypes.STRING
     },
     discount:{
         type:DataTypes.FLOAT

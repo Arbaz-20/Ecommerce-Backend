@@ -10,6 +10,8 @@ interface IProductService{
 
     GetProductByName(name:string) :Promise<object[] | object>
 
+    GetProductNameById(id: string): Promise< object|null >
+
     DeleteProduct(id:string) :Promise<number |{error?:string,status?:number}|undefined>
 
     BulkDeleteProduct (ids:string[]) : Promise<number>

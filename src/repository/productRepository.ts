@@ -31,6 +31,10 @@ class ProductRepository {
         return await product.findAll({where:{name:{[Op.iLike]:`%${name}%`}}})
     }
 
+    public GetProductNameById = async (id:string) :Promise<object|null > => {
+        return await product.findByPk(id,{attributes:["name"]})
+    }
+
     public DeleteProduct = async(id:string) :Promise<number> => {
         return await product.destroy({where:{id:id}});
     }

@@ -37,6 +37,15 @@ class ProductServiceImplementation implements IProductService{
         }
     }
     
+    public GetProductNameById = async (id: string): Promise< object|null > => {
+        if(id == null ||id == undefined){
+            return {error:"id is required",status:400}
+        }else{
+            let response = await this.repository.GetProductNameById(id);
+            return response;
+        }
+    }
+
     public GetAllProduct = async (page: number, limit: number): Promise<{ rows: object[]; count: number; }>=> {
         if(page == null || page == undefined || limit == null || limit == undefined || page == 0 || limit == 0){
             page = 0;

@@ -1,5 +1,8 @@
 import IProduct_orderService from "../interface/IProduct_orderService";
 import product_orderRepository from "../../repository/product_orderRepository";
+import { productOrderData } from "../../utils/types/orderTypes";
+import { ErrorStatus } from "../../utils/types/userTypes";
+import { Model } from "sequelize";
 class Product_orderServiceImplementation implements IProduct_orderService{
     
     repository: product_orderRepository;
@@ -9,12 +12,12 @@ class Product_orderServiceImplementation implements IProduct_orderService{
     }
 
     
-    public createProduct_order = async (product_orderData: object): Promise<object> =>{
+    public createProduct_order = async (product_orderData: object): Promise<productOrderData |ErrorStatus> =>{
         if(product_orderData == null || product_orderData == undefined){
             return {error:"product_orderData not found",status:400}
         }else{
-            let response = await this.repository.createProduct_order(product_orderData);
-            return response;
+            let response :object = await this.repository.createProduct_order(product_orderData);
+            return response as productOrderData;
         }
     }
     
@@ -67,6 +70,16 @@ class Product_orderServiceImplementation implements IProduct_orderService{
         
     }
     
+    public DeleteProduct_orderByOrderId = async (orderId: string): Promise<number | {error?:string,status?:number} | undefined> => {
+        if(orderId == null || orderId == undefined){
+            return {error:"id is required",status:400}
+        }else{
+            let response = await this.repository.DeleteProduct_orderByOrderId(orderId);
+            return response;
+        }
+        
+    }
+
     public BulkDeleteProduct_order = async (ids: string[]): Promise<number>=> {
         let response = await this.repository.BulkDeleteProduct_order(ids);
         return response;
