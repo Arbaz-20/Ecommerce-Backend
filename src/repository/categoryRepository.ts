@@ -25,6 +25,7 @@ class categoryRepository {
         return await category.findAndCountAll({
             offset:page,
             limit:limit,
+            distinct:true,
             order:[["updatedAt","DESC"]],
             include:[product]
         });

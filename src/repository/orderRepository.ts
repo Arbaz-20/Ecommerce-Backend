@@ -25,6 +25,7 @@ class OrderRepository {
         return await order.findAndCountAll({
             offset:page,
             limit:limit,
+            distinct:true,
             order:[["updatedAt","DESC"]],
             include:[product]
         });
