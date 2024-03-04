@@ -61,13 +61,13 @@ class AuthServiceImplementation implements IAuthService{
         }
     }
     
-    public GetAllUsers = async (page: number, limit: number): Promise<{ rows: object[]; count: number; }>=> {
+    public GetAllUsers = async (page: number, limit: number,name:string): Promise<{ rows: object[]; count: number; }>=> {
         if(page == null || page == undefined || limit == null || limit == undefined || page == 0 || limit == 0){
             page = 0;
             limit = 10;
         }
         let offset = (page - 1)*limit;
-        let response = await this.repository.GetAllUsers(offset,limit);
+        let response = await this.repository.GetAllUsers(offset,limit,name);
         return response;    
     }
     

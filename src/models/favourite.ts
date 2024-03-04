@@ -1,25 +1,20 @@
-import { Sequelize,DataTypes} from "sequelize";
+import {DataTypes, Model} from "sequelize";
 import db from "../config/database";
+import auth from "./auth";
 
-const category = db.define("category",{
+const favourites = db.define('favourites',{
     id:{
         type:DataTypes.UUID,
-        defaultValue:DataTypes.UUIDV4(), 
+        defaultValue:DataTypes.UUIDV4(),
         allowNull:false,
         primaryKey:true
     },
-    name:{
-        type:DataTypes.STRING,
-        unique:true,
-        allowNull:false
-    },
-    description:{
-        type:DataTypes.STRING,
-        allowNull:false
-    },
-    type:{
-        type:DataTypes.STRING,
-        allowNull:false
+    userId:{
+        type:DataTypes.UUID,
+        references:{
+            model:auth,
+            key:"id"
+        }
     },
     createdAt:{
         type:DataTypes.DATE,
@@ -33,4 +28,4 @@ const category = db.define("category",{
     }
 });
 
-export default category
+export default favourites

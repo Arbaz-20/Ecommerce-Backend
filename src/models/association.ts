@@ -4,6 +4,7 @@ import order from "./order";
 import permissions from "./permission";
 import product from "./product";
 import product_order from "./product_order";
+import favourites from "./favourite";
 
 const associations = ()=> {
     
@@ -15,6 +16,9 @@ const associations = ()=> {
 
     product.belongsToMany(order,{through:product_order,onDelete:"CASCADE",onUpdate:"CASCADE",foreignKey:"productId"});
     order.belongsToMany(product,{through:product_order,onDelete:"CASCADE",onUpdate:"CASCADE",foreignKey:"orderId"});
+
+    product.hasMany(favourites,{foreignKey:"productId",onUpdate:"CASCADE",onDelete:"CASCADE"});
+    favourites.belongsTo(product);
 
 }
 

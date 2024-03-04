@@ -1,72 +1,32 @@
 import OrderServiceImplementation from "../service/implementation/OrderServiceIMplementation"
 import { Request,Response } from "express"
 import { ErrorStatus } from "../utils/types/userTypes"
-import Product_orderServiceImplementation from '../service/implementation/Product_orderServiceImplementation'
-import ProductServiceImplementation from "../service/implementation/ProductServiceImplementation"
-import {productOrderData} from '../utils/types/orderTypes'
+
 import { Model } from "sequelize"
 
 class OrderController {
     order_service: OrderServiceImplementation
-    product_orderService: Product_orderServiceImplementation
-    product_service: ProductServiceImplementation
+  
 
     constructor(){
         this.order_service = new OrderServiceImplementation()
-        this.product_orderService = new Product_orderServiceImplementation()
-        this.product_service = new ProductServiceImplementation()
     }
 
     public CreateOrder = async (req:Request,res:Response)=> {
-        let OrderData = req.body
-        let product = OrderData["product"]
-        let success :Array<string> = []
-        let error :Array<string> = []
+        let OrderData = req.body;
         if(OrderData == null || OrderData == undefined){
-            res.status(400).json({error : "please provide the required fields"})
+            res.status(400).json({error: "please provide data"})
         }else{
             try {
-                let orderResponse : { error ? : string,status ? : number } | any  = await this.order_service?.CreateOrder(OrderData) 
+                let orderResponse = await this.order_service.CreateOrder(OrderData)
                 if(orderResponse == null || orderResponse == undefined){
-                    res.status(400).json({error:"Order Cannot be created please try again"});
-                }
-                else{
-                    for await(let product_order of product){
-                        let productOrderData : productOrderData = {
-                            productId:product_order.productId,
-                            orderId:orderResponse.id,
-                            product_quantity:product_order.product_quantity,
-                            product_colour:product_order.product_colour,
-                            discount:product_order.discount
-                        }   
-                        let response : productOrderData | ErrorStatus | any = await this.product_orderService.createProduct_order(productOrderData);
-                        if(response){
-                            let product:{name?:string|undefined}|null = await this.product_service.GetProductNameById(response.productId)
-                            product != undefined  ? success.push(`${product.name} removed Successfully`):success.push(`product removed Successfully`);
-                        }else{
-                            error.push(`${product.name} cannot be removed`);
-                        }
-                    }
-                    if(success.length > 0 && error.length == 0){
-                        res.status(200).json({message:"order created succcesfully",data: orderResponse});
-                    }else if(success.length > 0 && error.length > 0){
-                        let deleteResponse :number | {error?:string,status?:number} | undefined = await this.product_orderService.DeleteProduct_orderByOrderId(orderResponse.id);
-                        if(typeof deleteResponse == "number"){
-                            if(deleteResponse > 0){
-                                let response = await this.order_service.DeleteOrder(orderResponse.id);
-                                if(response > 0){
-                                    res.status(400).json({error:"Order Cannot be placed Please try again"});
-                                }
-                            }
-                        }
-                    }else{
-                        res.status(400).json({error:"Order Cannot be placed Please try again"});
-                    }
-                    
+                    res.status(200).json({error : 'something went wrong please try again'})
+                }else{
+                    res.status(200).json({message :" order created succesfully"})
                 }
             } catch (error:any) {
-                console.log(error);
                 if(error.errors){
+                    console.log(error)
                     let validationerror : Array<object> = [];
                     for await(let response of error.errors){
                         let obj:{path : string , message : string}={
@@ -93,16 +53,11 @@ class OrderController {
         res.status(400).json({error:"invalid id"})
        }else{
         try {
-            let isExist = await this.order_service.GetOrderById(id);
-            if(isExist == null || isExist == undefined){
-                res.status(400).json({error: "please select user properly"})
+            let orderresponse = await this.order_service.UpdateOrder(id, OrderData);
+            if(orderresponse == null || orderresponse == undefined){
+                res.status(400).json({error : 'something went wrong please try again'})
             }else{
-                let orderresponse = await this.order_service.UpdateOrder(id, OrderData);
-                if(orderresponse == null || orderresponse == undefined){
-                    res.status(400).json({error : 'something went wrong please try again'})
-                }else{
-                   res.status(200).json({message : " updated order successfully"}) 
-                }
+                res.status(200).json({message : " updated order successfully"}) 
             }
         } catch ( error: any ) {
             if(error.errors){

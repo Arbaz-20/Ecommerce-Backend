@@ -23,13 +23,20 @@ class AuthRepository {
         });
     }
 
-    public GetAllUsers = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
+    public GetAllUsers = async (page:number,limit:number,name:string) : Promise<{rows:Array<object>; count: number}> => {
         return await auth.findAndCountAll({
             offset:page,
             limit:limit,
             include:[
                 {
-                    model:permissions
+                    model:permissions,
+                    where:{
+                        [Op.or]:{
+                            name:{
+                                [Op.iLike]:`%${name}%`
+                            }
+                        }
+                    }
                 }
             ],
             order:[["updatedAt","DESC"]],

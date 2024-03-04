@@ -9,7 +9,7 @@ interface ICategoryService{
 
     GetCategoryById(id:string):Promise<Model<categoryType>|null|ErrorStatus >
 
-    GetAllCategories(page:number,limit:number) : Promise<{rows:Array<object>; count: number}>
+    GetAllCategories(page:number,limit:number,keyword:string) : Promise<{rows:Array<object>; count: number}>
 
     GetCategoryByName(name:string) :Promise<object[] | object>
 

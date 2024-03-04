@@ -9,7 +9,7 @@ interface IAuthService{
 
     GetUserById(id:string):Promise<Model<user>|null|ErrorStatus >
 
-    GetAllUsers(page:number,limit:number) : Promise<{rows:Array<object>; count: number}>
+    GetAllUsers(page:number,limit:number,name:string) : Promise<{rows:Array<object>; count: number}>
 
     GetUserByName(name:string) :Promise<object[] | object>
 

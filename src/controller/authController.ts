@@ -255,8 +255,10 @@ class AuthController{
     public GetAllUsers = async (req : Request,res:Response) => {
         let page = req.query.page as unknown as number;
         let limit = req.query.limit as unknown as number;
+        let name = req.query.name as unknown as string;
+        name = name == null || name == undefined ? "": name
         try {
-            let userResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.auth_service.GetAllUsers(Number(page),limit);
+            let userResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.auth_service.GetAllUsers(Number(page),limit,name);
             if(userResponse == null || userResponse == undefined || page == undefined || limit == undefined||page == null || limit == null){
                 res.status(400).json({error:"Something went wrong please try again"});
             }else{

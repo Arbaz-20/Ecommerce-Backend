@@ -21,13 +21,21 @@ class categoryRepository {
         return await category.findByPk(id);
     }
 
-    public GetAllCategories = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
+    public GetAllCategories = async (page:number,limit:number,keyword:string) : Promise<{rows:Array<object>; count: number}> => {
         return await category.findAndCountAll({
             offset:page,
             limit:limit,
             distinct:true,
             order:[["updatedAt","DESC"]],
-            include:[product]
+            include:[{model:product,
+                where:{
+                    [Op.or]:{
+                        name:{
+                            [Op.iLike]:`%${keyword}%`
+                        }
+                    }
+                }
+            }]
         });
     }
 
