@@ -11,15 +11,15 @@ class favouritesController {
 
     public createfavourites = async(req : Request, res: Response) => {
         let favouritesData = req.body;
-        if(favouritesData.user_id == null || favouritesData.user_id == undefined ||favouritesData.productId == null || favouritesData.productId == undefined){
+        if(favouritesData.authId == null || favouritesData.authId == undefined ||favouritesData.productId == null || favouritesData.productId == undefined){
            res.status(400).json({error : "Please provide user id or product id in order to mark favourite"});
         }else{
             try {
                 let data = {
-                    userId :favouritesData.user_id,
+                    authId :favouritesData.authId,
                     productId:favouritesData.productId
                 }
-                let isExist = await this.favouritess_Service.GetfavouritesByUserIdAndProductId(favouritesData.user_id,favouritesData.productId);
+                let isExist = await this.favouritess_Service.GetfavouritesByauthIdAndProductId(favouritesData.authId,favouritesData.productId);
                 if(isExist == null || isExist == undefined){
                     let response = await this.favouritess_Service.createfavourites(data);
                     if(response){
@@ -126,11 +126,11 @@ class favouritesController {
 
     }
 
-    public GetAllFavouritesByUserId = async(req:Request,res:Response) => {
-        let user_id = req.params.id
+    public GetAllFavouritesByauthId = async(req:Request,res:Response) => {
+        let authId = req.params.id
         let page = req.query.page as unknown as number
         let limit = req.query.limit as unknown as number
-        if(user_id == null || user_id == undefined || user_id == ":id"){
+        if(authId == null || authId == undefined || authId == ":id"){
             res.status(400).json({error:"please provide id"})
         }else{
             if(page == undefined && limit == undefined){
@@ -138,7 +138,7 @@ class favouritesController {
                 limit = 10;   
             }   
             let offset = (page - 1)*limit;
-            let response = await this.favouritess_Service.GetFavouritesByUserId(user_id,offset,limit);
+            let response = await this.favouritess_Service.GetFavouritesByauthId(authId,offset,limit);
             if(response.count == 0 || response.rows.length == 0){
                 res.status(200).json({message:"No Data found",data:response})
             }else{

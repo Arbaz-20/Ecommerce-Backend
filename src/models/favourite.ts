@@ -9,13 +9,6 @@ const favourites = db.define('favourites',{
         allowNull:false,
         primaryKey:true
     },
-    userId:{
-        type:DataTypes.UUID,
-        references:{
-            model:auth,
-            key:"id"
-        }
-    },
     createdAt:{
         type:DataTypes.DATE,
         allowNull:false,

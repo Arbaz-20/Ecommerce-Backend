@@ -1,8 +1,5 @@
 import {DataTypes} from "sequelize";
 import db from "../config/database";
-import auth from "./auth";
-import product from "./product";
-import { toDefaultValue } from "sequelize/types/utils";
 
 
 const cart = db.define(`cart`,{
@@ -36,6 +33,9 @@ const cart = db.define(`cart`,{
     total_price:{
         type:DataTypes.FLOAT,
         allowNull:false
+    },
+    date:{
+        type:DataTypes.DATEONLY
     },
     createdAt:{
         type:DataTypes.DATE,

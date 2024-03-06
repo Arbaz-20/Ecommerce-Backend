@@ -1,6 +1,7 @@
 import { Model, Op } from "sequelize";
 import favouritess from "../models/favourite";
 import product from "../models/product";
+import auth from "../models/auth";
 
 class favouritessRepository {
 
@@ -32,6 +33,9 @@ class favouritessRepository {
                         }
                     }
                 }
+                
+            },{
+                model:auth
             }]
         });
     }
@@ -40,19 +44,19 @@ class favouritessRepository {
         return await favouritess.findAll({where:{name:{[Op.iLike]:`%${name}%`}}})
     }
 
-    public GetfavouritesByUserIdAndProductId = async (user_id:string,product_id:string) :Promise<object | null > => {
+    public GetfavouritesByauthIdAndProductId = async (authId:string,product_id:string) :Promise<object | null > => {
         return await favouritess.findOne({where:{
             [Op.and]:{
-                userId:user_id,
+                authId:authId,
                 productId:product_id
             }
         }})
     }
 
-    public GetFavouritesByUserId = async (user_id:string,page:number,limit:number):Promise<{count:number,rows:Model<any,any>[]}> =>{
+    public GetFavouritesByauthId = async (authId:string,page:number,limit:number):Promise<{count:number,rows:Model<any,any>[]}> =>{
         return await favouritess.findAndCountAll({
             where:{
-                userId:user_id
+                authId:authId
             },
             distinct:true,
             offset:page,

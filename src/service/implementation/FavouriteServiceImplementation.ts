@@ -52,13 +52,13 @@ class favouritesServiceImplementation implements IfavouritesService{
         }
     }
 
-    public GetfavouritesByUserIdAndProductId = async (user_id:string,product_id:string) :Promise<object | null > => {
-        let response = await this.repository.GetfavouritesByUserIdAndProductId(user_id,product_id)
+    public GetfavouritesByauthIdAndProductId = async (authId:string,product_id:string) :Promise<object | null > => {
+        let response = await this.repository.GetfavouritesByauthIdAndProductId(authId,product_id)
         return response
     }
 
-    public GetFavouritesByUserId = async(user_id:string,page:number,limit:number):Promise<{count:number,rows:Model<any,any>[]}> =>{
-        let response = await this.repository.GetFavouritesByUserId(user_id,page,limit)
+    public GetFavouritesByauthId = async(authId:string,page:number,limit:number):Promise<{count:number,rows:Model<any,any>[]}> =>{
+        let response = await this.repository.GetFavouritesByauthId(authId,page,limit)
         return response
     }
     public Deletefavourites = async (id: string): Promise<number|{error?:string,status?:number}|any>=> {

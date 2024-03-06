@@ -1,9 +1,6 @@
 import OrderServiceImplementation from "../service/implementation/OrderServiceIMplementation"
 import { Request,Response } from "express"
 import { ErrorStatus } from "../utils/types/userTypes"
-
-import { Model } from "sequelize"
-
 class OrderController {
     order_service: OrderServiceImplementation
   

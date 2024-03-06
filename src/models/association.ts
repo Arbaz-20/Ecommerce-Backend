@@ -20,6 +20,9 @@ const associations = ()=> {
     product.hasMany(favourites,{foreignKey:"productId",onUpdate:"CASCADE",onDelete:"CASCADE"});
     favourites.belongsTo(product);
 
+    auth.hasMany(favourites,{foreignKey:"authId",onUpdate:"CASCADE",onDelete:"CASCADE"});
+    favourites.belongsTo(auth);
+
 }
 
 export default associations;

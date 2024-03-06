@@ -27,19 +27,17 @@ class AuthRepository {
         return await auth.findAndCountAll({
             offset:page,
             limit:limit,
-            include:[
-                {
-                    model:permissions,
-                    where:{
-                        [Op.or]:{
-                            name:{
-                                [Op.iLike]:`%${name}%`
-                            }
-                        }
+            where:{
+                [Op.or]:{
+                    name:{
+                        [Op.iLike]:`%${name}%`
                     }
                 }
-            ],
-            order:[["updatedAt","DESC"]],
+            },
+            include:[{
+                model:permissions,
+            }],
+            order:[["updatedAt","DESC"]]
         });
     }
 
