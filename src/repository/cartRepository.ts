@@ -1,5 +1,7 @@
-import { Op } from "sequelize";
+import { Model, Op } from "sequelize";
 import cart from "../models/cart";
+import { CartType } from "../utils/types/cartType";
+import product from "../models/product";
 
 
 class cartRepository {
@@ -14,20 +16,26 @@ class cartRepository {
     public updateCart = async (id:string,cartdata:object|any ):Promise<[affectedCount?:number|undefined]>=>{
         return await cart.update(cartdata,{where:{id:id}});
     }
-    public GetCartById = async (id:string):Promise <object | null |{error?:string,status?:number}> =>{
-        return await cart.findByPk(id);
+    public GetCartById = async (id:string):Promise <CartType |{error?:string,status?:number}|null> =>{
+        return await cart.findByPk(id,{
+            include:[{model:product,as:"cartproduct"}]
+        }) as CartType;
     }
-    public GetCartByUserId =async (user_id:string):Promise<{rows:Array<object>; count:number}>=>{
+    public GetCartByUserId =async (user_id:string):Promise<{rows:Array<object>; count:number}|{rows:Array<object>; count:number,subtotal:number}>=>{
         return await cart.findAndCountAll({
             where:{
                 user_id:user_id
-            }
+            },
+            include:[{model:product,attributes:{exclude:["createdAt","categoryId"]}}],
+            order:[["updatedAt","DESC"]]
         });
     }
     public GetAllCarts = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
         return await cart.findAndCountAll({
             offset:page,
-            limit:limit
+            limit:limit,
+            include:[{model:product,attributes:{exclude:["createdAt","categoryId"]}}],
+            order:[["updatedAt","DESC"]]
         });
     }
 

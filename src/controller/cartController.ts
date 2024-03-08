@@ -1,6 +1,8 @@
 import { Request,Response } from "express"
 import { ErrorStatus} from "../utils/types/userTypes";
 import CartServiceImplementation from "../service/implementation/CartServiceImplementation";
+import { CartType } from "../utils/types/cartType";
+import { Model } from "sequelize";
 
 class CartController {
     Cart_service: CartServiceImplementation;
@@ -11,8 +13,8 @@ class CartController {
 
     public createCart = async( req : Request, res :Response)=>{
         let cartData = req.body;
-        if(cartData ==  null || cartData == undefined ||cartData == ""){
-            res.status(404).json({error : "Cart not found"})
+        if(cartData ==  null || cartData == undefined ||cartData.productId == null || cartData.productId == undefined || cartData.user_id == undefined || cartData.user_id == null){
+            res.status(404).json({error : "Please provide cart details"})
         }else{
         try {
                 let cartResponse : { error ? : string,status ? : number } | any  = await this.Cart_service.createCart(cartData) 
@@ -92,12 +94,22 @@ class CartController {
             res.status(404).json({error:"please provide id"})
         }else{
             try {
-                let cartResponse :{error ?:string,status?:number } | null = await this.Cart_service.GetCartById(id);
-                if(cartResponse == null || cartResponse == undefined){
-                    res.status(400).json({error:"Something went wrong please try again"});
-                }
-                else{
-                    res.status(200).json({data: cartResponse});
+                let cartResponse: any = await this.Cart_service.GetCartById(id);
+                if (cartResponse == null || cartResponse == undefined) {
+                    res.status(400).json({ error: cartResponse });
+                } else {
+                    cartResponse = JSON.parse(JSON.stringify(cartResponse))
+                    if(typeof(cartResponse) as any){
+                        let total :number = await this.CalculatePrice(cartResponse.price , cartResponse.quantity)
+                        if(typeof total == "number"){
+                            cartResponse["total_price"] = total
+                            res.status(200).json({data:cartResponse});
+                        }else{  
+                            res.status(400).json({error:"Calculation error"});
+                        }
+                    }else{
+                        res.status(400).json({error:"please try again"});
+                    }
                 }
             } catch (error : any) {
                 res.status(400).json({error:error.message});
@@ -111,9 +123,23 @@ class CartController {
             res.status(400).json({error:"please provide id"})
         }else{
             try {
-                let response:{rows:Array<object>; count:number}= await this.Cart_service.GetCartByUserId(user_id)
+                let price:Array<number> = []
+                let response:{rows:Array<CartType>; count:number;subtotal?:number} = await this.Cart_service.GetCartByUserId(user_id)
                 if(response.count > 0){
-                    res.status(200).json({data:response})
+                    for (let data of response.rows){
+                        let calculate_price = await this.CalculatePrice(Number(data.price),Number(data.quantity));
+                        if(typeof calculate_price == "number"){
+                            price.push(calculate_price)
+                        }
+                    }
+                    let total_price = await this.CompleteTotalPrice(price);
+                    if(typeof total_price == "number"){
+                        response = JSON.parse(JSON.stringify(response))
+                        response.subtotal = total_price
+                        res.status(200).json({data:response})
+                    }else{
+                        res.status(400).json({error:"Please try again"})
+                    }
                 }else{
                     res.status(200).json({message:"data not found"})
                 }
@@ -197,7 +223,20 @@ class CartController {
             res.status(400).json({error:error})
         }
     }
- 
+
+    private CalculatePrice = async (price:number,quantity:number):Promise<number> =>{
+        let total_price = price * quantity
+        return total_price
+    }
+    
+    private CompleteTotalPrice = async(price:Array<number>):Promise<number> =>{
+        let total_price = 0
+        for (let current_price of price){
+            total_price = total_price + current_price
+        }
+        return total_price;
+    }
+
 };
     
 export default CartController

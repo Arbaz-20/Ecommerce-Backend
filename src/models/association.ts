@@ -5,6 +5,7 @@ import permissions from "./permission";
 import product from "./product";
 import product_order from "./product_order";
 import favourites from "./favourite";
+import cart from "./cart";
 
 const associations = ()=> {
     
@@ -23,6 +24,8 @@ const associations = ()=> {
     auth.hasMany(favourites,{foreignKey:"authId",onUpdate:"CASCADE",onDelete:"CASCADE"});
     favourites.belongsTo(auth);
 
+    product.hasOne(cart,{onUpdate:"CASCADE",onDelete:"CASCADE"})
+    cart.belongsTo(product)
 }
 
 export default associations;

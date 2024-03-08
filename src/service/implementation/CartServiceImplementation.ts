@@ -1,5 +1,7 @@
 import ICartService from "../interface/ICartService";
 import cartRepository from "../../repository/cartRepository";
+import { CartType } from "../../utils/types/cartType";
+import { Model } from "sequelize";
 
 class CartServiceImplementation implements ICartService{
     
@@ -25,16 +27,18 @@ class CartServiceImplementation implements ICartService{
             return response
         }
     }
-    public GetCartById = async (id: string): Promise<object | { error?: string | undefined; status?: number | undefined; } | null>=> {
-        if(id == null ||id == undefined){
-            return {error:"id is required",status:400}
+    public GetCartById = async (id: string): Promise<CartType |{error?:string,status?:number}|null>=> {
+        if(id !== null ||id !== undefined || id !== ":id"){
+            let response : CartType | {error?:string,status?:number}|null = await this.repository.GetCartById(id);
+            return response
         }else{
-            let response = await this.repository.GetCartById(id);
-            return response;
+            let data:CartType | {error?:string,status?:number}|null = {error:"id is required",status:400}
+            return data
+            
         }
     }
 
-    public GetCartByUserId =async(user_id:string):Promise<{rows:Array<object>; count:number}>=>{
+    public GetCartByUserId =async(user_id:string):Promise<{rows:Array<CartType>; count:number;subtotal?:number}>=>{
         let response = await this.repository.GetCartByUserId(user_id)
         return response;
     }

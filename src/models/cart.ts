@@ -13,15 +13,6 @@ const cart = db.define(`cart`,{
         type:DataTypes.UUID,
         allowNull:false,
     },
-    product_id:{
-        type:DataTypes.UUID,
-        allowNull:false
-
-    },
-    order_id:{
-        type:DataTypes.UUID,
-        allowNull:true
-    },
     price:{
         type:DataTypes.FLOAT,
         allowNull:false
@@ -30,12 +21,9 @@ const cart = db.define(`cart`,{
         type:DataTypes.BIGINT,
         allowNull:false
     },
-    total_price:{
-        type:DataTypes.FLOAT,
-        allowNull:false
-    },
     date:{
-        type:DataTypes.DATEONLY
+        type:DataTypes.DATE,
+        defaultValue:new Date().toISOString()
     },
     createdAt:{
         type:DataTypes.DATE,
