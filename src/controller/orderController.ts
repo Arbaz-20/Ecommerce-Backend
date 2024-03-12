@@ -11,7 +11,7 @@ class OrderController {
 
     public CreateOrder = async (req:Request,res:Response)=> {
         let OrderData = req.body;
-        if(OrderData == null || OrderData == undefined){
+        if(OrderData== null|| OrderData==undefined||OrderData.name== null || OrderData.name == undefined ||OrderData.name==""||OrderData.address==null || OrderData.address== undefined||OrderData.address==""){
             res.status(400).json({error: "please provide data"})
         }else{
             try {
@@ -99,6 +99,8 @@ class OrderController {
     public GetAllOrders = async (req : Request, res : Response) => {
         let page = req.query.page as unknown as number;
         let limit = req.query.limit as unknown as number;
+        // let user = req.user as {id:string,name:string} 
+        // console.log("this is the user id",user.id)
         try {
             let orderResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.order_service.GetAllOrders(Number(page),limit);
             if(orderResponse == null || orderResponse == undefined || page == undefined || limit == undefined||page == null || limit == null){

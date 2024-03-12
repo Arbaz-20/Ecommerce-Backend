@@ -18,13 +18,14 @@ class cartRepository {
     }
     public GetCartById = async (id:string):Promise <CartType |{error?:string,status?:number}|null> =>{
         return await cart.findByPk(id,{
-            include:[{model:product,as:"cartproduct"}]
+            include:[{model:product}]
         }) as CartType;
     }
-    public GetCartByUserId =async (user_id:string):Promise<{rows:Array<object>; count:number}|{rows:Array<object>; count:number,subtotal:number}>=>{
+    public GetCartByUserId = async (user_id:string):Promise<{rows:Array<object>; count:number}|{rows:Array<object>; subtotal:number,count:number}>=>{
         return await cart.findAndCountAll({
             where:{
-                user_id:user_id
+                user_id:user_id,
+                order_id:null
             },
             include:[{model:product,attributes:{exclude:["createdAt","categoryId"]}}],
             order:[["updatedAt","DESC"]]
@@ -32,6 +33,9 @@ class cartRepository {
     }
     public GetAllCarts = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
         return await cart.findAndCountAll({
+            where:{
+                order_id:null
+            },
             offset:page,
             limit:limit,
             include:[{model:product,attributes:{exclude:["createdAt","categoryId"]}}],

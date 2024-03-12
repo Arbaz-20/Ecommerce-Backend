@@ -1,7 +1,8 @@
 import order from "../models/order";
 import { Op } from "sequelize";
+import cart from "../models/cart";
 import product from "../models/product";
-import product_order from "../models/product_order";
+
 
 class OrderRepository {
 
@@ -18,7 +19,9 @@ class OrderRepository {
     }
 
     public GetOrderById = async (id:string):Promise< object | null |{error?:string,status?:number}> =>{
-        return await order.findByPk(id);
+        return await order.findByPk(id,{
+            include:[{model:cart,include:[product]}]
+        });
     }
 
     public GetAllOrders = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
@@ -27,7 +30,7 @@ class OrderRepository {
             limit:limit,
             distinct:true,
             order:[["updatedAt","DESC"]],
-            include:[product]
+            include:[{model:cart,attributes:["quantity","price","user_id"],include:[product]}]
         });
     }
 

@@ -25,6 +25,10 @@ const cart = db.define(`cart`,{
         type:DataTypes.DATE,
         defaultValue:new Date().toISOString()
     },
+    orderId:{
+        type:DataTypes.UUID,
+        allowNull:true
+    },
     createdAt:{
         type:DataTypes.DATE,
         allowNull:false,

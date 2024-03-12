@@ -102,8 +102,8 @@ class CartController {
                     if(typeof(cartResponse) as any){
                         let total :number = await this.CalculatePrice(cartResponse.price , cartResponse.quantity)
                         if(typeof total == "number"){
-                            cartResponse["total_price"] = total
-                            res.status(200).json({data:cartResponse});
+                            //cartResponse["total_price"] = total
+                            res.status(200).json({data:{total_price:total,cartResponse}});
                         }else{  
                             res.status(400).json({error:"Calculation error"});
                         }
@@ -124,7 +124,7 @@ class CartController {
         }else{
             try {
                 let price:Array<number> = []
-                let response:{rows:Array<CartType>; count:number;subtotal?:number} = await this.Cart_service.GetCartByUserId(user_id)
+                let response:{subtotal?:number;rows:Array<CartType>; count:number} = await this.Cart_service.GetCartByUserId(user_id)
                 if(response.count > 0){
                     for (let data of response.rows){
                         let calculate_price = await this.CalculatePrice(Number(data.price),Number(data.quantity));
@@ -136,7 +136,7 @@ class CartController {
                     if(typeof total_price == "number"){
                         response = JSON.parse(JSON.stringify(response))
                         response.subtotal = total_price
-                        res.status(200).json({data:response})
+                        res.status(200).json({count:response.count,subtotal:response.subtotal,rows:response.rows});
                     }else{
                         res.status(400).json({error:"Please try again"})
                     }

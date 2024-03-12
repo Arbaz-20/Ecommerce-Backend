@@ -3,7 +3,6 @@ import category from "./category";
 import order from "./order";
 import permissions from "./permission";
 import product from "./product";
-import product_order from "./product_order";
 import favourites from "./favourite";
 import cart from "./cart";
 
@@ -15,9 +14,6 @@ const associations = ()=> {
     category.hasMany(product,{foreignKey:"categoryId",onUpdate:"CASCADE",onDelete:"CASCADE"});
     product.belongsTo(category);
 
-    product.belongsToMany(order,{through:product_order,onDelete:"CASCADE",onUpdate:"CASCADE",foreignKey:"productId"});
-    order.belongsToMany(product,{through:product_order,onDelete:"CASCADE",onUpdate:"CASCADE",foreignKey:"orderId"});
-
     product.hasMany(favourites,{foreignKey:"productId",onUpdate:"CASCADE",onDelete:"CASCADE"});
     favourites.belongsTo(product);
 
@@ -26,6 +22,9 @@ const associations = ()=> {
 
     product.hasOne(cart,{onUpdate:"CASCADE",onDelete:"CASCADE"})
     cart.belongsTo(product)
+
+    order.hasMany(cart,{foreignKey:"orderId",onUpdate:"CASCADE",onDelete:"CASCADE"});
+    cart.belongsTo(order);
 }
 
 export default associations;

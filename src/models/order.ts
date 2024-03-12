@@ -67,6 +67,9 @@ const order = db.define("orders",{
     discount_price:{
         type:DataTypes.STRING
     },
+    final_price:{
+        type:DataTypes.FLOAT
+    },
     createdAt:{
         type:DataTypes.DATE,
         allowNull:false,
