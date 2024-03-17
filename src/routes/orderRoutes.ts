@@ -8,7 +8,7 @@ let OrderRouter : Router = Router();
 OrderRouter.post("/CreateOrder",orderController.CreateOrder);
 OrderRouter.put("/UpdateOrder/:id",orderController.UpdateOrder);
 OrderRouter.get("/GetOrderById/:id",orderController.GetOrderById);
-OrderRouter.get("/GetAllOrders",isAutheticated,orderController.GetAllOrders);
+OrderRouter.get("/GetAllOrders",orderController.GetAllOrders);
 OrderRouter.delete("/DeleteOrder/:id",orderController.DeleteOrder);
 OrderRouter.delete("/BulkDeleteOrders",orderController.BulkDeleteOrders); 
 

@@ -48,9 +48,6 @@ const order = db.define("orders",{
             return(data == false ?"invalid status":payment_status)
         }
     },
-    GST_tax:{
-        type:DataTypes.STRING
-    },
     delivery_charges:{
         type:DataTypes.INTEGER
     },
@@ -61,13 +58,19 @@ const order = db.define("orders",{
         type:DataTypes.DATE,
         defaultValue: Sequelize.fn('now')
     },
-    order_price:{
+    total_price:{
         type:DataTypes.STRING
     },
     discount_price:{
         type:DataTypes.STRING
     },
+    GST_tax:{
+        type:DataTypes.STRING
+    },
     final_price:{
+        type:DataTypes.FLOAT
+    },
+    total_discount :{
         type:DataTypes.FLOAT
     },
     createdAt:{

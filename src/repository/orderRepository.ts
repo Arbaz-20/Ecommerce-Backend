@@ -25,12 +25,13 @@ class OrderRepository {
     }
 
     public GetAllOrders = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
+        let attributes = ["name","image","quantity","description","price"]
         return await order.findAndCountAll({
             offset:page,
             limit:limit,
             distinct:true,
             order:[["updatedAt","DESC"]],
-            include:[{model:cart,attributes:["quantity","price","user_id"],include:[product]}]
+            include:[{model:cart,attributes:["quantity","price","user_id"],include:[{model:product,attributes:attributes}]}]
         });
     }
 

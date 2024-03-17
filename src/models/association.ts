@@ -23,8 +23,9 @@ const associations = ()=> {
     product.hasOne(cart,{onUpdate:"CASCADE",onDelete:"CASCADE"})
     cart.belongsTo(product)
 
-    order.hasMany(cart,{foreignKey:"orderId",onUpdate:"CASCADE",onDelete:"CASCADE"});
-    cart.belongsTo(order);
+    
+
+
 }
 
 export default associations;

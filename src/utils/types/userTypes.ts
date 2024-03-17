@@ -70,7 +70,8 @@ export type ProductType = {
     quantity?:number,
     colour?:string,
     description?:string,
-    price?:number
+    price?:number,
+    discount?:number
 }
 
 export type UpdateReturn = {

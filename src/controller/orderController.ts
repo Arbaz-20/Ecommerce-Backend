@@ -1,24 +1,77 @@
 import OrderServiceImplementation from "../service/implementation/OrderServiceIMplementation"
 import { Request,Response } from "express"
-import { ErrorStatus } from "../utils/types/userTypes"
+import { ErrorStatus, ProductType } from "../utils/types/userTypes"
+import {OrderData, productOrderData} from '../utils/types/orderTypes'
+import Product_orderServiceImplementation from "../service/implementation/Product_orderServiceImplementation"
+import ProductServiceImplementation from "../service/implementation/ProductServiceImplementation"
+
 class OrderController {
     order_service: OrderServiceImplementation
+    product_orderService: Product_orderServiceImplementation
+    product_service: ProductServiceImplementation
   
 
     constructor(){
         this.order_service = new OrderServiceImplementation()
+        this.product_orderService = new Product_orderServiceImplementation()
+        this.product_service = new ProductServiceImplementation()
     }
 
-    public CreateOrder = async (req:Request,res:Response)=> {
+    public CreateOrder = async (req:Request,res:Response) => {
         let OrderData = req.body;
-        if(OrderData== null|| OrderData==undefined||OrderData.name== null || OrderData.name == undefined ||OrderData.name==""||OrderData.address==null || OrderData.address== undefined||OrderData.address==""){
+        let success :Array<string> = []
+        let errors:Array<string> = []
+
+        let product = JSON.parse(JSON.stringify(OrderData.product));
+        if(OrderData == null|| OrderData == undefined || OrderData.name == null || OrderData.name == undefined ||OrderData.name==""||OrderData.address==null || OrderData.address== undefined||OrderData.address==""){
             res.status(400).json({error: "please provide data"})
         }else{
             try {
-                let orderResponse = await this.order_service.CreateOrder(OrderData)
+                let total_price = await this.CalculateTotalPrice(product)
+                OrderData["total_price"] = total_price
+                let discount_price = await this.CalculateDiscountPrice(product)
+                OrderData["discount_price"] = discount_price
+                let total_discount = total_price - discount_price
+                OrderData["total_discount"] = total_discount
+                let tax = await this.CalculateTax(total_price,18)
+                OrderData["GST_tax"] = tax
+                let final_amount = total_price + tax
+                OrderData["final_price"] = final_amount
+                let orderResponse:OrderData = await this.order_service.CreateOrder(OrderData)
                 if(orderResponse == null || orderResponse == undefined){
                     res.status(200).json({error : 'something went wrong please try again'})
                 }else{
+                    for await(let product_order of product){
+                        let productOrderData : productOrderData = {
+                            productId:product_order.productId,
+                            orderId:orderResponse.id as string,
+                            product_quantity:product_order.product_quantity,
+                            product_colour:product_order.product_colour,
+                            discount:product_order.discount,
+                        }   
+                        let response : productOrderData | ErrorStatus | any = await this.product_orderService.createProduct_order(productOrderData);
+                        if(response){
+                            let product:{name?:string|undefined}|null = await this.product_service.GetProductNameById(response.productId)
+                            product != undefined  ? success.push(`${product.name} removed Successfully`):success.push(`product removed Successfully`);
+                        }else{
+                            errors.push(`${product.name} cannot be removed`);
+                        }
+                    }
+                    if(success.length > 0 && errors.length == 0){
+                        res.status(200).json({message:"order created succcesfully",data: orderResponse});
+                    }else if(success.length > 0 && errors.length > 0){
+                        let deleteResponse :number | {error?:string,status?:number} | undefined = await this.product_orderService.DeleteProduct_orderByOrderId(orderResponse.id as string);
+                        if(typeof deleteResponse == "number"){
+                            if(deleteResponse > 0){
+                                let response = await this.order_service.DeleteOrder(orderResponse.id as string);
+                                if(response > 0){
+                                    res.status(400).json({error:"Order Cannot be placed Please try again"});
+                                }
+                            }
+                        }
+                    }else{
+                        res.status(400).json({error:"Order Cannot be placed Please try again"});
+                    }
                     res.status(200).json({message :" order created succesfully"})
                 }
             } catch (error:any) {
@@ -170,6 +223,30 @@ class OrderController {
             console.log(error)
             res.status(400).json({error:error})
         }
+    }
+
+    private CalculateTotalPrice = async(product:Array<ProductType>):Promise<number> =>{
+        let total_price = 0
+        for await (let price of product){
+            let priceData = Number(price.price) * Number(price.quantity)
+            total_price += Number(priceData);
+        }
+        return total_price;
+    }
+
+    private CalculateDiscountPrice = async (product:Array<ProductType>):Promise<number> => {
+        let final_discount_price = 0
+        for await (let price of product){
+            let priceData = Number(price.price) * Number(price.quantity)
+            let discount_price = (priceData * Number(price.discount)) / 100
+            final_discount_price += discount_price  
+        }
+        return final_discount_price;
+    }
+
+    private CalculateTax = async(total_price:number,tax:number):Promise<number> =>{
+        let value = (Number(total_price) * Number(tax)) / 100
+        return value    
     }
 
 };
