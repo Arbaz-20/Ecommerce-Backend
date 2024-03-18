@@ -141,7 +141,7 @@ class CartController {
                         res.status(400).json({error:"Please try again"})
                     }
                 }else{
-                    res.status(200).json({message:"data not found"})
+                    res.status(200).json({data:response})
                 }
             }  catch (error:any) {
                 res.status(400).json({error:error.message});

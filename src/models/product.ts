@@ -35,6 +35,9 @@ const product = db.define("product",{
     price:{
         type:DataTypes.FLOAT
     },
+    discount:{
+        type:DataTypes.FLOAT,
+    },
     createdAt:{
         type:DataTypes.DATE,
         allowNull:false,

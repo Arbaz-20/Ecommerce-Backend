@@ -2,6 +2,7 @@ import order from "../models/order";
 import { Op } from "sequelize";
 import cart from "../models/cart";
 import product from "../models/product";
+import product_order from "../models/product_order";
 
 
 class OrderRepository {
@@ -31,7 +32,7 @@ class OrderRepository {
             limit:limit,
             distinct:true,
             order:[["updatedAt","DESC"]],
-            include:[{model:cart,attributes:["quantity","price","user_id"],include:[{model:product,attributes:attributes}]}]
+            include:[{model:product_order}]
         });
     }
 

@@ -5,6 +5,7 @@ import permissions from "./permission";
 import product from "./product";
 import favourites from "./favourite";
 import cart from "./cart";
+import product_order from "./product_order";
 
 const associations = ()=> {
     
@@ -23,8 +24,8 @@ const associations = ()=> {
     product.hasOne(cart,{onUpdate:"CASCADE",onDelete:"CASCADE"})
     cart.belongsTo(product)
 
-    
-
+    order.hasMany(product_order,{foreignKey:"orderId", onDelete:"CASCADE",onUpdate:"CASCADE"})
+    product_order.belongsTo(order)
 
 }
 

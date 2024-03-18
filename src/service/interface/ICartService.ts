@@ -15,6 +15,8 @@ interface ICartService {
 
     GetCartByName(name:string): Promise<object[]|[]>
 
+    DeleteCartByUserId(user_id:string) :Promise<{error:"id is required",status:400}|number>
+
     DeleteCart(id:string): Promise<number>
 
     BulkDeleteCarts(ids:string[]):Promise<number>

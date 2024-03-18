@@ -4,63 +4,80 @@ import { ErrorStatus, ProductType } from "../utils/types/userTypes"
 import {OrderData, productOrderData} from '../utils/types/orderTypes'
 import Product_orderServiceImplementation from "../service/implementation/Product_orderServiceImplementation"
 import ProductServiceImplementation from "../service/implementation/ProductServiceImplementation"
+import CartServiceImplementation from "../service/implementation/CartServiceImplementation"
+import { CartType } from "../utils/types/cartType"
+import product from "../models/product"
 
 class OrderController {
     order_service: OrderServiceImplementation
     product_orderService: Product_orderServiceImplementation
     product_service: ProductServiceImplementation
+    cart_service: CartServiceImplementation
   
 
     constructor(){
         this.order_service = new OrderServiceImplementation()
         this.product_orderService = new Product_orderServiceImplementation()
         this.product_service = new ProductServiceImplementation()
+        this.cart_service = new CartServiceImplementation()
     }
 
     public CreateOrder = async (req:Request,res:Response) => {
         let OrderData = req.body;
         let success :Array<string> = []
         let errors:Array<string> = []
-
-        let product = JSON.parse(JSON.stringify(OrderData.product));
+        
         if(OrderData == null|| OrderData == undefined || OrderData.name == null || OrderData.name == undefined ||OrderData.name==""||OrderData.address==null || OrderData.address== undefined||OrderData.address==""){
             res.status(400).json({error: "please provide data"})
-        }else{
+        }else if(OrderData.user_id == null || OrderData.user_id == undefined){
+            res.status(200).json({error:"User id required"});
+        }
+        else{
             try {
-                let total_price = await this.CalculateTotalPrice(product)
+                let product = await this.cart_service.GetCartByUserId(OrderData.user_id)
+                let total_price = await this.CalculateTotalPrice(product.rows)
                 OrderData["total_price"] = total_price
-                let discount_price = await this.CalculateDiscountPrice(product)
+                let discount_price = await this.CalculateDiscountPrice(product.rows)
                 OrderData["discount_price"] = discount_price
                 let total_discount = total_price - discount_price
                 OrderData["total_discount"] = total_discount
                 let tax = await this.CalculateTax(total_price,18)
                 OrderData["GST_tax"] = tax
-                let final_amount = total_price + tax
+                let final_amount = total_price + OrderData.delivery_charges + tax 
                 OrderData["final_price"] = final_amount
                 let orderResponse:OrderData = await this.order_service.CreateOrder(OrderData)
                 if(orderResponse == null || orderResponse == undefined){
                     res.status(200).json({error : 'something went wrong please try again'})
                 }else{
-                    for await(let product_order of product){
+                    for await(let product_order of product.rows){
                         let productOrderData : productOrderData = {
-                            productId:product_order.productId,
+                            productId: product_order.productId as string,
                             orderId:orderResponse.id as string,
-                            product_quantity:product_order.product_quantity,
-                            product_colour:product_order.product_colour,
-                            discount:product_order.discount,
+                            product_quantity:product_order.quantity as BigInt,
+                            discount:product_order?.product?.discount as number,
                         }   
                         let response : productOrderData | ErrorStatus | any = await this.product_orderService.createProduct_order(productOrderData);
                         if(response){
-                            let product:{name?:string|undefined}|null = await this.product_service.GetProductNameById(response.productId)
-                            product != undefined  ? success.push(`${product.name} removed Successfully`):success.push(`product removed Successfully`);
+                            let productResponse:{name?:string|undefined}|null = await this.product_service.GetProductNameById(product_order?.product?.id as string)
+                            productResponse != undefined  ? success.push(`${productResponse.name} removed Successfully`):success.push(`product removed Successfully`);
                         }else{
-                            errors.push(`${product.name} cannot be removed`);
+                            errors.push(`Order cannot be place`);
                         }
                     }
+                    
                     if(success.length > 0 && errors.length == 0){
-                        res.status(200).json({message:"order created succcesfully",data: orderResponse});
-                    }else if(success.length > 0 && errors.length > 0){
+                        let deleteCart = await this.cart_service.DeleteCartByUserId(OrderData.user_id);
+                        if(typeof deleteCart == "number"){
+                            if(deleteCart > 0){
+                                res.status(200).json({message:"order created succcesfully",data: orderResponse});
+                            }else{
+                                res.status(400).json({error:"order Cannot be placed please try agian"});
+                            }
+                        }
+                    }
+                    else if(success.length > 0 && errors.length > 0){
                         let deleteResponse :number | {error?:string,status?:number} | undefined = await this.product_orderService.DeleteProduct_orderByOrderId(orderResponse.id as string);
+                        console.log(deleteResponse)
                         if(typeof deleteResponse == "number"){
                             if(deleteResponse > 0){
                                 let response = await this.order_service.DeleteOrder(orderResponse.id as string);
@@ -69,10 +86,10 @@ class OrderController {
                                 }
                             }
                         }
-                    }else{
+                    }
+                    else{
                         res.status(400).json({error:"Order Cannot be placed Please try again"});
                     }
-                    res.status(200).json({message :" order created succesfully"})
                 }
             } catch (error:any) {
                 if(error.errors){
@@ -225,7 +242,7 @@ class OrderController {
         }
     }
 
-    private CalculateTotalPrice = async(product:Array<ProductType>):Promise<number> =>{
+    private CalculateTotalPrice = async(product:Array<CartType>):Promise<number> =>{
         let total_price = 0
         for await (let price of product){
             let priceData = Number(price.price) * Number(price.quantity)
@@ -234,11 +251,11 @@ class OrderController {
         return total_price;
     }
 
-    private CalculateDiscountPrice = async (product:Array<ProductType>):Promise<number> => {
+    private CalculateDiscountPrice = async (product:Array<CartType>):Promise<number> => {
         let final_discount_price = 0
         for await (let price of product){
             let priceData = Number(price.price) * Number(price.quantity)
-            let discount_price = (priceData * Number(price.discount)) / 100
+            let discount_price = (priceData * Number(price.product?.discount)) / 100
             final_discount_price += discount_price  
         }
         return final_discount_price;

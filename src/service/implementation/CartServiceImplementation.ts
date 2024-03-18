@@ -60,6 +60,7 @@ class CartServiceImplementation implements ICartService{
             return response;
         }
     }
+    
     public DeleteCart = async (id: string): Promise<number|{error?:string,status?:number}|any>=> {
         if(id == null || id == undefined){
             return {error:"id is required",status:400}
@@ -68,6 +69,16 @@ class CartServiceImplementation implements ICartService{
             return response;
         }
     }
+
+    public DeleteCartByUserId = async(user_id:string) :Promise<{error:"id is required",status:400}|number> => {
+        if(user_id == null || user_id == undefined){
+            return {error:"id is required",status:400}
+        }else{
+            let response = await this.repository.DeleteCartByUserId(user_id);
+            return response;
+        }
+    }
+
     public BulkDeleteCarts = async (ids: string[]): Promise<number> =>{
         let response = await this.repository.BulkDeleteCarts(ids);
         return response;

@@ -25,7 +25,7 @@ class cartRepository {
         return await cart.findAndCountAll({
             where:{
                 user_id:user_id,
-                order_id:null
+                
             },
             include:[{model:product,attributes:{exclude:["createdAt","categoryId"]}}],
             order:[["updatedAt","DESC"]]
@@ -33,9 +33,6 @@ class cartRepository {
     }
     public GetAllCarts = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
         return await cart.findAndCountAll({
-            where:{
-                order_id:null
-            },
             offset:page,
             limit:limit,
             include:[{model:product,attributes:{exclude:["createdAt","categoryId"]}}],
@@ -49,6 +46,10 @@ class cartRepository {
 
     public DeleteCart= async(id:string) :Promise<number> => {
         return await cart.destroy({where:{id:id}});
+    }
+
+    public DeleteCartByUserId = async(user_id:string) :Promise<number> => {
+        return await cart.destroy({where:{user_id:user_id}});
     }
 
     public BulkDeleteCarts = async(ids:string[]) :Promise<number> => {

@@ -11,5 +11,16 @@ export type CartType = {
     createdAt?:Date
     updatedAt?:Date
     date?:Date
-    subtotal?:number
+    subtotal?:number,
+    productId?:string,
+    product?:{
+        id?: string,
+        name?: string,
+        image?: string,
+        quantity?:string,
+        description?: string,
+        price?:number,
+        discount?: number,
+        updatedAt?: Date
+    }
 }

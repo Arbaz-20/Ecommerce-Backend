@@ -27,9 +27,6 @@ const order = db.define("orders",{
         type:DataTypes.STRING,
         allowNull:true
     },
-    product_no:{
-        type:DataTypes.STRING
-    },
     order_status:{
         type:DataTypes.ENUM,
         values:order_status,
@@ -37,7 +34,8 @@ const order = db.define("orders",{
             let order_status:string = this.getDataValue('order_status');
             let data = order_status.includes(order_status)
             return(data == false ? "Invalid status": order_status)
-        }
+        },
+        defaultValue:"waiting for confirmation"
     },
     payment_status:{
         type:DataTypes.ENUM,
