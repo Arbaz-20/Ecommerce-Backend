@@ -271,24 +271,27 @@ class AuthController{
 
     public DeleteUser =async (req : Request,res:Response) => {
         let id : string = req.params?.id;
-        try {
-            let userResponse : {error?:string,status?:number} | any | number|undefined = await this.auth_service.DeleteUser(id);
-            if(userResponse == null || userResponse == undefined){
-                res.status(400).json({error:"Something went wrong please try again"});
-            }else if (userResponse.error || userResponse.status == 400){
-                res.status(userResponse.status as number).json({error:userResponse.error});
-            }else{
-                let permissions = await this.permissionService.DeletePermissionByUserId(id)
-                if(permissions !=null|| permissions != undefined){
-                    res.status(200).json({message:"deleted Sucessfully"});
+        if(id == null || id == undefined){
+            res.status(400).json({error:"id is requrired"});
+        }else{
+            try {
+                let userResponse : {error?:string,status?:number} | any | number|undefined = await this.auth_service.DeleteUser(id);
+                if(userResponse == null || userResponse == undefined){
+                    res.status(400).json({error:"Something went wrong please try again"});
+                }else if (userResponse.error || userResponse.status == 400){
+                    res.status(userResponse.status as number).json({error:userResponse.error});
                 }else{
-                    res.status(400).json({error:"couldnot able to delete"})
+                    let permissions = await this.permissionService.DeletePermissionByUserId(id)
+                    if(permissions !=null|| permissions != undefined){
+                        res.status(200).json({message:"deleted Sucessfully"});
+                    }else{
+                        res.status(400).json({error:"couldnot able to delete"})
+                    }
                 }
+            } catch (error:any) {
+                res.status(400).json({error:error.message})
             }
-        } catch (error:any) {
-            res.status(400).json({error:error.message})
         }
-        
     }
 
     public BulkDeleteUser =async (req : Request,res:Response) => {

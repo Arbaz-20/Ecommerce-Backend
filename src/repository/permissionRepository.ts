@@ -23,7 +23,7 @@ class PermissionRepository{
     }
     
     public getPermissionByUserId = async (user_id:string):Promise<object|null> => {
-        return await permission.findOne({where: {userId:user_id}});
+        return await permission.findOne({where: {authId:user_id}});
     }
 
     public GetAllPermissions = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {

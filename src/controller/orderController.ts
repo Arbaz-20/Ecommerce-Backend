@@ -7,6 +7,7 @@ import ProductServiceImplementation from "../service/implementation/ProductServi
 import CartServiceImplementation from "../service/implementation/CartServiceImplementation"
 import { CartType } from "../utils/types/cartType"
 import product from "../models/product"
+import order_status from "../utils/masterFiles/orderstatus"
 
 class OrderController {
     order_service: OrderServiceImplementation
@@ -147,6 +148,49 @@ class OrderController {
        }
     }
 
+    public UpdateOrderStatus = async(req : Request, res:Response) =>{
+        let id = req.params.id 
+        let Order_status  = req.query.Order_status as string
+        console.log(Order_status)
+        if(id == null || id == undefined || Order_status == null || Order_status == undefined){
+            res.status(400).json({error : "id reqiured please provide id"})
+        }else{
+            try {
+                let response = await this.order_service.UpdateOrderStatus(id,Order_status as string)
+                if(response == 0){
+                    res.status(400).json({error:"something went wrong"})
+                }else{
+                    res.status(200).json({message:"Status updated successfully"})
+                }
+            } catch (error:any) {
+                res.status(400).json({errors:error.message})
+                console.log(error)
+            }
+            
+        }
+        
+    }
+
+    public UpdatePaymentStatus = async(req: Request, res:Response)=>{
+        let id = req.params.id
+        let paymentStatus = req.query.paymentStatus
+        if(id == null || id == undefined || paymentStatus == null || paymentStatus == undefined || id == ":id"){
+            res.status(400).json({error:"id not found"})
+        }else{
+            try {
+                let response = await this.order_service.UpdatePaymentStatus(id,paymentStatus as string)
+                if(response == 0){
+                    res.status(400).json({error:"something went wrong"})
+                }else{
+                    res.status(200).json({message:"Status updated successfully"})
+                }
+            } catch (error:any) {
+                res.status(400).json({errors:error.message})
+                console.log(error)
+            }
+            
+        }
+    }
     public GetOrderById = async (req : Request,res: Response) =>{
         let id = req.params.id;
         if(id == null || id == undefined){

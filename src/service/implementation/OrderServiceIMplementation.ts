@@ -1,5 +1,6 @@
 import IOrderService from "../interface/IOrderService";
 import OrderRepository from "../../repository/orderRepository";
+import order_status from "../../utils/masterFiles/orderstatus";
 
 class OrderServiceImplementation implements IOrderService {
 
@@ -23,6 +24,22 @@ class OrderServiceImplementation implements IOrderService {
         }else{
             let response : [affectedCount? : number] | object = await this.repository.UpdateOrder(id,OrderData);
             console.log(response);
+            return response
+        }
+    }
+    public UpdateOrderStatus = async(id:string,Order_status:string):Promise<[affectedCount?: number | undefined]|any>=>{
+        if(id == null || id == undefined){
+            return{error:"user id is required",status:400}
+        }else{
+            let response : [affectedCount? : number]= await this.repository.UpdateOrderStatus(id,Order_status);
+            return response
+        }
+    }
+    public UpdatePaymentStatus = async(id:string,paymentStatus:string):Promise<[affectedCount?: number | undefined]|any>=>{
+        if(id == null || id == undefined){
+            return{error:"user id is required",status:400}
+        }else{
+            let response : [affectedCount? : number]= await this.repository.UpdatePaymentStatus(id,paymentStatus);
             return response
         }
     }

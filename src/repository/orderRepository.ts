@@ -3,6 +3,7 @@ import { Op } from "sequelize";
 import cart from "../models/cart";
 import product from "../models/product";
 import product_order from "../models/product_order";
+import order_status from "../utils/masterFiles/orderstatus";
 
 
 class OrderRepository {
@@ -18,6 +19,15 @@ class OrderRepository {
     public UpdateOrder = async (id:string, OrderData : object|any ):Promise<[affectedCount?:number|undefined]>=>{
         return await order.update(OrderData,{where:{id:id}});
     }
+
+    public UpdateOrderStatus = async (id:string,Order_status : string) : Promise<[affectedCount?: number]>=>{
+        return await order.update ({ order_status: Order_status },{where:{id:id}})
+    }
+
+    public UpdatePaymentStatus = async (id:string,paymentStatus : string) : Promise<[affectedCount?: number]>=>{
+        return await order.update ({ payment_status: paymentStatus },{where:{id:id}})
+    }
+
 
     public GetOrderById = async (id:string):Promise< object | null |{error?:string,status?:number}> =>{
         return await order.findByPk(id,{

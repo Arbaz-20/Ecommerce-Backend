@@ -40,11 +40,11 @@ const order = db.define("orders",{
     payment_status:{
         type:DataTypes.ENUM,
         values:payment_status,
-        get() {
-            let payment_status= this.getDataValue('payment_status');
-            let data = payment_status.includes(payment_status)
-            return(data == false ?"invalid status":payment_status)
-        }
+        // get() {
+        //     // let payment_status= this.getDataValue('payment_status');
+        //     let data = payment_status.includes(payment_status)
+        //     return(data == false ?"invalid status":payment_status)
+        // }
     },
     delivery_charges:{
         type:DataTypes.INTEGER

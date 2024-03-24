@@ -4,6 +4,10 @@ interface IOrderService{
 
  UpdateOrder (id:string, OrderData : object|any ):Promise<[affectedCount?:number|undefined]>
 
+ UpdateOrderStatus (id:string,Order_status:string):Promise<[affectedCount?: number | undefined]>
+
+ UpdatePaymentStatus(id:string,paymentStatus:string):Promise<[affectedCount?: number | undefined]>
+
  GetOrderById (id:string):Promise< object | null |{error?:string,status?:number}>
 
  GetAllOrders (page:number,limit:number) : Promise<{rows:Array<object>; count: number}>
