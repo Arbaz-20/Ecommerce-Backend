@@ -1,12 +1,12 @@
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import jwt, { Jwt, JwtPayload } from 'jsonwebtoken'
 import { Request,Response,NextFunction } from 'express';
 
 declare global{
     namespace Express{
         interface Request{
-            user ? : string | {id:string,name:string} | JwtPayload
+            user ? :  {id:string} | JwtPayload
         }
-    }
+    }   
 }
 
 
@@ -21,19 +21,19 @@ const isAutheticated = async(req:Request,res:Response,next:NextFunction)=>{
         }else{
             try {
                 let user = jwt.verify(token,process.env.jwt_secret as string);
-                
                 if(user == null){
                     res.status(400).json({error:"Invalid Credentials"});
                 }else{
-                    req.user = user;
+                    req.user  = user as {id:string} | JwtPayload;
                     next()
                 }        
             } catch (error:any) {
+                console.log(error)
                 res.status(400).json({error:error.message})
             }    
         }
     }
-
-
 }
+
+
 export default isAutheticated;

@@ -1,5 +1,7 @@
 import IPermissionSevice from "../interface/IPermissionService";
 import PermissionRepository from "../../repository/permissionRepository";
+import { permissionType } from "../../utils/types/userTypes";
+import { Model } from "sequelize";
 
 class PermissionServiceImplementation implements IPermissionSevice{
     
@@ -29,7 +31,7 @@ class PermissionServiceImplementation implements IPermissionSevice{
         return response;
     }
 
-    public getPermissionByUserId = async (user_id:string):Promise<object|null> => {
+    public getPermissionByUserId = async (user_id:string):Promise<Model<permissionType>|null> => {
         let response = await this.repository.getPermissionByUserId(user_id);
         return response;
     }

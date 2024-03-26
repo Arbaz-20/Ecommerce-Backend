@@ -6,11 +6,15 @@ import product from "./product";
 import favourites from "./favourite";
 import cart from "./cart";
 import product_order from "./product_order";
+import Role from "./role";
 
 const associations = ()=> {
     
-    auth.hasMany(permissions,{foreignKey:"authId",onUpdate:"CASCADE",onDelete:"CASCADE"}),
-    permissions.belongsTo(auth);
+    Role.hasOne(auth,{foreignKey:"roleId",onUpdate:"CASCADE",onDelete:"CASCADE"}),
+    auth.belongsTo(Role);
+
+    permissions.hasOne(Role,{foreignKey:"permissionId",onUpdate:"CASCADE",onDelete:"CASCADE"});
+    Role.belongsTo(permissions);
 
     category.hasMany(product,{foreignKey:"categoryId",onUpdate:"CASCADE",onDelete:"CASCADE"});
     product.belongsTo(category);

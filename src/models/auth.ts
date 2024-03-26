@@ -67,7 +67,7 @@ const auth = db.define("auths",{
         type:DataTypes.STRING,
         allowNull:true,
     },
-    type:{
+    roleId:{
         type:DataTypes.STRING,
         allowNull:false
     },

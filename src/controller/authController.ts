@@ -91,7 +91,7 @@ class AuthController{
             }else{
                 if(await bcrypt.compare(password,isExist.password)){
                     let token = jwt.sign(
-                        {id: isExist.id, name : isExist.name},
+                        {id: isExist.id},
                         process.env.jwt_secret as string,
                         {expiresIn:"30min"}
 

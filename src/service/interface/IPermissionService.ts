@@ -1,3 +1,6 @@
+import { Model } from "sequelize"
+import { permissionType } from "../../utils/types/userTypes"
+
 interface IPermissionService{
 
     CreatePermission  ( PermissionData : object | any ) : Promise<object> 
@@ -8,7 +11,7 @@ interface IPermissionService{
 
     GetPermissionById  (id:string):Promise< object | null > 
 
-    getPermissionByUserId (userId:string):Promise<object|null>
+    getPermissionByUserId (userId:string):Promise<Model<permissionType>|null>
 
     GetAllPermissions  (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> 
 

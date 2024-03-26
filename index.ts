@@ -10,6 +10,7 @@ import CategoryRouter from "./src/routes/categoryRoutes";
 import favouriteRouter from "./src/routes/favouriteRoutes";
 import setAssociations from "./src/models/association";
 import cartRouter from "./src/routes/cartRoutes";
+import RoleRouter from "./src/routes/roleRoutes";
 
 
 db.sync({alter:true}).then(()=>{
@@ -33,6 +34,7 @@ app.use("/api/order",OrderRouter);
 app.use("/api/category",CategoryRouter);
 app.use("/api/favourtie",favouriteRouter);
 app.use("/api/cart",cartRouter)
+app.use("/api/role",RoleRouter)
 
 app.use("/src/utils/upload",express.static("src/utils/upload"))
 

@@ -1,4 +1,6 @@
+import { Model } from "sequelize";
 import permission from "../models/permission";
+import { permissionType } from "../utils/types/userTypes";
 
 
 class PermissionRepository{
@@ -22,7 +24,7 @@ class PermissionRepository{
         return await permission.findByPk(id);
     }
     
-    public getPermissionByUserId = async (user_id:string):Promise<object|null> => {
+    public getPermissionByUserId = async (user_id:string):Promise<Model<permissionType>|null> => {
         return await permission.findOne({where: {authId:user_id}});
     }
 
