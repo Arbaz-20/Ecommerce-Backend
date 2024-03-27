@@ -27,6 +27,7 @@ export type UserType = {
 }
 
 export type permissionType = {
+    id?:string,
     create:boolean,
     update:boolean,
     edit:boolean,

@@ -1,6 +1,7 @@
 import { Sequelize,DataTypes} from "sequelize";
 import db from "../config/database";
 import countries  from "../utils/masterFiles/countrysMasterFile";
+import Role from "./role";
 
 const auth = db.define("auths",{
     id:{
@@ -68,8 +69,11 @@ const auth = db.define("auths",{
         allowNull:true,
     },
     roleId:{
-        type:DataTypes.STRING,
-        allowNull:false
+        references:{
+            model:Role
+        },
+        type:DataTypes.UUID,
+        allowNull:true
     },
     createdAt:{
         type:DataTypes.DATE,

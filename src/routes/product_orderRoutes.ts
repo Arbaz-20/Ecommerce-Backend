@@ -12,7 +12,7 @@ ProductRouter.post("/createProduct",upload.single('image'),isAutheticated,produc
 ProductRouter.post("/createProduct",upload.single('image'),productController.createProduct);
 ProductRouter.put("/UpdateProduct/:id",upload.single('image'),productController.UpdateProduct);
 ProductRouter.get("/GetProductById/:id",productController.GetProductById);
-ProductRouter.get("/GetAllProducts",isAutheticated,productController.GetAllProducts);
+ProductRouter.get("/GetAllProducts",productController.GetAllProducts);
 ProductRouter.get("/GetAllProducts",productController.GetAllProducts);
 ProductRouter.delete("/DeleteProduct/:id",productController.DeleteProduct);
 ProductRouter.delete("/BulkDeleteProduct",productController.BulkDeleteProduct);

@@ -22,7 +22,7 @@ const Role = db.define("roles",{
         allowNull:false
 
     },
-    permissionsId:{
+    permissionId:{
         type:DataTypes.UUID,
     },
     createdAt:{

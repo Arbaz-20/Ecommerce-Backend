@@ -3,7 +3,7 @@ import { permissionType } from "../../utils/types/userTypes"
 
 interface IPermissionService{
 
-    CreatePermission  ( PermissionData : object | any ) : Promise<object> 
+    CreatePermission  ( PermissionData : permissionType | any ) : Promise<object> 
 
     UpdatePermission (id:string,PermissionData : object | any ) : Promise<object> 
 
@@ -17,7 +17,7 @@ interface IPermissionService{
 
     DeletePermission(id:string) :Promise<number> 
 
-    DeletePermissionByUserId(userId:string) : Promise<number> 
+    DeletePermissionsByRoleId(userId:string) : Promise<number> 
 
     BulkDeletePermissionsByUserId  (userId:string[]) : Promise<number>
 

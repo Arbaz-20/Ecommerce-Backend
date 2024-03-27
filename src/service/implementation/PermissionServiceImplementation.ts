@@ -11,7 +11,7 @@ class PermissionServiceImplementation implements IPermissionSevice{
         this.repository = new PermissionRepository()
     }
     
-    public CreatePermission = async (PermissionData: any): Promise<object> =>{
+    public CreatePermission = async (PermissionData: permissionType): Promise<object> =>{
         let response = await this.repository.CreatePermission(PermissionData);
         return response;
     }
@@ -48,8 +48,8 @@ class PermissionServiceImplementation implements IPermissionSevice{
         return response;
     }
     
-    public DeletePermissionByUserId = async(userId: string): Promise<number>=> {
-        let response = await this.repository.DeletePermissionByUserId(userId);
+    public DeletePermissionsByRoleId = async(userId: string): Promise<number>=> {
+        let response = await this.repository.DeletePermissionByRoleId(userId);
         return response;
     }
 

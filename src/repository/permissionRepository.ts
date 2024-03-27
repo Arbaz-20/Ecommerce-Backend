@@ -8,7 +8,7 @@ class PermissionRepository{
     constructor(){
 
     }
-    public CreatePermission = async ( PermissionData : object | any ) : Promise<object> => {
+    public CreatePermission = async ( PermissionData : permissionType | any ) : Promise<object> => {
         return await permission.create(PermissionData);
     }
 
@@ -40,8 +40,8 @@ class PermissionRepository{
         return await permission.destroy({where:{id:id}});
     }
 
-    public DeletePermissionByUserId = async (userId:string) : Promise<number> => {
-        return await permission.destroy({where:{userId:userId}});
+    public DeletePermissionByRoleId = async (roleId:string) : Promise<number> => {
+        return await permission.destroy({where:{roleId:roleId}});
     }
 
     public BulkDeletePermissionsByUserId = async (userId:string[]) : Promise<number> => {

@@ -10,13 +10,13 @@ let upload = multer({
     storage : multer.memoryStorage()
 });
 
-AuthRouter.post("/createUser",upload.single('image'),authController.CreateUser);
-AuthRouter.post("/loginController",authController.LoginController)
-AuthRouter.put("/updateUser/:id",upload.single('image'),authController.UpdateUser);
+// AuthRouter.post("/createUser",upload.single('image'),authController.CreateUser);
+ AuthRouter.post("/loginController",authController.LoginController)
+// AuthRouter.put("/updateUser/:id",upload.single('image'),authController.UpdateUser);
 AuthRouter.get("/GetUserById/:id",authController.GetUserById);
-AuthRouter.get("/GetAllUsers",PermissonsRestrict,authController.GetAllUsers);
-AuthRouter.delete("/DeleteUser/:id",authController.DeleteUser);
-AuthRouter.delete("/BulkDeleteUser",authController.BulkDeleteUser);
+AuthRouter.get("/GetAllUsers",authController.GetAllUsers);
+// AuthRouter.delete("/DeleteUser/:id",authController.DeleteUser);
+// AuthRouter.delete("/BulkDeleteUser",authController.BulkDeleteUser);
 AuthRouter.delete("/logoutController",authController.logoutController)
 
 
