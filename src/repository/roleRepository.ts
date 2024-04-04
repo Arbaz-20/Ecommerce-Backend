@@ -1,5 +1,6 @@
 import role from "../models/role";
-import { Op } from "sequelize";
+import { Model, Op } from "sequelize";
+import { roleType } from "../utils/types/RoleType";
 
 class RoleRespository {
     constructor(){
@@ -11,7 +12,11 @@ class RoleRespository {
     }
 
     public UpdateRole = async (id:string, roleData : object|any ):Promise<[affectedCount?:number|undefined]|{error : string , status : number}>=>{
-        return await role.update(roleData,{where:{id:id}});
+        return await role.update({name:roleData.name},{where:{id:id}});
+    }
+
+    public UpdateRoleByPermissionId = async (id:string, roleData : object|any ):Promise<[affectedCount?:number|undefined]|{error : string , status : number}>=>{
+        return await role.update(roleData,{where:{permissionId:id}});
     }
 
     public GetRoleById = async (id:string):Promise< object | null |{error?:string,status?:number}> =>{
@@ -31,8 +36,8 @@ class RoleRespository {
         });
     }
 
-    public GetRoleByName = async (name:string) :Promise<object[] | [] > => {
-        return await role.findAll({where:{name:{[Op.iLike]:`%${name}%`}}})
+    public GetRoleByName = async (name:string) :Promise<Model<roleType, roleType>|null> => {
+        return await role.findOne({where:{name:{[Op.iLike]:`%${name}%`}}})
     }
 
     public DeleteRole = async(id:string) :Promise<number> => {

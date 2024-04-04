@@ -1,5 +1,7 @@
 import IRoleService from "../interface/IRoleService";
 import RoleRespository from "../../repository/roleRepository";
+import { roleType } from "../../utils/types/RoleType";
+import { Model } from "sequelize";
 
 class RoleServiceImplementation implements IRoleService{
     
@@ -47,7 +49,7 @@ class RoleServiceImplementation implements IRoleService{
         return response;    
     }
     
-    public GetRoleByName = async (name: string): Promise<object[] | object> =>{
+    public GetRoleByName = async (name: string): Promise<Model<roleType, roleType>|null|{error:string,status:number}> =>{
         if(name == null || name == undefined){
             return {error:"name is required",status:400}
         }else{

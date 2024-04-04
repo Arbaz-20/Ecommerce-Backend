@@ -20,15 +20,15 @@ class roleController{
         }else{
             try {
                 let isExist = await this.roleService.GetRoleByName(roleData.name);
-                if(isExist){
-                    res.status(400).json({error:`Role ${roleData.name} Already Exists`});
-                }else{
+                if(isExist == null || isExist ==  undefined){
                     let roleResponse : {message?:string|undefined,status?:number|undefined} = await this.createRoleData(roleData) 
                     if (roleResponse.message && roleResponse.status == 400){
                         res.status(400).json({error:roleResponse.message})
                     }else{
                         res.status(200).json({message:"Role Created successfully"})
                     }
+                }else{
+                    res.status(400).json({error:`Role ${roleData.name} Already Exists`});    
                 }
             } catch (error : any) {
                 if(error.errors){
@@ -189,33 +189,41 @@ class roleController{
         }
     }
 
-    private updateRoleData  = async(roleData:roleType,id:string):Promise<{message?:string,status?:number}> => {
+    private updateRoleData  = async(roleData:roleType,id:string):Promise<{message?:string|undefined,status?:number|undefined}> => {
         let permission = roleData.permissions as Array<permissionType>
-        let response = await this.permissionService.DeletePermissionsByRoleId(id);
-        if(response > 0){
-            let permissionResponse = await this.permissionService.CreatePermission(permission[0]) as permissionType
-            if(permissionResponse == null || permissionResponse == undefined){
-                return {message:"Something went wrong please try again",status:400}
-            }else{
-                roleData["permissionId"] = permissionResponse.id
-                let roleResponse : ErrorStatus|[affectedCount?:number] = await this.roleService.UpdateRole(id,roleData);
-                if(roleResponse == null || roleResponse == undefined){
-                    return{message:"Something went wrong please try again",status:400};
-                }
-                else if(typeof roleResponse == "number"){
-                    if(roleResponse > 0){
-                        return {message:"Updated Sucessfully",status:200}
+        let role:roleType | null = await this.roleService.GetRoleById(id)
+        if(role == null || role == undefined){
+            return {message:"No Role Exists",status:400}
+        }else{
+            let response = await this.permissionService.DeletePermission(role.permissionId as string);
+            console.log(response,"this is the delete permission data")
+            if(response > 0){
+                let permissionResponse = await this.permissionService.CreatePermission(permission[0]) as permissionType
+                console.log(permissionResponse,"this is the permission response")
+                if(permissionResponse == null || permissionResponse == undefined){
+                    return {message:"Something went wrong please try again",status:400}
+                }else{
+                    roleData["permissionId"] = permissionResponse.id
+                    let roleResponse : ErrorStatus|[affectedCount?:number] = await this.roleService.UpdateRole(id,roleData);
+                    if(roleResponse == null || roleResponse == undefined){
+                        return{message:"Something went wrong please try again",status:400};
+                    }else if(roleResponse){
+                        if(typeof roleResponse == "number"){
+                            if(roleResponse as number > 0) {
+                                return {message:"Updated Sucessfully",status:200}
+                            }else{
+                                return{message:"Couldnt update properly",status:400};    
+                            }
+                        }
                     }else{
-                        return{message:"Couldnt update properly",status:400};    
+                        return {message:"Something went wrong",status:400}
                     }
                 }
-                else{
-                    return {message:"Something went wrong",status:400}
-                }
+            }else{
+                return {message:"Permission cannot updated please try again",status:400}
             }
-        }else{
-            return {message:"Permission cannot updated please try again",status:400}
         }
+        return {message:"Something went wrong",status:400}
     }
 }
 

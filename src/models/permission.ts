@@ -9,12 +9,6 @@ const permissions = db.define("permissions",{
         allowNull:false,
         primaryKey:true
     },
-    authId:{
-        type:DataTypes.UUID,
-        references:{
-            model:auth
-        }
-    },
     create:{
         type:DataTypes.BOOLEAN,
         defaultValue:false

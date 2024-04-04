@@ -1,3 +1,6 @@
+import { Model } from "sequelize";
+import { roleType } from "../../utils/types/RoleType";
+
 interface IRoleService{
 
     createRole(RoleData : object  ) : Promise<object>
@@ -8,7 +11,7 @@ interface IRoleService{
 
     GetAllRoles(page:number,limit:number,keyword:string) : Promise<{rows:Array<object>; count: number}>
 
-    GetRoleByName(name:string) :Promise<object[] | object>
+    GetRoleByName(name:string) :Promise<Model<roleType, roleType>|null|{error:string,status:number}>
 
     DeleteRole(id:string) :Promise<number |{error?:string,status?:number}|undefined>
 
