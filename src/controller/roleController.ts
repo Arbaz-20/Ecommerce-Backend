@@ -195,27 +195,18 @@ class roleController{
         if(role == null || role == undefined){
             return {message:"No Role Exists",status:400}
         }else{
-            let response = await this.permissionService.DeletePermission(role.permissionId as string);
-            console.log(response,"this is the delete permission data")
-            if(response > 0){
-                let permissionResponse = await this.permissionService.CreatePermission(permission[0]) as permissionType
-                console.log(permissionResponse,"this is the permission response")
-                if(permissionResponse == null || permissionResponse == undefined){
-                    return {message:"Something went wrong please try again",status:400}
+            let response :[affectedCount:number] = await this.permissionService.UpdatePermission(role.permissionId as string,permission[0]);
+            console.log(response)
+            if(response instanceof Array){
+                if(response[0] > 0){
+                    return {message:"Update Permission Successfully",status:200}
                 }else{
-                    let roleobject = {name:roleData.name,permissionId:permissionResponse.id}
-                    let roleResponse : ErrorStatus|[affectedCount?:number] = await this.roleService.createRole(roleobject);
-                    if(roleResponse == null || roleResponse == undefined){
-                        return{message:"Something went wrong please try again",status:400}
-                    }else{
-                        return{ message:"updated succesfully",status:200}
-                    }
+                    return {message:"Cannot Update Successfully",status:400}
                 }
             }else{
                 return {message:"Permission cannot updated please try again",status:400}
             }
         }
-        return {message:"Something went wrong",status:400}
     }
 }
 

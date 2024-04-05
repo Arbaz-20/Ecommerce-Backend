@@ -3,9 +3,9 @@ import { ErrorStatus, UserType, user } from "../../utils/types/userTypes";
 
 interface IAuthService{
 
-    CreateUser( userData : object | any ) : Promise<object>
+    CreateUser( userData : object | any ) : Promise<{error?:string|undefined,status?:number|undefined} | Model<UserType,UserType>|UserType>
 
-    UpdateUser(id:string, userData : object | any ):Promise<object|[affectedCount?:number|undefined]>
+    UpdateUser(id:string, userData : object | any ):Promise<{error?:string,status:400}|[affectedCount?:number|undefined]>
 
     GetUserById(id:string):Promise<Model<user>|null|ErrorStatus >
 

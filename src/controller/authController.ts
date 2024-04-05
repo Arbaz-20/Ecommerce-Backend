@@ -19,66 +19,64 @@ class AuthController{
         this.permissionService = new PermissionServiceImplementation()
     }
 
-    // public CreateUser = async (req : Request ,res : Response) => {
-    //     let userData = req.body;
-    //     let file:Fileinfo | undefined = req.file as Fileinfo;
+    public CreateUser = async (req : Request ,res : Response) => {
+        let userData = req.body;
+        let file:Fileinfo | undefined = req.file as Fileinfo;
         
-    //     if(userData.permission == null || userData.permission == undefined){
-    //         res.status(400).json({ error:"Please provide the permission to user"})
-    //     }
-    //     else{
-    //         if(userData.name == undefined || userData.email == undefined || userData.password == undefined || userData.name == null|| userData.email == null || userData.password == null){
-    //             res.status(400).json({error : "please provide the required fields"})
-    //         }else{
-    //             try {
-    //                 if(file == null || file == undefined){
-    //                     let response = this.auth_service.CreateUser(userData);
-    //                     if((await response).message || (await response).status == 400){
-    //                         res.status((await response).status as number).json({error:(await response).message});    
-    //                     }else{
-    //                         res.status((await response).status as number).json({message:(await response).message});    
-    //                     }
-    //                 }else{
-    //                     if(file.mimetype?.split("/")[1] == "jpg" || file.mimetype?.split("/")[1] == "png" || file.mimetype?.split("/")[1] == "jpeg"){
-    //                         let stream = Readable.from(file.buffer as Buffer);
-    //                         let filename = file.originalname?.replaceAll(" ","_");
-    //                         let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
-    //                         let writer = fs.createWriteStream(filePath);
-    //                         stream.pipe(writer);
-    //                         let url = `${process.env.server}/${filePath}`
-    //                         userData["image"] = url;
-    //                         let response : Promise<{message?:string,status?:number}> = this.createUserData(userData);
-    //                         if((await response).message && (await response).status == 400){
-    //                             res.status(400).json({error:(await response).message})
-    //                         }else{
-
-    //                             res.status(200).json({message:(await response).message})
-    //                         }
-    //                     }else{
-    //                         res.status(400).json({error:"Please Select either png or jpg or jpeg file"});    
-    //                     }
-    //                 }
-    //             } catch (error:any) {
-    //                 this.print(error);
-    //                 if(error.errors){
-    //                     let validationerror = []
-    //                     for await(let response of error.errors){
-    //                         let obj :{path : string,message : string} = {
-    //                             path: "",
-    //                             message: ""
-    //                         };
-    //                         obj.path = response.path,
-    //                         obj.message = response.message
-    //                         validationerror.push(obj);
-    //                     }
-    //                     res.status(400).json({errors : validationerror});
-    //                 }else{
-    //                     res.status(400).json({errors : error.message});
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+        
+        if(userData.name == undefined || userData.email == undefined || userData.password == undefined || userData.name == null|| userData.email == null || userData.password == null){
+            res.status(400).json({error : "please provide the required fields"})
+        }else{
+            try {
+                if(file == null || file == undefined){
+                    let response = this.auth_service.CreateUser(userData);
+                    if(typeof response == "number")
+                    if(response > 0){
+                        res.status(200).json({message :"created successfully"})
+                    }else{
+                        res.status(400).json({error :"couldnot able to create"})
+                    }
+                }else{
+                    if(file.mimetype?.split("/")[1] == "jpg" || file.mimetype?.split("/")[1] == "png" || file.mimetype?.split("/")[1] == "jpeg"){
+                        let stream = Readable.from(file.buffer as Buffer);
+                        let filename = file.originalname?.replaceAll(" ","_");
+                        let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
+                        let writer = fs.createWriteStream(filePath);
+                        stream.pipe(writer);
+                        let url = `${process.env.server}/${filePath}`
+                        userData["image"] = url;
+                        let response :any = this.auth_service.CreateUser(userData);
+                        // if(response.error && response.status){
+                        //     res.status(400).json({error:response.error})
+                        // }else{
+                        //     res.status(200).json({message:"Created User Successfully"})
+                        // }
+                        res.status(200).json({message:"Created User Successfully"})
+                    }else{
+                        res.status(400).json({error:"Please Select either png or jpg or jpeg file"});    
+                    }
+                }
+            } catch (error:any) {
+                this.print(error);
+                if(error.errors){
+                    let validationerror = []
+                    for await(let response of error.errors){
+                        let obj :{path : string,message : string} = {
+                            path: "",
+                            message: ""
+                        };
+                        obj.path = response.path,
+                        obj.message = response.message
+                        validationerror.push(obj);
+                    }
+                    res.status(400).json({errors : validationerror});
+                }else{
+                    res.status(400).json({errors : error.message});
+                }
+            }
+        }
+        
+    }
 
     public LoginController = async(req : Request, res : Response) =>{
         let {email,password} = req.body;
@@ -152,86 +150,103 @@ class AuthController{
         }
     }
 
-    // public UpdateUser = async(req : Request,res : Response ) => {
-    //     let userData = req.body;
-    //     let {id} = req.params;
-    //     let destination = "src/utils/upload/user"
-    //     let file : Fileinfo = req.file as Fileinfo
-    //     let stream = new Stream()
-    //     if(id == null || id == undefined){
-    //         res.status(404).json({error : "please provide id to update"})
-    //     }else{
-    //         try{
-    //             let isExist : Model<UserType,UserType>|ErrorStatus|any = await this.auth_service.GetUserById(id)
-    //             if(isExist == null ||isExist == undefined){
-    //                 res.status(400).json({error: "please select user properly"})
-    //             }else{
-    //                 if(file == null || file == undefined){
-    //                     let data :{message?:string,status?:number} = await this.updateUserData(userData,id);       
-    //                     if(data.message || data.status == 400){
-    //                         res.status(data.status as number).json({error:data.message});
-    //                     }else if(data.message || data.status == 200){
-    //                         res.status(data.status as number).json({error:data.message});
-    //                     }else{
-    //                         res.status(400).json({error:"Something went wrong"});
-    //                     }
-    //                 }else{
-    //                     if(isExist.image == null || isExist.image == undefined){
-    //                         if(file.originalname?.split(".")[1] == "jpeg"||file.originalname?.split(".")[1] == "png"||file.originalname?.split(".")[1] == "jpg"){
-    //                             let streamData = Readable.from(file.buffer as Buffer);
-    //                             let filename = file.originalname?.replaceAll(" ","_");
-    //                             let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
-    //                             let writer = fs.createWriteStream(filePath);
-    //                             streamData.pipe(writer);
-    //                             userData["image"] = `${process.env.server}/${filePath}`
-    //                             let updateResponse: {message?:string | undefined ,status?:number} = await this.updateUserData(userData,id);
-    //                             if(updateResponse.status == 200){
-    //                                 res.status(200).json({message:updateResponse.message})
-    //                             }else{
-    //                                 res.status(400).json({error_message:updateResponse.message})
-    //                             }
-    //                         }else{
-    //                             res.status(400).json({error_message:"Plese select either png or jpeg or jpg file format"})
-    //                         }
-    //                     }else{
-    //                         let imageName = isExist.image.split("/")
-    //                         let filenameData = imageName[imageName.length - 1]
-    //                         fs.rm(`${destination}/${filenameData}`,(error:unknown)=>{console.log(error)});
-    //                         let streamData = Readable.from(file.buffer as Buffer);
-    //                         let filename = file.originalname?.replaceAll(" ","_");
-    //                         let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
-    //                         let writer = fs.createWriteStream(filePath);
-    //                         streamData.pipe(writer);
-    //                         userData["image"] = `${process.env.server}/${filePath}`
-    //                         let updateResponse:{message?:string,status?:number} = await this.updateUserData(userData,id);
-    //                         if(updateResponse.status == 200){
-    //                             res.status(200).json({message:updateResponse.message})
-    //                         }else{
-    //                             res.status(400).json({error:updateResponse.message})
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }catch(error : any){
-    //             console.log(error);
-    //             if(error.errors){
-    //                 let validationerror : Array<object> = [];
-    //                 for await(let response of error.errors){
-    //                     let obj:{path : string , message : string}={
-    //                         path: "",
-    //                         message: ""
-    //                     }
-    //                     obj.path = response.path;
-    //                     obj.message = response.message;
-    //                     validationerror.push(obj);
-    //                 }
-    //                 res.status(400).json({errors:validationerror})
-    //             }else{
-    //                 res.status(400).json({errors:error.message})
-    //             }
-    //         } 
-    //     }
-    // }
+    public UpdateUser = async(req : Request,res : Response ) => {
+        let userData = req.body;
+        let {id} = req.params;
+        let destination = "src/utils/upload/user"
+        let file : Fileinfo = req.file as Fileinfo
+        let stream = new Stream()
+        if(id == null || id == undefined){
+            res.status(404).json({error : "please provide id to update"})
+        }else{
+            try{
+                let isExist : Model<UserType,UserType>|ErrorStatus|any = await this.auth_service.GetUserById(id)
+                if(isExist == null ||isExist == undefined){
+                    res.status(400).json({error: "please select user properly"})
+                }else{
+                    if(file == null || file == undefined){
+                        let data :{error?:string,status:400}|[affectedCount?:number]|undefined = await this.auth_service.UpdateUser(id,userData);       
+                        if(data instanceof Array){
+                            if(typeof data == "number"){
+                                if(data > 0){
+                                    res.status(200).json({message:"Updated Successfully"});
+                                }else{
+                                    res.status(400).json({error:"Cannot update please try again"});
+                                }
+                            }
+                        }else{
+                            res.status(data.status).json({error:data.error})
+                        }
+                    }else{
+                        if(isExist.image == null || isExist.image == undefined){
+                            if(file.originalname?.split(".")[1] == "jpeg"||file.originalname?.split(".")[1] == "png"||file.originalname?.split(".")[1] == "jpg"){
+                                let streamData = Readable.from(file.buffer as Buffer);
+                                let filename = file.originalname?.replaceAll(" ","_");
+                                let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
+                                let writer = fs.createWriteStream(filePath);
+                                streamData.pipe(writer);
+                                userData["image"] = `${process.env.server}/${filePath}`
+                                let data :{error?:string,status:400}|[affectedCount?:number]|undefined = await this.auth_service.UpdateUser(id,userData);       
+                                if(data instanceof Array){
+                                    if(typeof data == "number"){
+                                        if(data > 0){
+                                            res.status(200).json({message:"Updated Successfully"});
+                                        }else{
+                                            res.status(400).json({error:"Cannot update please try again"});
+                                        }
+                                    }
+                                }else{
+                                    res.status(data.status).json({error:data.error})
+                                }
+                            }else{
+                                res.status(400).json({error_message:"Plese select either png or jpeg or jpg file format"})
+                            }
+                        }else{
+                            let imageName = isExist.image.split("/")
+                            let filenameData = imageName[imageName.length - 1]
+                            //update rm not working
+                            fs.rm(`${destination}/${filenameData}`,(error:unknown)=>{console.log("this is the error",error)});
+                            let streamData = Readable.from(file.buffer as Buffer);
+                            let filename = file.originalname?.replaceAll(" ","_");
+                            let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
+                            let writer = fs.createWriteStream(filePath);
+                            streamData.pipe(writer);
+                            userData["image"] = `${process.env.server}/${filePath}`
+                            let data :{error?:string,status:400}|[affectedCount?:number]|undefined = await this.auth_service.UpdateUser(id,userData);       
+                            if(data instanceof Array){
+                                if(typeof data == "number"){
+                                    if(data > 0){
+                                        res.status(200).json({message:"Updated Successfully"});
+                                    }else{
+                                        res.status(400).json({error:"Cannot update please try again"});
+                                    }
+                                }
+                            }else{
+                                res.status(data.status).json({error:data.error})
+                            }
+                        }
+                    }
+                }
+            }catch(error : any){
+                console.log(error);
+                if(error.errors){
+                    let validationerror : Array<object> = [];
+                    for await(let response of error.errors){
+                        let obj:{path : string , message : string}={
+                            path: "",
+                            message: ""
+                        }
+                        obj.path = response.path;
+                        obj.message = response.message;
+                        validationerror.push(obj);
+                    }
+                    res.status(400).json({errors:validationerror})
+                }else{
+                    res.status(400).json({errors:error.message})
+                }
+            } 
+        }
+    }
 
     public GetUserById = async (req : Request,res:Response) => {
         let id = req.params.id;

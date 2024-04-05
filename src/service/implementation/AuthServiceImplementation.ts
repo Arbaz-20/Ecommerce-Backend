@@ -12,7 +12,7 @@ class AuthServiceImplementation implements IAuthService{
     }
    
     
-    public CreateUser = async (userData: any): Promise<ErrorStatus | user> =>{
+    public CreateUser = async (userData: UserType): Promise<{error?:string,status?:number}|UserType> =>{
         if(userData.password == null || userData.password == undefined){
             return {error:"Password is required",status:400}
         }else{
@@ -21,7 +21,8 @@ class AuthServiceImplementation implements IAuthService{
             userData = JSON.parse(JSON.stringify(userData));
             userData["password"] = password
             let response = await this.repository.CreateUser(userData);
-            return response as user;
+            return response as unknown as UserType
+            
         }
     }
 
@@ -33,19 +34,19 @@ class AuthServiceImplementation implements IAuthService{
         ]
     }
     
-    public UpdateUser = async (id: string, userData: UserType):Promise<ErrorStatus|[affectedCount?:number]> =>{
+    public UpdateUser = async (id: string, userData: UserType):Promise<{error?:string,status:400}|[affectedCount?:number]> =>{
         if(id == null || id == undefined){
-            return {error:"Please Select user to update",status:400} as ErrorStatus;
+            return {error:"Please Select user to update",status:400} as {error?:string,status:400};
         }else{
             if(userData.password == null || userData.password == undefined){
-                let response : [affectedCount? : number] = await this.repository.UpdateUser(id,userData);
+                let response : {error?:string,status:400}|[affectedCount? : number] = await this.repository.UpdateUser(id,userData);
                 return response               
             }else{
                 let salt = await bcrypt.genSalt(10);
                 let password = await bcrypt.hash(userData.password, salt);
                 userData = JSON.parse(JSON.stringify(userData));
                 userData["password"] = password
-                let response : [affectedCount?:number|undefined] = await this.repository.UpdateUser(id,userData);
+                let response : {error?:string,status:400}|[affectedCount?:number|undefined] = await this.repository.UpdateUser(id,userData);
                 return response;
             }
         }

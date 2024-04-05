@@ -9,18 +9,16 @@ class AuthRepository {
 
     }
 
-    public CreateUser = async ( userData : object | any ) : Promise<object> => {
+    public CreateUser = async ( userData : object | any ) : Promise<Model<UserType,UserType>> => {
         return await auth.create(userData);
     }
 
-    public UpdateUser = async (id:string, userData : object|any ):Promise<[affectedCount?:number|undefined]>=>{
+    public UpdateUser = async (id:string, userData : object|any ):Promise<{error?:string,status:400}|[affectedCount?:number|undefined]>=>{
         return await auth.update(userData,{where:{id:id}});
     }
 
     public GetUserById = async (id:string):Promise<Model<user>| null |{error?:string,status?:number}> =>{
-        return await auth.findByPk(id,{
-            include:[{model:permissions,attributes:{exclude:["authId","createdAt","updatedAt"]}}],
-        });
+        return await auth.findByPk(id);
     }
 
     public GetAllUsers = async (page:number,limit:number,name:string) : Promise<{rows:Array<object>; count: number}> => {
@@ -34,9 +32,6 @@ class AuthRepository {
                     }
                 }
             },
-            include:[{
-                model:permissions,
-            }],
             order:[["updatedAt","DESC"]]
         });
     }
