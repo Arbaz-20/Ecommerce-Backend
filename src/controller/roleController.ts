@@ -203,20 +203,12 @@ class roleController{
                 if(permissionResponse == null || permissionResponse == undefined){
                     return {message:"Something went wrong please try again",status:400}
                 }else{
-                    roleData["permissionId"] = permissionResponse.id
-                    let roleResponse : ErrorStatus|[affectedCount?:number] = await this.roleService.UpdateRole(id,roleData);
+                    let roleobject = {name:roleData.name,permissionId:permissionResponse.id}
+                    let roleResponse : ErrorStatus|[affectedCount?:number] = await this.roleService.createRole(roleobject);
                     if(roleResponse == null || roleResponse == undefined){
-                        return{message:"Something went wrong please try again",status:400};
-                    }else if(roleResponse){
-                        if(typeof roleResponse == "number"){
-                            if(roleResponse as number > 0) {
-                                return {message:"Updated Sucessfully",status:200}
-                            }else{
-                                return{message:"Couldnt update properly",status:400};    
-                            }
-                        }
+                        return{message:"Something went wrong please try again",status:400}
                     }else{
-                        return {message:"Something went wrong",status:400}
+                        return{ message:"updated succesfully",status:200}
                     }
                 }
             }else{
