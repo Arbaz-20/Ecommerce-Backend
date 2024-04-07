@@ -35,11 +35,20 @@ class OrderRepository {
         });
     }
 
-    public GetAllOrders = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
-        let attributes = ["name","image","quantity","description","price"]
+    public GetAllOrders = async (page:number,limit:number,keyword:string) : Promise<{rows:Array<object>; count: number}> => {
         return await order.findAndCountAll({
             offset:page,
             limit:limit,
+            where:{
+                [Op.or]:{
+                    name:{
+                        [Op.iLike]:`%${keyword}%`   
+                    },
+                    address:{
+                        [Op.iLike]:`%${keyword}%`
+                    }
+                }
+            },
             distinct:true,
             order:[["updatedAt","DESC"]],
             include:[{model:product_order}]

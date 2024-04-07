@@ -2,6 +2,7 @@ import auth from "../models/auth";
 import { Model, Op } from "sequelize";
 import { UserType, user } from "../utils/types/userTypes";
 import permissions from "../models/permission";
+import Role from "../models/role";
 
 class AuthRepository {
 
@@ -18,10 +19,19 @@ class AuthRepository {
     }
 
     public GetUserById = async (id:string):Promise<Model<user>| null |{error?:string,status?:number}> =>{
-        return await auth.findByPk(id);
+        return await auth.findByPk(id,{
+            include:[{
+                model:Role,
+                include:[{
+                    model:permissions
+                }]
+            }]
+        });
+        
     }
 
     public GetAllUsers = async (page:number,limit:number,name:string) : Promise<{rows:Array<object>; count: number}> => {
+        let role_attribute = ["id","name"]
         return await auth.findAndCountAll({
             offset:page,
             limit:limit,
@@ -32,6 +42,7 @@ class AuthRepository {
                     }
                 }
             },
+            include:[{model:Role,attributes:role_attribute, include:[{model:permissions}]}],
             order:[["updatedAt","DESC"]]
         });
     }

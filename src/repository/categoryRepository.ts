@@ -26,16 +26,15 @@ class categoryRepository {
             offset:page,
             limit:limit,
             distinct:true,
-            order:[["updatedAt","DESC"]],
-            include:[{model:product,
-                where:{
-                    [Op.or]:{
-                        name:{
-                            [Op.iLike]:`%${keyword}%`
-                        }
-                    }
+            where:{
+                [Op.or]:{
+                    name:{
+                        [Op.iLike]:`%${keyword}%`
+                    },
                 }
-            }]
+            },
+            order:[["updatedAt","DESC"]],
+            include:[{model:product,separate:true}]
         });
     }
 

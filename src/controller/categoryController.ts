@@ -12,20 +12,20 @@ class categoryController {
 
     public CreateCategory = async( req : Request, res :Response)=>{
         let categoryData = req.body;
-        if(categoryData.name ==  null || categoryData.name == undefined ||categoryData.name == ""){
+        if(categoryData.category_name ==  null || categoryData.category_name == undefined ||categoryData.category_name == ""){
             res.status(404).json({error : "category not found"})
         }else{
-        try {
-                let categoryResponse : { error ? : string,status ? : number } | any  = await this.category_service.CreateCategory(categoryData) 
-                if(categoryResponse == null || categoryResponse == undefined){
-                    res.status(400).json({error:"Something went wrong please try again"});
-                }
-                else if(categoryResponse.error){
-                    res.status(categoryResponse.status).json({error:categoryResponse.error});
-                }
-                else{
-                    res.status(200).json({message:"category created succcesfully"});
-                }
+            try {
+                    let categoryResponse : { error ? : string,status ? : number } | any  = await this.category_service.CreateCategory(categoryData) 
+                    if(categoryResponse == null || categoryResponse == undefined){
+                        res.status(400).json({error:"Something went wrong please try again"});
+                    }
+                    else if(categoryResponse.error){
+                        res.status(categoryResponse.status).json({error:categoryResponse.error});
+                    }
+                    else{
+                        res.status(200).json({message:"category created succcesfully"});
+                    }
             } catch (error:any) {
                 if(error.errors){
                     let validationerror = []
@@ -59,7 +59,6 @@ class categoryController {
                     res.status(400).json({error: "please select category properly"})
                 }else{
                     let categoryResponse = await this.category_service.UpdateCategory(id, categoryData);
-                    console.log(categoryResponse)
                     if(categoryResponse == null || categoryResponse == undefined){
                         res.status(400).json({error : 'something went wrong please try again'})
                     }else{

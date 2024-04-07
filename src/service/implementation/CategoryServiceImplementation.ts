@@ -12,8 +12,8 @@ class CategoryServiceImplementation implements ICategoryService{
     }
    
     public CreateCategory = async(categoryData: any): Promise<object>=> {
-        if(categoryData.name == null || categoryData.name == undefined){
-            return {error:"Password is required",status:400}
+        if(categoryData.category_name == null || categoryData.category_name == undefined){
+            return {error:"Category's Name is required",status:400}
         }else{
             let response = await this.repository.CreateCategory(categoryData);
             return response as categoryType;

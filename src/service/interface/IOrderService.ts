@@ -10,7 +10,7 @@ interface IOrderService{
 
  GetOrderById (id:string):Promise< object | null |{error?:string,status?:number}>
 
- GetAllOrders (page:number,limit:number) : Promise<{rows:Array<object>; count: number}>
+ GetAllOrders (page:number,limit:number,keyword:string) : Promise<{rows:Array<object>; count: number}>
 
  GetOrderByName (name:string) :Promise<object[] | object >
         

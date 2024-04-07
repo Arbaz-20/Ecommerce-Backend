@@ -1,6 +1,7 @@
 import role from "../models/role";
 import { Model, Op } from "sequelize";
 import { roleType } from "../utils/types/RoleType";
+import permissions from "../models/permission";
 
 class RoleRespository {
     constructor(){
@@ -20,7 +21,11 @@ class RoleRespository {
     }
 
     public GetRoleById = async (id:string):Promise< object | null |{error?:string,status?:number}> =>{
-        return await role.findByPk(id);
+        return await role.findByPk(id,{
+            include:[{
+                model:permissions
+            }]
+        });
     }
 
     public GetAllRoles = async (page:number,limit:number,keyword:string) : Promise<{rows:Array<object>; count: number}> => {

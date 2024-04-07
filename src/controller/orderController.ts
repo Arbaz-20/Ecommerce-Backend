@@ -213,10 +213,12 @@ class OrderController {
     public GetAllOrders = async (req : Request, res : Response) => {
         let page = req.query.page as unknown as number;
         let limit = req.query.limit as unknown as number;
+        let keyword  = req.query.keyword as string
+        keyword = keyword == null || keyword == undefined ? "": keyword
         // let user = req.user as {id:string,name:string} 
         // console.log("this is the user id",user.id)
         try {
-            let orderResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.order_service.GetAllOrders(Number(page),limit);
+            let orderResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.order_service.GetAllOrders(Number(page),limit,keyword);
             if(orderResponse == null || orderResponse == undefined || page == undefined || limit == undefined||page == null || limit == null){
                 res.status(400).json({error:"Something went wrong please try again"});
             }else{

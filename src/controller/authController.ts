@@ -28,34 +28,39 @@ class AuthController{
             res.status(400).json({error : "please provide the required fields"})
         }else{
             try {
-                if(file == null || file == undefined){
-                    let response = this.auth_service.CreateUser(userData);
-                    if(typeof response == "number")
-                    if(response > 0){
-                        res.status(200).json({message :"created successfully"})
+                let isExist = await this.auth_service.GetUserByEmail(userData.email);
+                if(isExist == null){
+                    if(file == null || file == undefined){
+                        let response = this.auth_service.CreateUser(userData);
+                        if(typeof response == "number")
+                        if(response > 0){
+                            res.status(200).json({message :"created successfully"})
+                        }else{
+                            res.status(400).json({error :"couldnot able to create"})
+                        }
                     }else{
-                        res.status(400).json({error :"couldnot able to create"})
+                        if(file.mimetype?.split("/")[1] == "jpg" || file.mimetype?.split("/")[1] == "png" || file.mimetype?.split("/")[1] == "jpeg"){
+                            let stream = Readable.from(file.buffer as Buffer);
+                            let filename = file.originalname?.replaceAll(" ","_");
+                            let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
+                            let writer = fs.createWriteStream(filePath);
+                            stream.pipe(writer);
+                            let url = `${process.env.server}/${filePath}`
+                            userData["image"] = url;
+                            let response :any = this.auth_service.CreateUser(userData);
+                            if(response.error && response.status){
+                                res.status(400).json({error:response.error})
+                            }else{
+                                res.status(200).json({message:"Created User Successfully"})
+                            }
+                        }else{
+                            res.status(400).json({error:"Please Select either png or jpg or jpeg file"});    
+                        }
                     }
                 }else{
-                    if(file.mimetype?.split("/")[1] == "jpg" || file.mimetype?.split("/")[1] == "png" || file.mimetype?.split("/")[1] == "jpeg"){
-                        let stream = Readable.from(file.buffer as Buffer);
-                        let filename = file.originalname?.replaceAll(" ","_");
-                        let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
-                        let writer = fs.createWriteStream(filePath);
-                        stream.pipe(writer);
-                        let url = `${process.env.server}/${filePath}`
-                        userData["image"] = url;
-                        let response :any = this.auth_service.CreateUser(userData);
-                        // if(response.error && response.status){
-                        //     res.status(400).json({error:response.error})
-                        // }else{
-                        //     res.status(200).json({message:"Created User Successfully"})
-                        // }
-                        res.status(200).json({message:"Created User Successfully"})
-                    }else{
-                        res.status(400).json({error:"Please Select either png or jpg or jpeg file"});    
-                    }
+                    res.status(400).json({error:`${userData.email} already exists please try different email`})
                 }
+                
             } catch (error:any) {
                 this.print(error);
                 if(error.errors){
@@ -204,25 +209,23 @@ class AuthController{
                         }else{
                             let imageName = isExist.image.split("/")
                             let filenameData = imageName[imageName.length - 1]
-                            //update rm not working
-                            fs.rm(`${destination}/${filenameData}`,(error:unknown)=>{console.log("this is the error",error)});
+                            fs.rmSync(`${destination}/${filenameData}`);
                             let streamData = Readable.from(file.buffer as Buffer);
                             let filename = file.originalname?.replaceAll(" ","_");
                             let filePath = `${this.destination}/${filename?.split(".")[0]+"_"+this.getTimeStamp()+"."+filename?.split(".")[1]}`
                             let writer = fs.createWriteStream(filePath);
                             streamData.pipe(writer);
                             userData["image"] = `${process.env.server}/${filePath}`
-                            let data :{error?:string,status:400}|[affectedCount?:number]|undefined = await this.auth_service.UpdateUser(id,userData);       
+                            let data :{error?:string,status:400}|[affectedCount?:number]|undefined = await this.auth_service.UpdateUser(id,userData); 
                             if(data instanceof Array){
-                                if(typeof data == "number"){
-                                    if(data > 0){
-                                        res.status(200).json({message:"Updated Successfully"});
-                                    }else{
-                                        res.status(400).json({error:"Cannot update please try again"});
-                                    }
+                                if(Number(data[0]) > 0){
+                                    res.status(200).json({message:"Updated Successfully"});
+                                }else{
+                                    res.status(400).json({error:"Cannot update please try again"});
                                 }
+                                
                             }else{
-                                res.status(data.status).json({error:data.error})
+                                res.status(400).json({error:"Cannot able update please try again"})
                             }
                         }
                     }
