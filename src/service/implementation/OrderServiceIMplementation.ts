@@ -51,13 +51,13 @@ class OrderServiceImplementation implements IOrderService {
             return response;
         }
     }
-    public GetAllOrders = async(page: number, limit: number,keyword:string): Promise<{ rows: object[]; count: number; }> =>{
+    public GetAllOrders = async(page: number, limit: number,keyword:string,filterBy:string): Promise<{ rows: object[]; count: number; }> =>{
         if(page == null || page == undefined || limit == null || limit == undefined || page == 0 || limit == 0){
             page = 0;
             limit = 10;
         }
         let offset = (page - 1)*limit;
-        let response = await this.repository.GetAllOrders(offset,limit,keyword);
+        let response = await this.repository.GetAllOrders(offset,limit,keyword,filterBy);
         return response;   
     }
     public GetOrderByName = async(name: string): Promise<object[] | object> =>{

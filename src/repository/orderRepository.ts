@@ -35,7 +35,7 @@ class OrderRepository {
         });
     }
 
-    public GetAllOrders = async (page:number,limit:number,keyword:string) : Promise<{rows:Array<object>; count: number}> => {
+    public GetAllOrders = async (page:number,limit:number,keyword:string,filterBy:string) : Promise<{rows:Array<object>; count: number}> => {
         return await order.findAndCountAll({
             offset:page,
             limit:limit,
@@ -47,7 +47,8 @@ class OrderRepository {
                     address:{
                         [Op.iLike]:`%${keyword}%`
                     }
-                }
+                },
+                order_status: order_status.includes(filterBy) ? filterBy:order_status
             },
             distinct:true,
             order:[["updatedAt","DESC"]],

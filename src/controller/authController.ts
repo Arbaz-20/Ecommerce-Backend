@@ -287,71 +287,75 @@ class AuthController{
         }
     }
 
-    // public DeleteUser = async (req : Request,res:Response) => {
-    //     let id : string = req.params?.id;
-    //     if(id == null || id == undefined){
-    //         res.status(400).json({error:"id is requrired"});
-    //     }else{
-    //         try {
-    //             let userResponse : {error?:string,status?:number} | any | number|undefined = await this.auth_service.DeleteUser(id);
-    //             if(userResponse == null || userResponse == undefined){
-    //                 res.status(400).json({error:"Something went wrong please try again"});
-    //             }else if (userResponse.error || userResponse.status == 400){
-    //                 res.status(userResponse.status as number).json({error:userResponse.error});
-    //             }else{
-    //                 let permissions = await this.permissionService.DeletePermissionByUserId(id)
-    //                 if(permissions !=null|| permissions != undefined){
-    //                     res.status(200).json({message:"deleted Sucessfully"});
-    //                 }else{
-    //                     res.status(400).json({error:"couldnot able to delete"})
-    //                 }
-    //             }
-    //         } catch (error:any) {
-    //             res.status(400).json({error:error.message})
-    //         }
-    //     }
-    // }
+    public DeleteUser = async (req : Request,res:Response) => {
+        let id : string = req.params?.id;
+        if(id == null || id == undefined){
+            res.status(400).json({error:"id is requrired"});
+        }else{
+            try {
+                let userResponse : {error?:string,status?:number} | any | number|undefined = await this.auth_service.DeleteUser(id);
+                if(userResponse == null || userResponse == undefined){
+                    res.status(400).json({error:"Something went wrong please try again"});
+                }else if (userResponse.error || userResponse.status == 400){
+                    res.status(userResponse.status as number).json({error:userResponse.error});
+                }else{
+                    let response = await this.auth_service.DeleteUser(id)
+                    if(typeof response == "number"){
+                        if(response > 0){
+                            res.status(200).json({message:"Deleted Sucessfully"});
+                        }else{
+                            res.status(400).json({error:"couldnot able to delete"})
+                        }
+                    }else{
+                        res.status(400).json({error:"Cannot Update Please try again"})
+                    }
+                }
+            } catch (error:any) {
+                res.status(400).json({error:error.message})
+            }
+        }
+    }
 
-    // public BulkDeleteUser =async (req : Request,res:Response) => {
-    //     let ids : string[] = req.body.ids;
-    //     let errors: string[] = [];
-    //     let success:string[] = [];
+    public BulkDeleteUser =async (req : Request,res:Response) => {
+        let ids : string[] = req.body.ids;
+        let errors: string[] = [];
+        let success:string[] = [];
         
-    //     try {
-    //         for await(let id of ids ){
-    //             if(id != null || id != undefined || id != ""){
-    //                 let isExist : user | { error?: string | undefined , status?: number | undefined }|any = await this.auth_service.GetUserById(id);
-    //                 if(isExist !== null || isExist !== undefined){
-    //                     let permission = await this.permissionService.getPermissionByUserId(id);
-    //                     if(permission != null || permission != undefined){
-    //                         let response : number | ErrorStatus|any = await this.permissionService.DeletePermissionByUserId(id);
-    //                         if(response > 0){
-    //                             let response : {error?:string,status?:number}|number = await this.auth_service.DeleteUser(id);
-    //                             if(Number(response) > 0){
-    //                                 success.push(`${isExist.name} Deleted Successfully`);
-    //                             }else{
-    //                                 errors.push(`${isExist.name} cannot be deleted please try again`)
-    //                             }
-    //                         }
-    //                         else{
-    //                             errors.push(`${isExist.name} couldn't Delete plese try again`);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         if(errors.length > 0){
-    //             res.status(400).json({error:errors});
-    //         }else if(errors.length > 0,success.length > 0){
-    //             res.status(400).json({success:success,error:errors});
-    //         }else{
-    //             res.status(200).json({success:success , message:"All Deleted Successfully"});
-    //         }
-    //     } catch (error:any) {
-    //         res.status(400).json({error:error.message})
-    //     }
+        try {
+            for await(let id of ids ){
+                if(id != null || id != undefined || id != ""){
+                    let isExist : user | { error?: string | undefined , status?: number | undefined }|any = await this.auth_service.GetUserById(id);
+                    if(isExist !== null || isExist !== undefined){
+                        let permission = await this.permissionService.getPermissionByUserId(id);
+                        if(permission != null || permission != undefined){
+                            let response : number | ErrorStatus|any = await this.auth_service.DeleteUser(id);
+                            if(response > 0){
+                                let response : {error?:string,status?:number}|number = await this.auth_service.DeleteUser(id);
+                                if(Number(response) > 0){
+                                    success.push(`${isExist.name} Deleted Successfully`);
+                                }else{
+                                    errors.push(`${isExist.name} cannot be deleted please try again`)
+                                }
+                            }
+                            else{
+                                errors.push(`${isExist.name} couldn't Delete plese try again`);
+                            }
+                        }
+                    }
+                }
+            }
+            if(errors.length > 0){
+                res.status(400).json({error:errors});
+            }else if(errors.length > 0,success.length > 0){
+                res.status(400).json({success:success,error:errors});
+            }else{
+                res.status(200).json({success:success , message:"All Deleted Successfully"});
+            }
+        } catch (error:any) {
+            res.status(400).json({error:error.message})
+        }
         
-    // }
+    }
 
     
     private getTimeStamp = () =>{

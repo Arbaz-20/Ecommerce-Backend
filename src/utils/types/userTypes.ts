@@ -9,6 +9,7 @@ export type user = {
     image:string,
     city:string,
     address:string,
+    roleId:string,
     createdAt:Date,
     updatedAt:Date,
 }
@@ -24,6 +25,7 @@ export type UserType = {
     city:string,
     address:string,
     permission?:string|undefined
+    roleId?:string
 }
 
 export type permissionType = {
