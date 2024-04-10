@@ -54,7 +54,7 @@ let RolesRestrict = async(req:Request,res:Response,next:NextFunction) => {
                 }  
             }  
         } catch ( error:any) {
-            res.status
+            res.status(400).json({error:error})
         }
     }
 }

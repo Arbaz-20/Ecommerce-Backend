@@ -1,7 +1,10 @@
 import jwt, { JwtPayload } from "jsonwebtoken"
 import PermissionServiceImplementation from "../service/implementation/PermissionServiceImplementation"
 import { Request,Response,NextFunction } from "express";
-import { permissionType } from "../utils/types/userTypes";
+import { permissionType, UserType } from "../utils/types/userTypes";
+import RoleServiceImplementation from "../service/implementation/RoleServiceImplementation";
+import AuthServiceImplementation from "../service/implementation/AuthServiceImplementation";
+import { roleType } from "../utils/types/RoleType";
 
 declare global{
     namespace Express{
@@ -15,18 +18,22 @@ type user = {
     id : string | JwtPayload
 }
 
-
+let role = new RoleServiceImplementation()
 let permission = new PermissionServiceImplementation()
+let userService = new AuthServiceImplementation()
 
 let PermissonsRestrict = async(req:Request,res:Response,next:NextFunction) => {
     let header = req.headers.authorization
     let type = req.headers.type as string
+    
     if(header == null || header == undefined){
         res.status(401).json({error:"Unauthorized Access"});
+        console.log(header)
     }else if(type == null ||type == undefined){
         res.status(401).json({error:"type required Unauthorized Access"});
     }
     else{
+    
         try {
             let token : string | undefined = header?.split(" ")[1]
             if(token == null || token == undefined){
@@ -36,10 +43,12 @@ let PermissonsRestrict = async(req:Request,res:Response,next:NextFunction) => {
                 if(user == null || user == undefined){
                     res.status(401).json({error:"Unauthorized Access"});
                 }else{
-                    let permissionData : permissionType | null = await permission.getPermissionByUserId(user?.id as string) as permissionType | null
-                    if(permissionData == null || permission == undefined){
-                        res.status(401).json({error:"Unauthorized Access"});
+                    let userData :UserType = await userService.GetUserById(user?.id as string) as UserType
+                    if(userData == null || userData == undefined){
+                        res.status(400).json({error:"Unauthorized Access"});
                     }else{
+                        let roleValue:roleType = userData["role"] as roleType
+                        let permissionData :permissionType = await permission.GetPermissionById(roleValue.permissionId as string) as permissionType
                         switch(type){
                             case "create":
                                 if(permissionData.create == true){
@@ -58,7 +67,8 @@ let PermissonsRestrict = async(req:Request,res:Response,next:NextFunction) => {
                                 break;
 
                             case "view":
-                                if(permissionData.view == true){
+                                if(permissionData["view"] == true){
+                                    console.log("this is the case",permissionData.view)
                                     next()
                                 }else{  
                                     res.status(401).json({error:"Unauthorized Access"});
@@ -79,7 +89,7 @@ let PermissonsRestrict = async(req:Request,res:Response,next:NextFunction) => {
                     }
                 }
             }
-        } catch (error:unknown|any) {
+        } catch (error:any) {
             console.log(error)
             res.status(400).json({error:error})   
         }

@@ -20,7 +20,7 @@ class RoleRespository {
         return await role.update(roleData,{where:{permissionId:id}});
     }
 
-    public GetRoleById = async (id:string):Promise< object | null |{error?:string,status?:number}> =>{
+    public GetRoleById = async (id:string):Promise< Model<roleType,roleType> | null |{error?:string,status?:number}> =>{
         return await role.findByPk(id,{
             include:[{
                 model:permissions

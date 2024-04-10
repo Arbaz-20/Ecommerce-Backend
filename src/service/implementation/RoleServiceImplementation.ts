@@ -30,12 +30,12 @@ class RoleServiceImplementation implements IRoleService{
         }
     }
 
-    public GetRoleById = async (id: string): Promise< object|null > => {
+    public GetRoleById = async (id: string): Promise< roleType|null|{error?:string,status?:400} > => {
         if(id == null ||id == undefined){
             return {error:"id is required",status:400}
         }else{
             let response = await this.repository.GetRoleById(id);
-            return response;
+            return response as roleType
         }
     }
     

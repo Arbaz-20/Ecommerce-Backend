@@ -96,7 +96,7 @@ class AuthController{
                     let token = jwt.sign(
                         {id: isExist.id},
                         process.env.jwt_secret as string,
-                        {expiresIn:"30min"}
+                        {expiresIn:"1day"}
 
                     )
                     let refreshToken = jwt.sign(
@@ -277,6 +277,7 @@ class AuthController{
         name = name == null || name == undefined ? "": name
         try {
             let userResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.auth_service.GetAllUsers(Number(page),limit,name);
+            console.log(userResponse)
             if(userResponse == null || userResponse == undefined || page == undefined || limit == undefined||page == null || limit == null){
                 res.status(400).json({error:"Something went wrong please try again"});
             }else{

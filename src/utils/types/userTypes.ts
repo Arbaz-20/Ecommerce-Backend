@@ -1,3 +1,5 @@
+import { roleType } from "./RoleType"
+
 export type user = {
     id ?:string,
     name:string,
@@ -26,6 +28,7 @@ export type UserType = {
     address:string,
     permission?:string|undefined
     roleId?:string
+    role:Array<roleType>
 }
 
 export type permissionType = {

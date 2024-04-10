@@ -89,7 +89,7 @@ class roleController{
             res.status(404).json({error:"please provide id"})
         }else{
             try {
-                let roleResponse :{error ?:string,status?:number } | null = await this.roleService.GetRoleById(id);
+                let roleResponse :roleType|{error ?:string,status?:number } | null = await this.roleService.GetRoleById(id);
                 if(roleResponse == null || roleResponse == undefined){
                     res.status(400).json({error:"Something went wrong please try again"});
                 }
@@ -191,7 +191,7 @@ class roleController{
 
     private updateRoleData  = async(roleData:roleType,id:string):Promise<{message?:string|undefined,status?:number|undefined}> => {
         let permission = roleData.permissions as Array<permissionType>
-        let role:roleType | null = await this.roleService.GetRoleById(id)
+        let role:roleType | null|{error:string,status:400} = await this.roleService.GetRoleById(id) as roleType
         if(role == null || role == undefined){
             return {message:"No Role Exists",status:400}
         }else{
