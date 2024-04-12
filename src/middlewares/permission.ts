@@ -54,7 +54,7 @@ let PermissonsRestrict = async(req:Request,res:Response,next:NextFunction) => {
                                 if(permissionData.create == true){
                                     next()
                                 }else{  
-                                    res.status(401).json({error:"Unauthorized Access"});
+                                    res.status(401).json({error:"Unauthorized Access for create"});
                                 }
                                 break;
 
@@ -62,7 +62,7 @@ let PermissonsRestrict = async(req:Request,res:Response,next:NextFunction) => {
                                 if(permissionData.update == true){
                                     next()
                                 }else{  
-                                    res.status(401).json({error:"Unauthorized Access"});
+                                    res.status(401).json({error:"Unauthorized Access for update"});
                                 }
                                 break;
 
@@ -71,7 +71,7 @@ let PermissonsRestrict = async(req:Request,res:Response,next:NextFunction) => {
                                     console.log("this is the case",permissionData.view)
                                     next()
                                 }else{  
-                                    res.status(401).json({error:"Unauthorized Access"});
+                                    res.status(401).json({error:"Unauthorized Access for view"});
                                 }
                                 break;
 
@@ -79,7 +79,7 @@ let PermissonsRestrict = async(req:Request,res:Response,next:NextFunction) => {
                                 if(permissionData.delete == true){
                                     next()
                                 }else{  
-                                    res.status(401).json({error:"Unauthorized Access"});
+                                    res.status(401).json({error:"Unauthorized Access for"});
                                 }
                                 break;
                             
