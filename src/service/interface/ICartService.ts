@@ -11,7 +11,7 @@ interface ICartService {
 
     GetCartByUserId (user_id:string):Promise<{rows:Array<CartType>; count:number}|{rows:Array<object>; count:number,subtotal:number}>
 
-    GetAllCarts(page:number,limit:number): Promise<{rows:Array<CartType>; count: number}>
+    GetAllCarts(page:number,limit:number,keyword:string): Promise<{rows:Array<CartType>; count: number}>
 
     GetCartByName(name:string): Promise<object[]|[]>
 

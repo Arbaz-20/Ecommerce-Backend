@@ -13,7 +13,7 @@ const associations = ()=> {
     Role.hasMany(auth,{foreignKey:"roleId",onUpdate:"CASCADE",onDelete:"CASCADE"}),
     auth.belongsTo(Role);
 
-    permissions.hasMany(Role,{foreignKey:"permissionId"});
+    permissions.hasMany(Role,{foreignKey:"permissionId",onUpdate:"CASCADE",onDelete:"CASCADE"});
     Role.belongsTo(permissions);
 
     category.hasMany(product,{foreignKey:"categoryId",onUpdate:"CASCADE",onDelete:"CASCADE"});

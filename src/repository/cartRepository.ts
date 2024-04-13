@@ -31,12 +31,22 @@ class cartRepository {
             order:[["updatedAt","DESC"]]
         });
     }
-    public GetAllCarts = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
+    public GetAllCarts = async (page:number,limit:number,keyword:string) : Promise<{rows:Array<object>; count: number}> => {
         return await cart.findAndCountAll({
             offset:page,
             limit:limit,
-            include:[{model:product,attributes:{exclude:["createdAt","categoryId"]}}],
+            distinct:true,
+            include:[{model:product,
+                where:{
+                    [Op.or]:{
+                        name:{
+                            [Op.iLike]:`%${keyword}%`   
+                        }
+                    }
+                }
+                ,attributes:{exclude:["createdAt","categoryId"]}}],
             order:[["updatedAt","DESC"]]
+
         });
     }
 

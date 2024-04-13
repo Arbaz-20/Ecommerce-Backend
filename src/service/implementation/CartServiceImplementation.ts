@@ -43,13 +43,13 @@ class CartServiceImplementation implements ICartService{
         return response;
     }
 
-    public GetAllCarts = async (page: number, limit: number): Promise<{ rows: object[]; count: number; }> =>{
+    public GetAllCarts = async (page: number, limit: number,keyword:string): Promise<{ rows: object[]; count: number; }> =>{
         if(page == null || page == undefined || limit == null || limit == undefined || page == 0 || limit == 0){
             page = 0;
             limit = 10;
         }
         let offset = (page - 1)*limit;
-        let response = await this.repository.GetAllCarts(offset,limit);
+        let response = await this.repository.GetAllCarts(offset,limit,keyword);
         return response;   
     }
     public GetCartByName = async (name: string): Promise<object[] | []|any> =>{

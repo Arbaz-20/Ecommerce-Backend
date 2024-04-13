@@ -36,61 +36,65 @@ class OrderController {
         else{
             try {
                 let product = await this.cart_service.GetCartByUserId(OrderData.user_id)
-                let total_price = await this.CalculateTotalPrice(product.rows)
-                OrderData["total_price"] = total_price
-                let discount_price = await this.CalculateDiscountPrice(product.rows)
-                OrderData["discount_price"] = discount_price
-                let total_discount = total_price - discount_price
-                OrderData["total_discount"] = total_discount
-                let tax = await this.CalculateTax(total_price,18)
-                OrderData["GST_tax"] = tax
-                let final_amount = total_price + OrderData.delivery_charges + tax 
-                OrderData["final_price"] = final_amount
-                let orderResponse:OrderData = await this.order_service.CreateOrder(OrderData)
-                if(orderResponse == null || orderResponse == undefined){
-                    res.status(200).json({error : 'something went wrong please try again'})
-                }else{
-                    for await(let product_order of product.rows){
-                        let productOrderData : productOrderData = {
-                            productId: product_order.productId as string,
-                            orderId:orderResponse.id as string,
-                            product_quantity:product_order.quantity as BigInt,
-                            discount:product_order?.product?.discount as number,
-                        }   
-                        let response : productOrderData | ErrorStatus | any = await this.product_orderService.createProduct_order(productOrderData);
-                        if(response){
-                            let productResponse:{name?:string|undefined}|null = await this.product_service.GetProductNameById(product_order?.product?.id as string)
-                            productResponse != undefined  ? success.push(`${productResponse.name} removed Successfully`):success.push(`product removed Successfully`);
-                        }else{
-                            errors.push(`Order cannot be place`);
-                        }
-                    }
-                    
-                    if(success.length > 0 && errors.length == 0){
-                        let deleteCart = await this.cart_service.DeleteCartByUserId(OrderData.user_id);
-                        if(typeof deleteCart == "number"){
-                            if(deleteCart > 0){
-                                res.status(200).json({message:"order created succcesfully",data: orderResponse});
+                if(product.count > 0){
+                    let total_price = await this.CalculateTotalPrice(product.rows)
+                    OrderData["total_price"] = total_price
+                    let discount_price = await this.CalculateDiscountPrice(product.rows)
+                    OrderData["discount_price"] = discount_price
+                    let total_discount = total_price - discount_price
+                    OrderData["total_discount"] = total_discount
+                    let tax = await this.CalculateTax(total_price,18)
+                    OrderData["GST_tax"] = tax
+                    let final_amount = total_price + OrderData.delivery_charges + tax 
+                    OrderData["final_price"] = final_amount
+                    let orderResponse:OrderData = await this.order_service.CreateOrder(OrderData)
+                    if(orderResponse == null || orderResponse == undefined){
+                        res.status(200).json({error : 'something went wrong please try again'})
+                    }else{
+                        for await(let product_order of product.rows){
+                            let productOrderData : productOrderData = {
+                                productId: product_order.productId as string,
+                                orderId:orderResponse.id as string,
+                                product_quantity:product_order.quantity as BigInt,
+                                discount:product_order?.product?.discount as number,
+                            }   
+                            let response : productOrderData | ErrorStatus | any = await this.product_orderService.createProduct_order(productOrderData);
+                            if(response){
+                                let productResponse:{name?:string|undefined}|null = await this.product_service.GetProductNameById(product_order?.product?.id as string)
+                                productResponse != undefined  ? success.push(`${productResponse.name} removed Successfully`):success.push(`product removed Successfully`);
                             }else{
-                                res.status(400).json({error:"order Cannot be placed please try agian"});
+                                errors.push(`Order cannot be place`);
                             }
                         }
-                    }
-                    else if(success.length > 0 && errors.length > 0){
-                        let deleteResponse :number | {error?:string,status?:number} | undefined = await this.product_orderService.DeleteProduct_orderByOrderId(orderResponse.id as string);
-                        console.log(deleteResponse)
-                        if(typeof deleteResponse == "number"){
-                            if(deleteResponse > 0){
-                                let response = await this.order_service.DeleteOrder(orderResponse.id as string);
-                                if(response > 0){
-                                    res.status(400).json({error:"Order Cannot be placed Please try again"});
+                        
+                        if(success.length > 0 && errors.length == 0){
+                            let deleteCart = await this.cart_service.DeleteCartByUserId(OrderData.user_id);
+                            if(typeof deleteCart == "number"){
+                                if(deleteCart > 0){
+                                    res.status(200).json({message:"order created succcesfully",data: orderResponse});
+                                }else{
+                                    res.status(400).json({error:"No product in cart please try again"});
                                 }
                             }
                         }
+                        else if(success.length > 0 && errors.length > 0){
+                            let deleteResponse :number | {error?:string,status?:number} | undefined = await this.product_orderService.DeleteProduct_orderByOrderId(orderResponse.id as string);
+                            console.log(deleteResponse)
+                            if(typeof deleteResponse == "number"){
+                                if(deleteResponse > 0){
+                                    let response = await this.order_service.DeleteOrder(orderResponse.id as string);
+                                    if(response > 0){
+                                        res.status(400).json({error:"No product in cart please try again"});
+                                    }
+                                }
+                            }
+                        }
+                        else{
+                            res.status(400).json({error:"No product in Cart"});
+                        }
                     }
-                    else{
-                        res.status(400).json({error:"Order Cannot be placed Please try again"});
-                    }
+                }else{
+                    res.status(400).json({error:"No product in Cart"});
                 }
             } catch (error:any) {
                 if(error.errors){

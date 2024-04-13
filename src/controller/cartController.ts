@@ -152,8 +152,10 @@ class CartController {
     public GetAllCarts = async (req : Request, res : Response) => {
         let page = req.query.page as unknown as number;
         let limit = req.query.limit as unknown as number;
+        let keyword  = req.query.keyword as string
+        keyword = keyword == null || keyword == undefined ? "": keyword
         try {
-            let cartResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.Cart_service.GetAllCarts(Number(page),limit);
+            let cartResponse :{count : number,rows:object[]} | {error ?: string ,status?:number } = await this.Cart_service.GetAllCarts(Number(page),limit,keyword);
             if(cartResponse == null || cartResponse == undefined){
                 res.status(400).json({error:"Something went wrong please try again"});
             }else{

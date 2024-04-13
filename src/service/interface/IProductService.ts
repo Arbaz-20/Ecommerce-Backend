@@ -6,7 +6,7 @@ interface IProductService{
 
     GetProductById(id:string):Promise< object | null >
 
-    GetAllProduct(page:number,limit:number) : Promise<{rows:Array<object>; count: number}>
+    GetAllProduct(page:number,limit:number,keyword:string,filterBy:string) : Promise<{rows:Array<object>; count: number}>
 
     GetProductByName(name:string) :Promise<object[] | object>
 

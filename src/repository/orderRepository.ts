@@ -1,5 +1,5 @@
 import order from "../models/order";
-import { Op } from "sequelize";
+import { cast, col, Op, where } from "sequelize";
 import cart from "../models/cart";
 import product from "../models/product";
 import product_order from "../models/product_order";
@@ -37,8 +37,6 @@ class OrderRepository {
 
     public GetAllOrders = async (page:number,limit:number,keyword:string,filterBy:string) : Promise<{rows:Array<object>; count: number}> => {
         return await order.findAndCountAll({
-            offset:page,
-            limit:limit,
             where:{
                 [Op.or]:{
                     name:{
@@ -46,10 +44,18 @@ class OrderRepository {
                     },
                     address:{
                         [Op.iLike]:`%${keyword}%`
-                    }
+                    },
+                    order_status:where(cast(col("order_status"),"TEXT"),{
+                        [Op.like]:`%${keyword}%`
+                    }),
+                    payment_status:where(cast(col("payment_status"),"TEXT"),{
+                        [Op.iLike]:`%${keyword}%`
+                    })
                 },
                 order_status: order_status.includes(filterBy) ? filterBy:order_status
             },
+            offset:page,
+            limit:limit,
             distinct:true,
             order:[["updatedAt","DESC"]],
             include:[{model:product_order}]

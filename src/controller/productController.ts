@@ -183,8 +183,14 @@ class productController {
     public GetAllProducts =  async (req : Request,res:Response) => {
         let page = req.query.page as unknown as number;
         let limit = req.query.limit as unknown as number;
+        let keyword  = req.query.keyword as string
+        let filterBy = req.query.filterBy as string
+
+        keyword = keyword == null || keyword == undefined ? "" : keyword
+        filterBy = filterBy == null || filterBy == undefined ? "" : filterBy
+
         try {
-            let productResponse :{count : number,rows:object[]} | {error ?: string ,status?:number }|any = await this.product_service?.GetAllProduct(Number(page),limit);
+            let productResponse :{count : number,rows:object[]} | {error ?: string ,status?:number }|any = await this.product_service?.GetAllProduct(Number(page),limit,keyword,filterBy);
             if(productResponse == null || productResponse == undefined || page == undefined || limit == undefined||page == null || limit == null){
                 res.status(400).json({error:"Something went wrong please try again"});
             }else{

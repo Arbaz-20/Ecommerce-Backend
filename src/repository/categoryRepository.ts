@@ -23,16 +23,16 @@ class categoryRepository {
 
     public GetAllCategories = async (page:number,limit:number,keyword:string) : Promise<{rows:Array<object>; count: number}> => {
         return await category.findAndCountAll({
-            offset:page,
-            limit:limit,
-            distinct:true,
             where:{
                 [Op.or]:{
-                    name:{
+                    category_name:{
                         [Op.iLike]:`%${keyword}%`
                     },
                 }
             },
+            offset:page,
+            limit:limit,
+            distinct:true,
             order:[["updatedAt","DESC"]],
             include:[{model:product,separate:true}]
         });

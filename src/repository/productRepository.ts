@@ -1,3 +1,4 @@
+import category from "../models/category";
 import order from "../models/order";
 import product from "../models/product";
 import { Op } from "sequelize";
@@ -19,8 +20,19 @@ class ProductRepository {
         return await product.findByPk(id);
     }
 
-    public GetAllProduct = async (page:number,limit:number) : Promise<{rows:Array<object>; count: number}> => {
+    public GetAllProduct = async (page:number,limit:number,keyword:string,filterBy:string) : Promise<{rows:Array<object>; count: number}> => {
         return await product.findAndCountAll({
+            where:{
+                [Op.or]:{
+                    name:{
+                        [Op.iLike]:`%${keyword}%`   
+                    },
+                },
+                '$category.category_name$':{
+                    [Op.iLike]:`%${filterBy}%`   
+                }
+            },
+            include:[{model:category,required:true}],
             offset:page,
             limit:limit,
             order:[["updatedAt","DESC"]],

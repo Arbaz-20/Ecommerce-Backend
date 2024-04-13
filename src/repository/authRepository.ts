@@ -33,8 +33,6 @@ class AuthRepository {
     public GetAllUsers = async (page:number,limit:number,name:string) : Promise<{rows:Array<object>; count: number}> => {
         let role_attribute = ["id","name"]
         return await auth.findAndCountAll({
-            offset:page,
-            limit:limit,
             where:{
                 [Op.or]:{
                     name:{
@@ -42,6 +40,9 @@ class AuthRepository {
                     }
                 }
             },
+            offset:page,
+            limit:limit,
+            distinct:true,
             include:[{model:Role,attributes:role_attribute, include:[{model:permissions}]}],
             order:[["updatedAt","DESC"]]
         });
