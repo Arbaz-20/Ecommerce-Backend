@@ -1,0 +1,1711 @@
+{
+	"info": {
+		"_postman_id": "9e14aa34-5cf4-4254-bf82-00ab387996e6",
+		"name": "Ecommerce Website",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28729382"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Sufiya",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "sufiya122@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "19",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "jannat",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "mumbai",
+									"type": "text"
+								},
+								{
+									"key": "country",
+									"value": "India",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "anna nagar",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "user",
+									"type": "text"
+								},
+								{
+									"key": "roleId",
+									"value": "18dfd40b-2826-4317-84eb-68f57102a50a",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/Saniya/OneDrive/Pictures/Camera Roll/file_1694447703627.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5000/api/auth/createUser",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"createUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateUser",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "arbaz",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "arbaz@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "19",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "jannat",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "mumbai",
+									"type": "text"
+								},
+								{
+									"key": "country",
+									"value": "India",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "anna nagar",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "user",
+									"type": "text"
+								},
+								{
+									"key": "permission",
+									"value": "[{\"create\":true,\"update\":false,\"edit\":true,\"view\":false,\"delete\":true}]",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/Saniya/OneDrive/Pictures/Camera Roll/WIN_20231022_19_09_56_Pro.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5000/api/auth/updateUser/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"updateUser",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "76e581c8-3bee-44b5-af6f-3e5cae40208a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUserById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/auth/GetUserById/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"GetUserById",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "c9fd6ff8-ca64-4359-8743-353af61dc2a9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllUsers",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijc2ZTU4MWM4LTNiZWUtNDRiNS1hZjZmLTNlNWNhZTQwMjA4YSIsImlhdCI6MTcxMjk1MjE1NCwiZXhwIjoxNzEzMDM4NTU0fQ.qCwAFa7HthozuifrJ9ruHxmVnM8ttgyRKqYJQlyYpqs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "type",
+								"value": "view",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/auth/GetAllUsers?page=1&limit=10",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"GetAllUsers"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "name",
+									"value": "Saniya",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deleteuser",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/auth/DeleteUser/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"DeleteUser",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ef7ad310-ac2e-49d8-89a9-e0ded8ccd28b"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BulkDeleteUsres",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ids\":[\"862922d0-2da2-4ecd-959f-a6c410a0e551\",\"e4cae066-3aea-427d-9b19-297a60d6d192\",\"f7d91441-dbff-4496-8df9-3f4b0b676dc0\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/auth/BulkDeleteUser",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"BulkDeleteUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login controller",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM5ZmQ2ZmY4LWNhNjQtNDM1OS04NzQzLTM1M2FmNjFkYzJhOSIsImlhdCI6MTcxMjc2NDA4NSwiZXhwIjoxNzEyNzY1ODg1fQ.jX1JNQrfDgkYKXetfq-F3hmsdaYPxMRJ-qV8N5L2Dhw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"arbaz@gmail.com\",\r\n    \"password\":\"jannat\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/auth/loginController",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"loginController"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout Controller",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/auth/logoutController",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"auth",
+								"logoutController"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "product",
+			"item": [
+				{
+					"name": "createproduct",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImE2MGI5YWVlLTYwNjMtNDFmYy04ZTk1LTk0NzllZTJjM2Q5MyIsImlhdCI6MTcxMTI5ODk1NSwiZXhwIjoxNzExMzAwNzU1fQ.vwEmDcXBS6wGOI3f6WcVysEcC36w4uK3MMA2yS5sZbI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "type",
+								"value": "create",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Full Size Burka",
+									"type": "text"
+								},
+								{
+									"key": "quantity",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "colour",
+									"value": "red",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "any item worn on the body",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "2500",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/Saniya/OneDrive/Pictures/Camera Roll/WIN_20231022_19_10_13_Pro.jpg"
+								},
+								{
+									"key": "categoryId",
+									"value": "f7f972f1-427e-48bb-a4f1-a658f7be6e7e",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5000/api/product/createProduct",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"product",
+								"createProduct"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateproduct",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImE2MGI5YWVlLTYwNjMtNDFmYy04ZTk1LTk0NzllZTJjM2Q5MyIsImlhdCI6MTcxMTI5ODk1NSwiZXhwIjoxNzExMzAwNzU1fQ.vwEmDcXBS6wGOI3f6WcVysEcC36w4uK3MMA2yS5sZbI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "type",
+								"value": "update",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Full size suit",
+									"type": "text"
+								},
+								{
+									"key": "colour",
+									"value": "red",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "1500",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/Saniya/OneDrive/Pictures/Screenshots/Screenshot 2023-12-13 190515.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:5000/api/product/UpdateProduct/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"product",
+								"UpdateProduct",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "547c2d63-d346-4de2-a9c3-b02c440882c7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getproductbyid",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/product/GetProductById/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"product",
+								"GetProductById",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "352b72c6-8265-4d2f-a610-3765b602c9e3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllProducts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImE2MGI5YWVlLTYwNjMtNDFmYy04ZTk1LTk0NzllZTJjM2Q5MyIsImlhdCI6MTcxMTI5ODk1NSwiZXhwIjoxNzExMzAwNzU1fQ.vwEmDcXBS6wGOI3f6WcVysEcC36w4uK3MMA2yS5sZbI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "type",
+								"value": "view",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:5000/api/product/GetAllProducts?page=1&limit=10&keyword=Full Size Burka&filterBy=Female Burkhas Catergory",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"product",
+								"GetAllProducts"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "keyword",
+									"value": "Full Size Burka"
+								},
+								{
+									"key": "filterBy",
+									"value": "Female Burkhas Catergory"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteproduct",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/product/DeleteProduct/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"product",
+								"DeleteProduct",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "a590d14f-1a7c-4ff8-8acb-9a95361e0946"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkdeleteproduct",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ids\":[\"a0123335-a2b4-442b-b13e-976ef84d2ce2\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/product/BulkDeleteProduct",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"product",
+								"BulkDeleteProduct"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "order",
+			"item": [
+				{
+					"name": "CreateOrder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYyZmU3OTk0LWNmNTgtNDExYi05YTA4LTdmZmZmYzk0ODE2MiIsIm5hbWUiOiJTYW5peWEgRiIsImlhdCI6MTcwNjAyNjk2NCwiZXhwIjoxNzA2MDI4NzY0fQ.NlMDdHfEakq87uJRVpLGDuGXo0kl3oIOKJhMGWEDpMY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Saniya Farooqui\",\r\n    \"address\":\"anna nagar\",\r\n    \"payment_status\":\"Debit\",\r\n    \"order_status\":\"waiting for confirmation\",\r\n    \"delivery_date\":\"2023-12-11\",\r\n    \"delivery_charges\":40,\r\n    \"user_id\":\"c9fd6ff8-ca64-4359-8743-353af61dc2a9\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/order/CreateOrder",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"order",
+								"CreateOrder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateOrder",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"long sharara\",\r\n    \"order_price\":\"1500\",\r\n    \"order_status\": \"confirmed\",\r\n    \"payment_status\": \"COD\",\r\n    \"address\": \"anna nagar\",\r\n    \"product_no\": \"1\",\r\n    \"GST_tax\": \"10%\",\r\n    \"delivery_charges\": 40\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/order/UpdateOrder/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"order",
+								"UpdateOrder",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "e178f539-3042-4aef-b4c9-6d2851473be7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOrderById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/order/GetOrderById/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"order",
+								"GetOrderById",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "e178f539-3042-4aef-b4c9-6d2851473be7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllOrder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImE2MGI5YWVlLTYwNjMtNDFmYy04ZTk1LTk0NzllZTJjM2Q5MyIsIm5hbWUiOiJTYW5peWEgRiIsImlhdCI6MTcxMDI2MDQ0OCwiZXhwIjoxNzEwMjYyMjQ4fQ.oTfeMyiv4EJFEQ7gg6a4Xwn89eZ-3sveI0bmY9YdJLs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/order/GetAllOrders?page=1&limit=10&keyword=Debit&filterBy=confirmed",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"order",
+								"GetAllOrders"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "keyword",
+									"value": "Debit"
+								},
+								{
+									"key": "filterBy",
+									"value": "confirmed"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteOrder",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/order/DeleteOrder/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"order",
+								"DeleteOrder",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "742e070e-2342-4aa5-a920-4d5cc6250020"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BulkDeleteOrder",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ids\":[\"d3ecf30e-4413-4f69-8687-00ac5835668d\",\"e178f539-3042-4aef-b4c9-6d2851473be7\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/order/BulkDeleteOrders",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"order",
+								"BulkDeleteOrders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateOrderStatus",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/order/UpdateOrderStatus/:id?Order_status=confirmed",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"order",
+								"UpdateOrderStatus",
+								":id"
+							],
+							"query": [
+								{
+									"key": "Order_status",
+									"value": "confirmed"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "7531bf79-4aba-4b64-b638-481c6cdb549a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PaymentUpdate",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/order/UpdatePaymentStatus/:id?paymentStatus=COD",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"order",
+								"UpdatePaymentStatus",
+								":id"
+							],
+							"query": [
+								{
+									"key": "paymentStatus",
+									"value": "COD"
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "27a52726-5933-4ac4-a660-58a6415b7d93"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "category",
+			"item": [
+				{
+					"name": "create category",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"category_name\":\"Female Burkhas Catergory\",\r\n    \"description\":\"it contains only shirts\",\r\n    \"type\":\"owner\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/category/createCategory",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"category",
+								"createCategory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update category",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"category_name\":\"Shirts\",\r\n    \"description\":\"alfiya is a working girl\",\r\n    \"type\":\"tshirt\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/category/UpdateCategory/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"category",
+								"UpdateCategory",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "c58b48e0-c2d6-44a0-ab90-25172305a0ff"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllcategory",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/category/GetAllCategorys?page=1&limit=10&keyword=Shirts",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"category",
+								"GetAllCategorys"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "keyword",
+									"value": "Shirts"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCategoryById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/category/GetCategoryById/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"category",
+								"GetCategoryById",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "290438cb-f9da-4142-a5d5-175f8b59e4fe"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete category",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/category/DeleteCategory/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"category",
+								"DeleteCategory",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "c58b48e0-c2d6-44a0-ab90-25172305a0ff"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bulkDelete category",
+					"request": {
+						"method": "DELETE",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "cart",
+			"item": [
+				{
+					"name": "createcart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\":\"c9fd6ff8-ca64-4359-8743-353af61dc2a9\",\r\n    \"productId\":\"f6829411-546f-4305-a669-36b6f60dbbe2\",\r\n    \"price\":2500,\r\n    \"quantity\":10  \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/cart/createCart",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"cart",
+								"createCart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updatecart",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\":\"265eedcf-2c0c-4fd2-8d7a-97aab80e7761\",\r\n    \"productId\":\"de1907db-0a9e-4724-affc-438141ad8af4\",\r\n    \"price\":500,\r\n    \"quantity\":15\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/cart/updateCart/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"cart",
+								"updateCart",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "877c3a71-cc0d-43ca-af32-7aade5406ccb"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetcartById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/cart/GetCartById/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"cart",
+								"GetCartById",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "0fe2a5da-c2a5-4c8b-ab81-79539ff9a360"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllcarts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/cart/GetAllCarts?page=1&limit=5&keyword=Half Size shirt ",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"cart",
+								"GetAllCarts"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "keyword",
+									"value": "Half Size shirt "
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deletecart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/cart/DeleteCart/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"cart",
+								"DeleteCart",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BulkDeletecarts",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/cart/BulkDeleteCarts",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"cart",
+								"BulkDeleteCarts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCartByUserId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/cart/GetCartByUserId/:user_id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"cart",
+								"GetCartByUserId",
+								":user_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "c676de25-e4c5-4d1b-96ca-6cca42584c03"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "favorite",
+			"item": [
+				{
+					"name": "createFavourite",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"authId\":\"24d72e05-6f0a-4a3c-9e2f-0ab1c70205ff\",\r\n    \"productId\":\"a5855a64-fd85-4ddf-b9ef-a453b36e5ea5\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/favourtie/createfavourites",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"favourtie",
+								"createfavourites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateFavourite",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\":\"265eedcf-2c0c-4fd2-8d7a-97aab80e7761\"\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/favourtie/updateFavourite/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"favourtie",
+								"updateFavourite",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ff9de201-f8c9-4007-8b96-baa15f60b593"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetFavoriteById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/favourtie/GetfavouritesById/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"favourtie",
+								"GetfavouritesById",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "4f0228fb-f920-4fe3-8e7e-f867efd1d22e"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllFavorites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/favourtie/GetAllfavouritess?page=1&limit=10",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"favourtie",
+								"GetAllfavouritess"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "keyword",
+									"value": "shirt",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteFavorote",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/favorite/DeleteFavorite/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"favorite",
+								"DeleteFavorite",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BulkDeleteFavorites",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/favorite/BulkDeleteFavorite",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"favorite",
+								"BulkDeleteFavorite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllFavouritesByUserId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/favourtie/GetAllFavouritesByUserId/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"favourtie",
+								"GetAllFavouritesByUserId",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "c676de25-e4c5-4d1b-96ca-6cca42584c03"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Role",
+			"item": [
+				{
+					"name": "CreateRole",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijc2ZTU4MWM4LTNiZWUtNDRiNS1hZjZmLTNlNWNhZTQwMjA4YSIsImlhdCI6MTcxMjc2MTA1NCwiZXhwIjoxNzEyNzYyODU0fQ.crpwFF0J0iNFxcVLS9O8yydoFfrlp3XVUUysYf4pwsY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"user\",\r\n    \"permissions\":[{\"create\":true,\"update\":true,\"edit\":true,\"view\":false,\"delete\":true}]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/role/CreateRole",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"role",
+								"CreateRole"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateRole",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"staff\",\r\n   \"permissions\":[{\"create\":false,\"update\":true,\"edit\":true,\"view\":true,\"delete\":true}]\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/role/UpdateRole/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"role",
+								"UpdateRole",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "18dfd40b-2826-4317-84eb-68f57102a50a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetRoleById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/role/GetRoleById/:id",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"role",
+								"GetRoleById",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllRoles",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:5000/api/role/GetAllRoles?limit=10&page=1&keyword=admn",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"role",
+								"GetAllRoles"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "keyword",
+									"value": "admn"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteRole",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/role/DeleteRole",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"role",
+								"DeleteRole"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BulkDeleteRole",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:5000/api/role/BulkDeleteRole",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"role",
+								"BulkDeleteRole"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
