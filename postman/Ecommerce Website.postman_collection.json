@@ -1,0 +1,821 @@
+{
+  "info": {
+    "name": "Ecommerce Backend",
+    "_postman_id": "a6c2f4d2-3b9d-4cc1-9b1c-ecom-backend-001",
+    "description": "Complete REST API collection for the Ecommerce Backend (Node.js + TypeScript + Express + Sequelize/PostgreSQL).\n\n## Setup\n1. Import this file into Postman: **File → Import**.\n2. Open the **Variables** tab on the collection and confirm:\n   - `API` = `http://localhost:5000/api` (change host/port to match your `.env` `PORT`).\n   - `token` = leave empty; it auto-fills after a successful `Auth / Login`.\n3. Start the server: `npm start`.\n4. Hit **Auth → Create User** to register, then **Auth → Login** — the test script saves the JWT to `{{token}}` and every protected request uses it as `Authorization: Bearer {{token}}`.\n\n## Folder Map\n- **Auth** — register, login, logout, user CRUD\n- **Role** — role CRUD\n- **Category** — category CRUD\n- **Product** — product CRUD (multipart image upload)\n- **Cart** — cart CRUD + lookup by user\n- **Favourite** — favourite CRUD + lookup by user\n- **Order** — order CRUD + status / payment status updates\n\nAll URLs use `{{API}}` as the route prefix (e.g. `{{API}}/auth/loginController`).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "API",
+      "value": "http://localhost:5000/api",
+      "type": "string",
+      "description": "Base URL prefix for every endpoint. Change to match your server host/port."
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "JWT auto-saved by the Login request's test script."
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "User registration, login/logout and user management.",
+      "item": [
+        {
+          "name": "Create User (Register)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "John Doe", "type": "text" },
+                { "key": "email", "value": "john@example.com", "type": "text" },
+                { "key": "password", "value": "Password@123", "type": "text" },
+                { "key": "address", "value": "221B Baker Street", "type": "text" },
+                { "key": "age", "value": "28", "type": "text" },
+                { "key": "country", "value": "Pakistan", "type": "text" },
+                { "key": "city", "value": "Karachi", "type": "text" },
+                { "key": "roleId", "value": "", "type": "text", "description": "Optional UUID of an existing role" },
+                { "key": "image", "type": "file", "src": [], "description": "Profile picture (optional)" }
+              ]
+            },
+            "url": { "raw": "{{API}}/auth/createUser", "host": ["{{API}}"], "path": ["auth", "createUser"] },
+            "description": "Register a new user. Multipart form; `image` is optional. `name`, `email`, `password` are required."
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Auto-save JWT into the {{token}} collection variable",
+                  "try {",
+                  "  const res = pm.response.json();",
+                  "  const t = res.token || res.accessToken || (res.data && res.data.token);",
+                  "  if (t) { pm.collectionVariables.set('token', t); console.log('Saved token'); }",
+                  "} catch (e) { console.log('No JSON token in response'); }"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Password@123\"\n}"
+            },
+            "url": { "raw": "{{API}}/auth/loginController", "host": ["{{API}}"], "path": ["auth", "loginController"] },
+            "description": "Login with email + password. Returns a JWT; the test script auto-stores it in `{{token}}`."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{API}}/auth/logoutController", "host": ["{{API}}"], "path": ["auth", "logoutController"] },
+            "description": "Logout the current session."
+          }
+        },
+        {
+          "name": "Get User By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{API}}/auth/GetUserById/:id",
+              "host": ["{{API}}"],
+              "path": ["auth", "GetUserById", ":id"],
+              "variable": [{ "key": "id", "value": "", "description": "User UUID" }]
+            },
+            "description": "Fetch a single user by UUID. Requires Bearer token."
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{API}}/auth/GetAllUsers?page=1&limit=10&name=",
+              "host": ["{{API}}"],
+              "path": ["auth", "GetAllUsers"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "name", "value": "", "description": "Search by name" }
+              ]
+            },
+            "description": "Paginated list of users. Supports `page`, `limit`, `name` filter."
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "John Updated", "type": "text" },
+                { "key": "address", "value": "New Address", "type": "text" },
+                { "key": "age", "value": "29", "type": "text" },
+                { "key": "country", "value": "Pakistan", "type": "text" },
+                { "key": "city", "value": "Lahore", "type": "text" },
+                { "key": "image", "type": "file", "src": [] }
+              ]
+            },
+            "url": {
+              "raw": "{{API}}/auth/updateUser/:id",
+              "host": ["{{API}}"],
+              "path": ["auth", "updateUser", ":id"],
+              "variable": [{ "key": "id", "value": "", "description": "User UUID" }]
+            },
+            "description": "Update an existing user. Multipart so an optional new `image` can be uploaded."
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{API}}/auth/DeleteUser/:id",
+              "host": ["{{API}}"],
+              "path": ["auth", "DeleteUser", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Delete one user by UUID."
+          }
+        },
+        {
+          "name": "Bulk Delete Users",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"<uuid-1>\", \"<uuid-2>\"]\n}"
+            },
+            "url": { "raw": "{{API}}/auth/BulkDeleteUser", "host": ["{{API}}"], "path": ["auth", "BulkDeleteUser"] },
+            "description": "Delete multiple users in one call. Body: `{ \"ids\": [..] }`."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Role",
+      "description": "Manage roles. A role references a `permissionId` (see Permission rows in the DB).",
+      "item": [
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"admin\",\n  \"permissionId\": \"<permission-uuid>\"\n}"
+            },
+            "url": { "raw": "{{API}}/role/CreateRole", "host": ["{{API}}"], "path": ["role", "CreateRole"] },
+            "description": "Create a new role with a name and an existing permission UUID."
+          }
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"super-admin\",\n  \"permissionId\": \"<permission-uuid>\"\n}"
+            },
+            "url": {
+              "raw": "{{API}}/role/UpdateRole/:id",
+              "host": ["{{API}}"],
+              "path": ["role", "UpdateRole", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Update an existing role."
+          }
+        },
+        {
+          "name": "Get Role By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/role/GetRoleById/:id",
+              "host": ["{{API}}"],
+              "path": ["role", "GetRoleById", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Fetch a single role by UUID."
+          }
+        },
+        {
+          "name": "Get All Roles",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/role/GetAllRoles?page=1&limit=10&keyword=",
+              "host": ["{{API}}"],
+              "path": ["role", "GetAllRoles"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "keyword", "value": "" }
+              ]
+            },
+            "description": "Paginated list of roles. Supports `keyword` search."
+          }
+        },
+        {
+          "name": "Delete Role",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{API}}/role/DeleteRole/:id",
+              "host": ["{{API}}"],
+              "path": ["role", "DeleteRole", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Delete one role by UUID."
+          }
+        },
+        {
+          "name": "Bulk Delete Roles",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"<uuid-1>\", \"<uuid-2>\"]\n}"
+            },
+            "url": { "raw": "{{API}}/role/BulkDeleteProduct", "host": ["{{API}}"], "path": ["role", "BulkDeleteProduct"] },
+            "description": "Route is literally named `BulkDeleteProduct` in the role router — kept as-is."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category",
+      "description": "Product categories.",
+      "item": [
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_name\": \"Electronics\",\n  \"description\": \"All electronic items\",\n  \"type\": \"physical\"\n}"
+            },
+            "url": { "raw": "{{API}}/category/createCategory", "host": ["{{API}}"], "path": ["category", "createCategory"] },
+            "description": "Create a new category."
+          }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_name\": \"Consumer Electronics\",\n  \"description\": \"Updated description\",\n  \"type\": \"physical\"\n}"
+            },
+            "url": {
+              "raw": "{{API}}/category/UpdateCategory/:id",
+              "host": ["{{API}}"],
+              "path": ["category", "UpdateCategory", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Update an existing category."
+          }
+        },
+        {
+          "name": "Get Category By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/category/GetCategoryById/:id",
+              "host": ["{{API}}"],
+              "path": ["category", "GetCategoryById", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Fetch a single category by UUID."
+          }
+        },
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/category/GetAllCategorys?page=1&limit=10&keyword=",
+              "host": ["{{API}}"],
+              "path": ["category", "GetAllCategorys"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "keyword", "value": "" }
+              ]
+            },
+            "description": "Paginated list of categories. Supports `keyword` search."
+          }
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{API}}/category/DeleteCategory/:id",
+              "host": ["{{API}}"],
+              "path": ["category", "DeleteCategory", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Delete one category by UUID."
+          }
+        },
+        {
+          "name": "Bulk Delete Categories",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"<uuid-1>\", \"<uuid-2>\"]\n}"
+            },
+            "url": { "raw": "{{API}}/category/BulkDeleteCategorys", "host": ["{{API}}"], "path": ["category", "BulkDeleteCategorys"] },
+            "description": "Delete multiple categories in one call."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product",
+      "description": "Product catalogue. Create/Update use multipart with field `image`.",
+      "item": [
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "iPhone 15", "type": "text" },
+                { "key": "description", "value": "Latest Apple smartphone", "type": "text" },
+                { "key": "price", "value": "1200", "type": "text" },
+                { "key": "discount", "value": "50", "type": "text" },
+                { "key": "quantity", "value": "20", "type": "text" },
+                { "key": "categoryId", "value": "<category-uuid>", "type": "text" },
+                { "key": "image", "type": "file", "src": [] }
+              ]
+            },
+            "url": { "raw": "{{API}}/product/createProduct", "host": ["{{API}}"], "path": ["product", "createProduct"] },
+            "description": "Create product. Multipart, `image` is uploaded via Multer (memory storage)."
+          }
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "iPhone 15 Pro", "type": "text" },
+                { "key": "description", "value": "Updated description", "type": "text" },
+                { "key": "price", "value": "1400", "type": "text" },
+                { "key": "discount", "value": "100", "type": "text" },
+                { "key": "quantity", "value": "15", "type": "text" },
+                { "key": "image", "type": "file", "src": [] }
+              ]
+            },
+            "url": {
+              "raw": "{{API}}/product/UpdateProduct/:id",
+              "host": ["{{API}}"],
+              "path": ["product", "UpdateProduct", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Update product. Multipart; replace `image` if needed."
+          }
+        },
+        {
+          "name": "Get Product By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/product/GetProductById/:id",
+              "host": ["{{API}}"],
+              "path": ["product", "GetProductById", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Fetch a single product by UUID."
+          }
+        },
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/product/GetAllProducts?page=1&limit=10&keyword=&filterBy=",
+              "host": ["{{API}}"],
+              "path": ["product", "GetAllProducts"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "keyword", "value": "", "description": "Search keyword" },
+                { "key": "filterBy", "value": "", "description": "Optional filter (e.g. categoryId)" }
+              ]
+            },
+            "description": "Paginated list of products with optional filter/search."
+          }
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{API}}/product/DeleteProduct/:id",
+              "host": ["{{API}}"],
+              "path": ["product", "DeleteProduct", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Delete one product by UUID."
+          }
+        },
+        {
+          "name": "Bulk Delete Products",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"<uuid-1>\", \"<uuid-2>\"]\n}"
+            },
+            "url": { "raw": "{{API}}/product/BulkDeleteProduct", "host": ["{{API}}"], "path": ["product", "BulkDeleteProduct"] },
+            "description": "Delete multiple products in one call."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "description": "User shopping cart items.",
+      "item": [
+        {
+          "name": "Create Cart Item",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"<user-uuid>\",\n  \"productId\": \"<product-uuid>\",\n  \"price\": 1200,\n  \"quantity\": 2\n}"
+            },
+            "url": { "raw": "{{API}}/cart/createCart", "host": ["{{API}}"], "path": ["cart", "createCart"] },
+            "description": "Add an item to a user's cart."
+          }
+        },
+        {
+          "name": "Update Cart Item",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 1100,\n  \"quantity\": 3\n}"
+            },
+            "url": {
+              "raw": "{{API}}/cart/updateCart/:id",
+              "host": ["{{API}}"],
+              "path": ["cart", "updateCart", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Update price/quantity of a cart row."
+          }
+        },
+        {
+          "name": "Get Cart By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/cart/GetCartById/:id",
+              "host": ["{{API}}"],
+              "path": ["cart", "GetCartById", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Fetch one cart row by UUID."
+          }
+        },
+        {
+          "name": "Get Cart By User Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/cart/GetCartByUserId/:user_id",
+              "host": ["{{API}}"],
+              "path": ["cart", "GetCartByUserId", ":user_id"],
+              "variable": [{ "key": "user_id", "value": "", "description": "User UUID" }]
+            },
+            "description": "Return all cart items for a given user."
+          }
+        },
+        {
+          "name": "Get All Carts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/cart/GetAllCarts?page=1&limit=10&keyword=",
+              "host": ["{{API}}"],
+              "path": ["cart", "GetAllCarts"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "keyword", "value": "" }
+              ]
+            },
+            "description": "Paginated list of all cart rows."
+          }
+        },
+        {
+          "name": "Delete Cart",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{API}}/cart/DeleteCart/:id",
+              "host": ["{{API}}"],
+              "path": ["cart", "DeleteCart", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Delete one cart row by UUID."
+          }
+        },
+        {
+          "name": "Bulk Delete Carts",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"<uuid-1>\", \"<uuid-2>\"]\n}"
+            },
+            "url": { "raw": "{{API}}/cart/BulkDeleteCarts", "host": ["{{API}}"], "path": ["cart", "BulkDeleteCarts"] },
+            "description": "Delete multiple cart rows in one call."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Favourite",
+      "description": "User wish-list / favourites. NOTE: route prefix is `/favourtie` (typo preserved from server: see index.ts).",
+      "item": [
+        {
+          "name": "Create Favourite",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"authId\": \"<user-uuid>\",\n  \"productId\": \"<product-uuid>\"\n}"
+            },
+            "url": { "raw": "{{API}}/favourtie/createfavourites", "host": ["{{API}}"], "path": ["favourtie", "createfavourites"] },
+            "description": "Add a product to a user's favourites."
+          }
+        },
+        {
+          "name": "Update Favourite",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"<product-uuid>\"\n}"
+            },
+            "url": {
+              "raw": "{{API}}/favourtie/updatefavourites/:id",
+              "host": ["{{API}}"],
+              "path": ["favourtie", "updatefavourites", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Update a favourite row by UUID."
+          }
+        },
+        {
+          "name": "Get Favourite By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/favourtie/GetfavouritesById/:id",
+              "host": ["{{API}}"],
+              "path": ["favourtie", "GetfavouritesById", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Fetch a single favourite by UUID."
+          }
+        },
+        {
+          "name": "Get All Favourites By Auth Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/favourtie/GetAllFavouritesByauthId/:id?page=1&limit=10",
+              "host": ["{{API}}"],
+              "path": ["favourtie", "GetAllFavouritesByauthId", ":id"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ],
+              "variable": [{ "key": "id", "value": "", "description": "Auth/User UUID" }]
+            },
+            "description": "All favourites belonging to a specific user."
+          }
+        },
+        {
+          "name": "Get All Favourites",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/favourtie/GetAllfavouritess?page=1&limit=10&keyword=",
+              "host": ["{{API}}"],
+              "path": ["favourtie", "GetAllfavouritess"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "keyword", "value": "" }
+              ]
+            },
+            "description": "Paginated list of all favourites."
+          }
+        },
+        {
+          "name": "Delete Favourite",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{API}}/favourtie/Deletefavourites/:id",
+              "host": ["{{API}}"],
+              "path": ["favourtie", "Deletefavourites", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Delete one favourite by UUID."
+          }
+        },
+        {
+          "name": "Bulk Delete Favourites",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"<uuid-1>\", \"<uuid-2>\"]\n}"
+            },
+            "url": { "raw": "{{API}}/favourtie/BulkDeletefavourites", "host": ["{{API}}"], "path": ["favourtie", "BulkDeletefavourites"] },
+            "description": "Delete multiple favourites in one call."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "description": "Orders + order/payment status updates.",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"address\": \"221B Baker Street\",\n  \"delivery_charges\": 200,\n  \"delivery_date\": \"2026-06-01\",\n  \"total_price\": \"2400\",\n  \"discount_price\": \"100\",\n  \"GST_tax\": \"120\",\n  \"final_price\": 2620,\n  \"total_discount\": 100,\n  \"products\": [\n    { \"productId\": \"<product-uuid>\", \"product_quantity\": 2, \"product_colour\": \"black\" }\n  ]\n}"
+            },
+            "url": { "raw": "{{API}}/order/CreateOrder", "host": ["{{API}}"], "path": ["order", "CreateOrder"] },
+            "description": "Create an order with one or more `products` line items (stored in the `product_order` join table)."
+          }
+        },
+        {
+          "name": "Update Order",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"address\": \"Updated Address\",\n  \"delivery_charges\": 250,\n  \"final_price\": 2700\n}"
+            },
+            "url": {
+              "raw": "{{API}}/order/UpdateOrder/:id",
+              "host": ["{{API}}"],
+              "path": ["order", "UpdateOrder", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Update top-level fields of an order."
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{API}}/order/UpdateOrderStatus/:id?Order_status=confirmed",
+              "host": ["{{API}}"],
+              "path": ["order", "UpdateOrderStatus", ":id"],
+              "query": [
+                { "key": "Order_status", "value": "confirmed", "description": "e.g. waiting for confirmation | confirmed | shipped | delivered | cancelled" }
+              ],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Update an order's `order_status` via the `Order_status` query param."
+          }
+        },
+        {
+          "name": "Update Payment Status",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{API}}/order/UpdatePaymentStatus/:id?paymentStatus=paid",
+              "host": ["{{API}}"],
+              "path": ["order", "UpdatePaymentStatus", ":id"],
+              "query": [
+                { "key": "paymentStatus", "value": "paid", "description": "e.g. pending | paid | failed | refunded" }
+              ],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Update an order's `payment_status` via query param."
+          }
+        },
+        {
+          "name": "Get Order By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/order/GetOrderById/:id",
+              "host": ["{{API}}"],
+              "path": ["order", "GetOrderById", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Fetch a single order by UUID."
+          }
+        },
+        {
+          "name": "Get All Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{API}}/order/GetAllOrders?page=1&limit=10&keyword=&filterBy=",
+              "host": ["{{API}}"],
+              "path": ["order", "GetAllOrders"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "keyword", "value": "" },
+                { "key": "filterBy", "value": "", "description": "Optional filter (e.g. order_status)" }
+              ]
+            },
+            "description": "Paginated list of all orders."
+          }
+        },
+        {
+          "name": "Delete Order",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{API}}/order/DeleteOrder/:id",
+              "host": ["{{API}}"],
+              "path": ["order", "DeleteOrder", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "description": "Delete one order by UUID."
+          }
+        },
+        {
+          "name": "Bulk Delete Orders",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"<uuid-1>\", \"<uuid-2>\"]\n}"
+            },
+            "url": { "raw": "{{API}}/order/BulkDeleteOrders", "host": ["{{API}}"], "path": ["order", "BulkDeleteOrders"] },
+            "description": "Delete multiple orders in one call."
+          }
+        }
+      ]
+    }
+  ]
+}

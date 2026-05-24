@@ -60,7 +60,8 @@ Ecommerce-Backend/
 │   │   ├── upload/             # Uploaded files (served statically)
 │   │   ├── masterFiles/        # Seed/master data
 │   │   └── types/              # Shared TS types
-│   └── postmanApi/             # Postman collection(s)
+│   └── postmanApi/
+│       └── Ecommerce Website.postman_collection.json  # Full API collection ({{API}} prefix + auto-JWT)
 └── dist/                       # Compiled output (if you build)
 ```
 
@@ -267,13 +268,59 @@ Then plug them into the `nodemailer.createTransport(...)` call inside [src/contr
 
 ## Postman Collection
 
-A Postman collection is included under [src/postmanApi/](src/postmanApi/). Import it into Postman:
+A ready-to-use Postman collection lives at [src/postmanApi/Ecommerce Website.postman_collection.json](src/postmanApi/Ecommerce%20Website.postman_collection.json). It contains **every endpoint** in this project, grouped into folders with descriptions.
 
-1. **File → Import** → choose the file from `src/postmanApi/`.
-2. Create an environment with variables:
-   - `baseUrl` = `http://localhost:5000`
-   - `token`   = *(paste JWT from login response)*
-3. Hit `Login` first, copy the token, then call protected endpoints.
+### Import
+
+1. Open Postman → **File → Import**.
+2. Select `src/postmanApi/Ecommerce Website.postman_collection.json`.
+3. The collection appears as **Ecommerce Backend** in your sidebar.
+
+### Collection Variables
+
+Open the collection → **Variables** tab. Two variables ship with it:
+
+| Variable | Default | Purpose |
+|----------|--------------------------------|---------|
+| `API`    | `http://localhost:5000/api`    | Route prefix used in every request URL as `{{API}}/...`. Change host/port to match your `.env` `PORT`. |
+| `token`  | *(empty)*                      | JWT — auto-populated by the **Login** request's test script. |
+
+> Every request URL is written as `{{API}}/<resource>/<action>` so you only have to edit `API` once when switching environments (local → staging → prod).
+
+### Auth — Bearer Token
+
+Collection-level auth is set to **Bearer Token** with value `{{token}}`. All protected requests inherit it automatically — no manual header copy-paste needed.
+
+The **Auth → Login** request has a test script that runs after the response:
+
+```js
+const t = res.token || res.accessToken || (res.data && res.data.token);
+if (t) pm.collectionVariables.set('token', t);
+```
+
+So the flow is:
+
+1. **Auth → Create User (Register)** — multipart form, optional `image`.
+2. **Auth → Login** — token is saved into `{{token}}` automatically.
+3. Run any other request — the Bearer header is filled in for you.
+
+### Folders Inside the Collection
+
+| Folder      | Contents                                                                                  |
+|-------------|-------------------------------------------------------------------------------------------|
+| **Auth**    | Create User, Login, Logout, Get / Get All / Update / Delete / Bulk Delete users           |
+| **Role**    | Create / Update / Get / Get All / Delete / Bulk Delete roles                              |
+| **Category**| Full CRUD                                                                                 |
+| **Product** | Full CRUD (multipart upload, field name `image`)                                          |
+| **Cart**    | CRUD + Get Cart By User Id                                                                |
+| **Favourite** | CRUD + Get All Favourites By Auth Id *(path is `/favourtie` — typo preserved from the server, see [index.ts:35](index.ts#L35))* |
+| **Order**   | Create / Update / Update Order Status (?Order_status=) / Update Payment Status (?paymentStatus=) / Get / Get All / Delete / Bulk Delete |
+
+### Tips
+
+- For multipart requests (Create User, Update User, Create Product, Update Product), open the **Body → form-data** tab and click the file row to attach an actual image from disk before sending.
+- Path params like `:id` are exposed in the **Path Variables** table under the URL — fill them in there, not by editing the URL.
+- Bulk-delete endpoints expect `{ "ids": ["<uuid-1>", "<uuid-2>"] }` in the JSON body.
 
 ---
 
